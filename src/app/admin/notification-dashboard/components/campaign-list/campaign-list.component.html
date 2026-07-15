@@ -1,0 +1,122 @@
+<div class="campaign-list-container">
+  <div class="page-header">
+    <div>
+      <h2>Campaigns</h2>
+      <p class="subtitle">Manage your marketing campaigns</p>
+    </div>
+    <button class="btn btn-primary" (click)="createCampaign()">
+      <span>+ New Campaign</span>
+    </button>
+  </div>
+  
+  <!-- Filters -->
+  <div class="filters">
+    <div class="filter-group">
+      <label>Status:</label>
+      <select [(ngModel)]="filterStatus" (change)="onFilterChange()">
+        <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label>Type:</label>
+      <select [(ngModel)]="filterType" (change)="onFilterChange()">
+        <option *ngFor="let opt of typeOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <span>Loading campaigns...</span>
+  </div>
+  
+  <!-- Campaigns Table -->
+  <div *ngIf="!isLoading" class="campaigns-table-wrapper">
+    <table class="campaigns-table" *ngIf="campaigns.length > 0">
+      <thead>
+        <tr>
+          <th>Campaign</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Recipients</th>
+          <th>Progress</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let campaign of campaigns" class="campaign-row">
+          <td class="campaign-info">
+            <div class="campaign-name">{{ campaign.name }}</div>
+            <div class="campaign-desc" *ngIf="campaign.description">{{ campaign.description | slice:0:50 }}{{ campaign.description.length > 50 ? '...' : '' }}</div>
+          </td>
+          <td class="campaign-type">
+            <span class="type-badge" [class]="'type-' + campaign.type">
+              {{ campaign.type | titlecase }}
+            </span>
+          </td>
+          <td class="campaign-status">
+            <span class="status-badge" [style.background-color]="getStatusColor(campaign.status)">
+              {{ campaign.status | titlecase }}
+            </span>
+          </td>
+          <td class="campaign-recipients">
+            <div class="recipient-stats">
+              <span class="total">{{ campaign.totalRecipients | number }}</span>
+              <div class="breakdown">
+                <span class="sent" title="Sent">{{ campaign.sentCount }}</span>
+                <span class="delivered" title="Delivered">{{ campaign.deliveredCount }}</span>
+                <span class="failed" title="Failed">{{ campaign.failedCount }}</span>
+              </div>
+            </div>
+          </td>
+          <td class="campaign-progress">
+            <div class="progress-bar" *ngIf="campaign.totalRecipients > 0">
+              <div class="progress-fill" [style.width.%]="getProgressPercentage(campaign)"></div>
+            </div>
+            <span class="progress-text">{{ getProgressPercentage(campaign) }}%</span>
+          </td>
+          <td class="campaign-date">{{ formatDate(campaign.createdAt) }}</td>
+          <td class="campaign-actions">
+            <button class="action-btn start" (click)="startCampaign(campaign)" *ngIf="canStart(campaign)" title="Start">
+              ▶
+            </button>
+            <button class="action-btn pause" (click)="pauseCampaign(campaign)" *ngIf="canPause(campaign)" title="Pause">
+              ⏸
+            </button>
+            <button class="action-btn resume" (click)="resumeCampaign(campaign)" *ngIf="canResume(campaign)" title="Resume">
+              ▶
+            </button>
+            <button class="action-btn edit" (click)="editCampaign(campaign)" title="Edit">
+              ✎
+            </button>
+            <button class="action-btn delete" (click)="deleteCampaign(campaign)" *ngIf="canDelete(campaign)" title="Delete">
+              🗑
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Empty State -->
+    <div *ngIf="campaigns.length === 0" class="empty-state">
+      <span class="empty-icon">📭</span>
+      <h3>No campaigns found</h3>
+      <p>Create your first campaign to get started</p>
+      <button class="btn btn-primary" (click)="createCampaign()">Create Campaign</button>
+    </div>
+  </div>
+  
+  <!-- Pagination -->
+  <div *ngIf="!isLoading && totalPages > 1" class="pagination">
+    <button class="page-btn" [disabled]="page === 1" (click)="onPageChange(page - 1)">
+      ← Previous
+    </button>
+    <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+    <button class="page-btn" [disabled]="page === totalPages" (click)="onPageChange(page + 1)">
+      Next →
+    </button>
+  </div>
+</div>

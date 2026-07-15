@@ -1,0 +1,66 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist
+build
+tmp
+out-tsc
+.bazel
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Testing
+karma.conf.js
+coverage
+.nyc_output
+e2e
+*.spec.ts
+*.test.ts
+
+# Angular
+.angular
+.sass-cache
+connect.lock
+coverage
+libpeerconnection.log
+testem.log
+typings
+
+# Misc
+README.md
+CHANGELOG.md
+LICENSE
+.github
+.editorconfig
+.eslintignore
+.eslintrc.json
+
+# Temporary files
+tmp
+temp
+*.tmp
+*.bak

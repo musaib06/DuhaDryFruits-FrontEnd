@@ -1,0 +1,100 @@
+@use "variable" as *;
+@use "./styles-asset-protection";
+
+/* ---------------- Base Reset ---------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  font-family: $font-family-primary;
+  background: $color-bg-primary;
+  color: $color-text-primary;
+  height: 100%;
+  margin: 0;
+  overflow-x: hidden !important;
+}
+
+a,
+i {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* ---------------- Brand font (Bilal) — global ---------------- */
+/* Same script font used in the logo. Falls back gracefully if not installed. */
+@font-face {
+  font-family: "Bilal";
+  src:
+    local("Bilal"),
+    local("Bilal Regular"),
+    local("BilalbyAsepRendi"),
+    url("https://db.onlinewebfonts.com/t/f753180986d88e3f4ecfa8dbc8a40ef6.woff2") format("woff2"),
+    url("https://db.onlinewebfonts.com/t/f753180986d88e3f4ecfa8dbc8a40ef6.woff") format("woff"),
+    url("https://db.onlinewebfonts.com/t/f753180986d88e3f4ecfa8dbc8a40ef6.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+.font-bilal {
+  font-family: "Bilal", "Brush Script MT", "Segoe Script", cursive !important;
+  letter-spacing: 0.2px;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+app-product {
+  cursor: pointer !important;
+}
+
+main {
+  flex: 1; // takes remaining space
+}
+
+.btn-primary {
+  background-color: $color-primary !important;
+  border: none;
+  color: $color-text-on-primary;
+}
+
+/* Blog reading — whole words only. Lines wrap at spaces and never split a real
+   word across lines (`word-break: normal` disables the mid-word chopping that
+   `break-all` caused). `overflow-wrap: break-word` is kept so that a genuinely
+   unbreakable token (e.g. a very long URL with no spaces) can still break to
+   avoid overflowing the card/viewport — normal words are left intact. */
+.article-body.blog-prose,
+.article-body.blog-prose :where(p, li, div, span, blockquote, td, th, h1, h2, h3, h4, h5, h6) {
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+  -moz-hyphens: none !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  text-align: left !important;
+  white-space: normal !important;
+  text-wrap: pretty;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Only links may break, and only when a single URL genuinely cannot fit —
+   normal prose words are never split. */
+.article-body.blog-prose a {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* On blog detail, move category FAB to bottom so it does not narrow the text column */
+body.wvf-blog-reading .mobile-category-fab {
+  top: auto;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  transform: none;
+}

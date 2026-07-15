@@ -1,0 +1,126 @@
+<div class="notification-settings-container">
+  <h2>Notification Settings</h2>
+  <p class="subtitle">Manage your notification preferences</p>
+  
+  <div *ngIf="message" class="alert" [class.success]="message.type === 'success'" [class.error]="message.type === 'error'">
+    {{ message.text }}
+  </div>
+  
+  <form [formGroup]="preferencesForm" (ngSubmit)="onSubmit()">
+    
+    <!-- Order Notifications -->
+    <div class="settings-section">
+      <h3>Order Notifications</h3>
+      <p class="section-desc">Get updates about your orders</p>
+      
+      <div class="toggle-item">
+        <label class="toggle">
+          <input type="checkbox" formControlName="orderUpdates">
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="label-title">Order Updates</span>
+          <span class="label-desc">Status changes for your orders</span>
+        </div>
+      </div>
+      
+      <div class="toggle-item">
+        <label class="toggle">
+          <input type="checkbox" formControlName="deliveryUpdates">
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="label-title">Delivery Updates</span>
+          <span class="label-desc">Out for delivery and delivered notifications</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Channel Preferences -->
+    <div class="settings-section">
+      <h3>Notification Channels</h3>
+      <p class="section-desc">Choose how you want to receive notifications</p>
+      
+      <div class="toggle-item">
+        <label class="toggle">
+          <input type="checkbox" formControlName="whatsappNotifications">
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="label-title">WhatsApp</span>
+          <span class="label-desc">Receive notifications on WhatsApp</span>
+        </div>
+      </div>
+      
+      <div class="toggle-item" *ngIf="pushSupported">
+        <label class="toggle">
+          <input type="checkbox" formControlName="pushNotifications">
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="label-title">Push Notifications</span>
+          <span class="label-desc">Browser notifications on your device</span>
+        </div>
+      </div>
+      
+      <div class="toggle-item">
+        <label class="toggle">
+          <input type="checkbox" formControlName="emailNotifications">
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="label-title">Email</span>
+          <span class="label-desc">Receive email notifications</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Marketing Preferences -->
+    <div class="settings-section">
+      <h3>Marketing Notifications</h3>
+      <p class="section-desc">Stay updated with offers and promotions</p>
+      
+      <div class="toggle-item">
+        <label class="toggle">
+          <input type="checkbox" formControlName="marketingNotifications">
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="label-title">Marketing Messages</span>
+          <span class="label-desc">Special offers and updates</span>
+        </div>
+      </div>
+      
+      <div class="toggle-item">
+        <label class="toggle">
+          <input type="checkbox" formControlName="promotionalOffers">
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="label-title">Promotional Offers</span>
+          <span class="label-desc">Discounts and promotional campaigns</span>
+        </div>
+      </div>
+      
+      <div class="toggle-item">
+        <label class="toggle">
+          <input type="checkbox" formControlName="cartReminders">
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="label-title">Cart Reminders</span>
+          <span class="label-desc">Reminders about items in your cart</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Submit Button -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="isSaving || preferencesForm.invalid">
+        <span *ngIf="isSaving">Saving...</span>
+        <span *ngIf="!isSaving">Save Preferences</span>
+      </button>
+    </div>
+    
+  </form>
+</div>

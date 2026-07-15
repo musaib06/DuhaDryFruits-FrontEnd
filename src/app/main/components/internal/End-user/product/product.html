@@ -1,0 +1,150 @@
+<article class="card product-card h-100" role="group" [class.out-of-stock]="!utils.canAddToCart(product)">
+    <!-- Image Section with Overlays -->
+    <div class="position-relative product-image-container" (click)="onView()">
+        <img [src]="getImageSrc()" 
+             (error)="onImageError($event)" 
+             class="card-img-top product-img wvf-protect-asset"
+             draggable="false"
+             [attr.alt]="product.name || 'product image'" 
+             loading="lazy"
+             decoding="async">
+
+        <!-- Top-Left: Stock Badge -->
+        <div class="position-absolute top-0 start-0 m-2">
+            <span class="badge" [ngClass]="utils.getStockStatusClass(product)">
+                {{ utils.getStockStatus(product) }}
+            </span>
+        </div>
+
+        <!-- Top-Right: Action Icons (Vertical Stack) -->
+        <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-1">
+            <button type="button" 
+                    class="btn btn-sm btn-light rounded-circle shadow-sm action-icon"
+                    [class.btn-danger]="product.isWishlisted"
+                    [class.text-white]="product.isWishlisted"
+                    (click)="handleWishlistClick($event)"
+                    [attr.aria-label]="product.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'"
+                    title="{{ product.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist' }}">
+                <i class="bi" [class.bi-heart-fill]="product.isWishlisted" [class.bi-heart]="!product.isWishlisted"></i>
+            </button>
+            <button type="button" 
+                    class="btn btn-sm btn-light rounded-circle shadow-sm action-icon"
+                    (click)="onView(); $event.stopPropagation()"
+                    aria-label="View product details"
+                    title="View Details">
+                <i class="bi bi-eye"></i>
+            </button>
+        </div>
+
+        <!-- Discount Badge -->
+        <!-- @if (utils.hasDiscount(product)) {
+            <span class="badge bg-danger position-absolute bottom-0 start-0 m-2">
+                -{{ utils.getDiscountPercentage(product) }}%
+            </span>
+        } -->
+
+        <!-- Out of Stock Overlay -->
+        @if (utils.isOutOfStock(product)) {
+            <div class="stock-overlay d-flex align-items-center justify-content-center">
+                <span class="fw-bold text-muted">Out of Stock</span>
+            </div>
+        }
+    </div>
+
+    <div class="card-body d-flex flex-column">
+        <!-- Product Name -->
+        <h6 class="card-title mb-1" title="{{ product.name }}">{{ product.name }}</h6>
+
+        <!-- Mini description -->
+        @if (miniDescription) {
+            <p class="product-mini-desc text-muted mb-2" title="{{ miniDescription }}">{{ miniDescription }}</p>
+        }
+
+        <!-- Rating Row -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <!-- Rating -->
+            <div class="rating-display d-flex align-items-center" role="button" tabindex="0"
+                 (click)="onReviewClick($event)" (keydown.enter)="onReviewClick($event)"
+                 style="cursor: pointer;">
+                @if (utils.hasReviews(product)) {
+                    <div class="stars-mini me-1">
+                        @for (s of [1,2,3,4,5]; track s) {
+                            @if (s <= utils.getFullStars(product)) {
+                                <i class="bi bi-star-fill text-warning" style="font-size: 0.65rem;"></i>
+                            } @else if (s === utils.getFullStars(product) + 1 && utils.hasHalfStar(product)) {
+                                <i class="bi bi-star-half text-warning" style="font-size: 0.65rem;"></i>
+                            } @else {
+                                <i class="bi bi-star text-muted" style="font-size: 0.65rem;"></i>
+                            }
+                        }
+                    </div>
+                    <small class="text-muted" style="font-size: 0.7rem;">
+                        {{ utils.getFormattedRating(product) }} ({{ utils.getReviewCount(product) }})
+                    </small>
+                } @else {
+                    <div class="stars-mini me-1">
+                        @for (s of [1,2,3,4,5]; track s) {
+                            <i class="bi bi-star-fill text-warning" style="font-size: 0.65rem;"></i>
+                        }
+                    </div>
+                    <small class="text-muted" style="font-size: 0.7rem;">5.0</small>
+                }
+            </div>
+        </div>
+
+        <div class="mt-auto">
+            <!-- Price Row: Left = Price, Right = Weight + Unit -->
+            <div class="price-row d-flex align-items-end justify-content-between mb-2 gap-2">
+                <!-- Price Section -->
+                <div class="price-block">
+                    <div class="price h6 mb-0 d-flex align-items-baseline">
+                        <span class="currency fw-bold">{{ currency }}</span>
+                        <span class="amount fw-bold">{{ utils.getPrice(product) | number:'1.0-2' }}</span>
+                    </div>
+                    @if (utils.hasDiscount(product)) {
+                        <small class="text-muted text-decoration-line-through">
+                            {{ currency }}{{ utils.getComparePrice(product) | number:'1.0-2' }}
+                        </small>
+                    }
+                </div>
+
+                <!-- Selected variant size with its unit (e.g. 100 ml, 500 g) -->
+                <div class="unit-block text-end flex-shrink-0">
+                    @if (selectedVariant) {
+                        <small class="d-block fw-semibold">{{ utils.getVariantUnitSize(selectedVariant) }}</small>
+                    }
+                </div>
+            </div>
+
+            <!-- Variant Buttons (Unit Selection) -->
+            @if (utils.hasMultipleVariants(product)) {
+                <div class="mb-3 variant-btn-group">
+                    @for (variant of availableVariants; track variant.id) {
+                        <button class="card-variant-btn"
+                                [class.card-variant-active]="variant.id === product.selectedVariantId"
+                                [class.card-variant-oos]="variant.stock <= 0"
+                                [disabled]="variant.stock <= 0"
+                                (click)="onVariantButtonClick(variant.id); $event.stopPropagation()">
+                            {{ utils.getVariantUnitSize(variant) || utils.getVariantQuantityWithUnit(variant) || utils.getVariantQuantityLabel(variant) }}
+                        </button>
+                    }
+                </div>
+            } @else if (product.variants.length === 1) {
+                <div class="mb-3">
+                    <span class="card-variant-btn card-variant-active" style="pointer-events:none;">
+                        {{ utils.getVariantUnitSize(selectedVariant) || utils.getVariantQuantityWithUnit(selectedVariant) || utils.getVariantQuantityLabel(selectedVariant) }}
+                    </span>
+                </div>
+            }
+
+            <!-- Full-Width Add to Cart Button -->
+            <button type="button" 
+                    class="btn btn-primary w-100 add-to-cart-btn" 
+                    [disabled]="!utils.canAddToCart(product)"
+                    (click)="onAddToCart()">
+                <i class="bi bi-cart-plus me-1"></i>
+                Add to Cart
+            </button>
+        </div>
+    </div>
+</article>

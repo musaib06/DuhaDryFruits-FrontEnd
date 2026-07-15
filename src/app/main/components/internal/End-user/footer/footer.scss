@@ -1,0 +1,329 @@
+@use "sass:color";
+@use "../../../../../../variable" as *;
+
+.social-icon-inline {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  vertical-align: middle;
+  background: #fff;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 1px;
+}
+
+.footer-main {
+  position: relative;
+  overflow: hidden;
+  font-size: $font-size-base;
+  letter-spacing: $letter-spacing-normal;
+
+  /* 🔥 Stronger glass base */
+  background: linear-gradient(
+    135deg,
+    rgba(15, 15, 15, 0.75),
+    rgba(10, 10, 10, 0.65)
+  );
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* depth */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 -15px 40px rgba(0, 0, 0, 0.6);
+
+  color: rgba(255, 255, 255, 0.92);
+
+  /* subtle overlay for readability */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.46);
+    z-index: 0;
+  }
+
+.footer-bg {
+  position: absolute;
+  top: -5%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: url('../../../../../../assets/logo-no-bg.png') center center no-repeat;
+  background-size: 300px auto;
+
+  opacity: 0.55;
+  filter: brightness(1.15) contrast(1.05);
+
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .row {
+    row-gap: $spacing-lg;
+  }
+
+  .footer-panel {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 14px;
+    padding: 14px 16px;
+    height: 100%;
+  }
+
+  /* headings */
+  h5 {
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+  }
+
+  /* brand title */
+  .footer-link-title {
+    h5 {
+      color: $color-warning-yellow;
+    }
+
+    &:hover h5 {
+      color: color.adjust($color-warning-yellow, $lightness: 10%);
+      text-decoration: none;
+    }
+  }
+
+  /* paragraph */
+  p {
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.68;
+  }
+
+  /* links */
+  .footer-links {
+    li {
+      margin-bottom: $spacing-sm;
+
+      a {
+        color: rgba(255, 196, 80, 0.98);
+        font-weight: 500;
+      }
+
+      .footer-link {
+        transition: all 0.25s ease;
+
+        &:hover {
+          color: $color-warning-yellow;
+          transform: translateX(4px);
+        }
+      }
+    }
+  }
+
+  /* contact links */
+  a {
+    color: rgba(255, 255, 255, 0.96);
+
+    &:hover {
+      color: $color-warning-yellow;
+    }
+  }
+
+  /* social icons */
+  .footer-social {
+    a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 45px;
+      height: 45px;
+
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.2);
+
+      transition: all 0.3s ease;
+
+      .social-icon-img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        border-radius: 4px;
+      }
+
+      &:hover {
+        background: #fff;
+        transform: translateY(-4px) scale(1.1);
+      }
+    }
+  }
+
+  hr {
+    opacity: 0.15;
+  }
+
+  .text-center.small {
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  @media (max-width: 767.98px) {
+    .text-md-start {
+      text-align: center !important;
+    }
+
+    font-size: $font-size-md;
+
+    h5 {
+      font-size: $font-size-lg;
+    }
+
+    .footer-bg {
+      background-size: 200px auto;
+      opacity: 0.22;
+    }
+
+    .footer-panel {
+      padding: 12px 12px;
+    }
+
+    .footer-social {
+      justify-content: center;
+      display: flex;
+    }
+  }
+
+}
+
+/* 🔥 Bottom bar modernized */
+.bottombar {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 170, 0, 0.95),
+    rgba(255, 140, 0, 0.95)
+  );
+
+  backdrop-filter: blur(10px);
+
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+
+  color: #fff;
+
+  .contact-item {
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  a {
+    color: #fff;
+  }
+
+  .social-icon-img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 2px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .social-icon-img.social-icon-sm {
+    width: 26px;
+    height: 26px;
+  }
+
+  .topbar-right .d-flex.align-items-center a {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  .mobile-contact-marquee {
+    display: none;
+  }
+
+  .icons {
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  @media (max-width: 767.98px) {
+    .mobile-contact-marquee {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      background: $color-warning-yellow !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      margin-bottom: 6px;
+    }
+
+    .marquee-track {
+      display: inline-flex;
+      align-items: center;
+      gap: 22px;
+      white-space: nowrap;
+      min-width: 200%;
+      padding: 6px 0;
+      animation: footer-marquee 18s linear infinite;
+    }
+
+    .marquee-item {
+      color: #1c1407 !important;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .d-flex.align-items-center.justify-content-between {
+      flex-direction: column;
+      gap: 6px;
+      text-align: center;
+    }
+
+    .topbar-left,
+    .topbar-right {
+      justify-content: center;
+    }
+
+    .container-fluid {
+      display: none;
+    }
+  }
+}
+
+@keyframes footer-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* icons */
+.bi-list,
+.bi-three-dots-vertical {
+  font-size: $font-size-icon-xl;
+  color: $color-text-primary;
+}

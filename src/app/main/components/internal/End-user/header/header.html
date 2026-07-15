@@ -1,0 +1,643 @@
+<div class="mobile-top-marquee" aria-label="Top contact and WhatsApp info">
+  <div class="marquee-track">
+    <a href="https://chat.whatsapp.com/ITwYgBWNqhM7Km2GHwDeAC?mode=gi_t" target="_blank" rel="noopener" class="marquee-item">
+      <img src="/assets/whatsAppIcon.png" alt="WhatsApp" class="social-icon-inline me-1" /> Bulk Orders | International Shipping | Gift Hampers | +91 773 8899 165
+    </a>
+    <a href="https://chat.whatsapp.com/ITwYgBWNqhM7Km2GHwDeAC?mode=gi_t" target="_blank" rel="noopener" class="marquee-item">
+      <img src="/assets/whatsAppIcon.png" alt="WhatsApp" class="social-icon-inline me-1" /> Bulk Orders | International Shipping | Gift Hampers | +91 773 8899 165
+    </a>
+  </div>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container-fluid">
+
+    <!-- Mobile/Tablet: Brand title on left, icons on right -->
+    <div class="d-flex align-items-center justify-content-between w-100 d-lg-none mobile-nav-bar">
+
+      <!-- Left: Brand lockup -->
+      <a class="wvf-brand" [routerLink]="['/home']" aria-label="Wild Valley Foods home">
+        <img src="assets/logo.png" alt="Wild Valley Foods" class="wvf-brand__logo">
+        <span class="wvf-brand__text">
+          <span class="wvf-brand__name font-bilal">wild valley foods</span>
+          <span class="wvf-brand__tagline">Fresh From The Farms Of Kashmir</span>
+        </span>
+      </a>
+
+      <!-- Right: Icons -->
+      <div class="d-flex align-items-center mobile-nav-icons">
+        @if (showNotificationBell) {
+        <button class="mobile-icon-btn position-relative wvf-notif-bell" type="button"
+          (click)="enableNotifications()" aria-label="Enable notifications" title="Enable notifications">
+          <i class="bi bi-bell"></i>
+        </button>
+        }
+        <button class="mobile-icon-btn position-relative" type="button" (click)="toggleSearch($event)"
+          [attr.aria-expanded]="showSearchDropdown">
+          <i class="bi bi-search"></i>
+        </button>
+
+        <button class="mobile-icon-btn position-relative" type="button"
+          data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+          <i class="bi bi-cart"></i>
+          @if (viewModel.cartItems.length > 0) {
+          <span
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-primary" style="font-size:0.6rem;">{{viewModel.cartItems.length}}</span>
+          }
+        </button>
+
+        <a class="mobile-icon-btn d-flex align-items-center justify-content-center"
+          routerLink="/shop" aria-label="Shop">
+          <i class="bi bi-shop"></i>
+        </a>
+
+        <button class="mobile-icon-btn" type="button" data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasLeft">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Desktop: Logo + Brand name on left -->
+    <a class="navbar-brand wvf-brand wvf-brand--lg d-none d-lg-flex" [routerLink]="['/home']"
+      routerLinkActive="router-link-active" aria-label="Wild Valley Foods home">
+      <img src="assets/logo.png" alt="Wild Valley Foods" class="wvf-brand__logo">
+      <span class="wvf-brand__text">
+        <span class="wvf-brand__name font-bilal">wild valley foods</span>
+        <span class="wvf-brand__tagline">Fresh From The Farms Of Kashmir</span>
+      </span>
+    </a>
+
+    <ul class="navbar-nav ms-auto d-none d-lg-flex flex-row align-items-center me-lg-4" (click)="onDesktopMenuClick($event)">
+      <li class="nav-item me-3">
+        <a class="nav-link" routerLink="/home" routerLinkActive="active-route"
+          [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      </li>
+      <li class="nav-item dropdown me-3">
+        <a class="nav-link dropdown-toggle" routerLink="/shop" routerLinkActive="active-route"
+          [routerLinkActiveOptions]="{ exact: true }" tabindex="0">Shop</a>
+        <ul class="dropdown-menu shop-dropdown">
+          <li>
+            <a class="dropdown-item fw-semibold" routerLink="/shop">All products</a>
+          </li>
+          <li><hr class="dropdown-divider m-0" /></li>
+          @if (shopDropdownProducts.length > 0) {
+          @for (product of shopDropdownProducts; track product.id) {
+          <li>
+            <a class="dropdown-item" [routerLink]="['/product', getProductSlug(product)]">
+              {{ product.name }}
+            </a>
+          </li>
+          }
+          } @else {
+          <li>
+            <span class="dropdown-item text-muted">Loading...</span>
+          </li>
+          }
+        </ul>
+      </li>
+      <li class="nav-item dropdown me-3">
+        <a class="nav-link">Categories</a>
+        <ul class="dropdown-menu categories-dropdown">
+          <li>
+            <a class="dropdown-item fw-semibold" routerLink="/shop">All products</a>
+          </li>
+          <li><hr class="dropdown-divider m-0" /></li>
+          @for (category of viewModel.categoriesViewModel.categories; track category.id) {
+          <li>
+            <a class="dropdown-item" [routerLink]="['/shop',category.name, category.id]">
+              {{ category.name }}
+            </a>
+          </li>
+          }
+        </ul>
+      </li>
+
+      <!-- <li class="nav-item me-3">
+        <a class="nav-link" routerLink="/about-us" routerLinkActive="active-route"
+          [routerLinkActiveOptions]="{ exact: true }">Our Story</a>
+      </li> -->
+      <li class="nav-item dropdown me-3">
+        <a class="nav-link dropdown-toggle" tabindex="0">Health Concerns</a>
+        <ul class="dropdown-menu health-concerns-dropdown">
+          <li>
+            <a class="dropdown-item fw-semibold" routerLink="/health-concerns">All videos</a>
+          </li>
+          <li><hr class="dropdown-divider m-0" /></li>
+          @if (healthConcernNavVideos.length > 0) {
+            @for (hv of healthConcernNavVideos; track hv.id) {
+              <li>
+                <a
+                  class="dropdown-item"
+                  [routerLink]="['/health-concerns']"
+                  [queryParams]="{ openVideo: hv.id }">
+                  {{ hv.title }}
+                </a>
+              </li>
+            }
+          } @else {
+            <li>
+              <span class="dropdown-item text-muted">Loading…</span>
+            </li>
+          }
+        </ul>
+      </li>
+      @if (showBlogNav) {
+      <li class="nav-item me-3">
+        <a class="nav-link" routerLink="/blog" routerLinkActive="active-route"
+          [routerLinkActiveOptions]="{ exact: true }">Blog</a>
+      </li>
+      }
+      <li class="nav-item me-3">
+        <a class="nav-link" routerLink="/contact-us" routerLinkActive="active-route"
+          [routerLinkActiveOptions]="{ exact: true }">Contact</a>
+      </li>
+
+
+      <li class="nav-item me-3 position-relative">
+        <!-- <a class="nav-link search-icon-link" (click)="toggleSearch()" style="cursor: pointer;">
+          <i class="bi bi-search fs-5"></i>
+        </a> -->
+
+<a class="nav-link search-icon-link"
+   (click)="toggleSearch(); $event.stopPropagation()"
+   style="cursor: pointer;">
+  <i class="bi bi-search fs-5"></i>
+</a>
+        @if (showSearchDropdown) {
+        <div class="search-dropdown" (click)="$event.stopPropagation()">
+          <div class="search-input-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" class="form-control search-input" placeholder="Search products..."
+              [(ngModel)]="searchQuery" (input)="onSearchInput($event)" (keydown.enter)="navigateToShop()" #searchInput
+              autocomplete="off">
+            @if (searchQuery) {
+            <button class="btn-close-search" (click)="clearSearch()" type="button">
+              <i class="bi bi-x"></i>
+            </button>
+            }
+          </div>
+
+          @if (isSearching) {
+          <div class="search-loading">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Searching...</span>
+          </div>
+          } @else if (searchResults.length > 0) {
+          <div class="search-results">
+            <div class="search-results-header">
+              <span class="text-muted small">{{ searchResults.length }} result(s) found</span>
+            </div>
+            <div class="search-results-list">
+              @for (product of searchResults.slice(0, 5); track product.id) {
+              <div class="search-result-item" (click)="navigateToProduct(product)">
+                <img [src]="getProductImageSrc(product)"
+                  alt="{{ product.name }}" class="result-image wvf-protect-asset" draggable="false"
+                  (error)="onProductImageError($event, product.id)">
+                <div class="result-info">
+                  <div class="result-name">{{ product.name }}</div>
+                  <div class="result-price">{{ getProductPrice(product) | currency : 'INR' }}</div>
+                </div>
+              </div>
+              }
+            </div>
+            @if (searchResults.length > 5) {
+            <div class="search-footer">
+              <button class="btn btn-sm btn-outline-primary w-100" (click)="navigateToShop()">
+                View All {{ searchResults.length }} Results
+              </button>
+            </div>
+            }
+          </div>
+          } @else if (searchQuery && searchQuery.length >= 2 && !isSearching) {
+          <div class="search-no-results">
+            <i class="bi bi-search fs-4 text-muted"></i>
+            <p class="text-muted mb-0">No products found</p>
+            <small class="text-muted">Try a different search term</small>
+          </div>
+          } @else if (searchQuery && searchQuery.length < 2) { <div class="search-hint">
+            <small class="text-muted">Type at least 2 characters to search</small>
+        </div>
+        }
+  </div>
+  }
+  </li>
+
+  @if (showNotificationBell) {
+  <li class="nav-item me-3">
+    <a class="nav-link wvf-notif-bell" style="cursor: pointer;" (click)="enableNotifications()"
+      aria-label="Enable notifications" title="Enable notifications">
+      <i class="bi bi-bell fs-5"></i>
+    </a>
+  </li>
+  }
+  <li class="nav-item me-3">
+    <a class="nav-link" routerLink="/wishlist" routerLinkActive="active-route"
+      [routerLinkActiveOptions]="{ exact: true }"><i class="bi bi-heart fs-5"></i><span
+        class="position-absolute top-1 start-80 translate-middle badge rounded-pill badge-primary">{{viewModel.wishListItems.length}}</span></a>
+
+  </li>
+  <li class="nav-item position-relative">
+    <a class="nav-link" style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+      aria-controls="offcanvasRight">
+      <i class="bi bi-cart fs-5"></i>
+      <span
+        class="position-absolute top-1 start-100 translate-middle badge rounded-pill badge-primary">{{viewModel.cartItems.length}}</span></a>
+
+
+  </li>
+  <li class="nav-item ms-3">
+    <a class="nav-link" routerLink="/my-orders" routerLinkActive="active-route"
+      [routerLinkActiveOptions]="{ exact: true }"><i class="bi bi-basket fs-5"></i></a>
+
+  </li>
+  </ul>
+  </div>
+</nav>
+
+
+<!-- <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+
+    <div class="d-flex align-items-center" style="flex: 1;">
+      <button class="btn btn-outline-secondary me-2 border-0 p-0 d-lg-none" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasLeft">
+        <i class="bi bi-list fs-3"></i>
+      </button>
+
+      <a class="navbar-brand fw-bold mb-0" [routerLink]="['/home']">
+        wild valley foods
+      </a>
+    </div>
+
+    <div class="d-flex flex-column align-items-center text-center" style="flex: 1;">
+      <a [routerLink]="['/home']" class="d-flex flex-column align-items-center text-decoration-none text-dark">
+        <img src="assets/logo.png" alt="Logo" width="50" class="mb-1">
+        <small class="text-muted fw-light" style="font-size: 0.75rem; letter-spacing: 1px; line-height: 1;">
+          FRESH FROM THE FARMS OF KASHMIR
+        </small>
+      </a>
+    </div>
+
+    <div class="d-flex justify-content-end align-items-center" style="flex: 1;">
+      <ul class="navbar-nav d-none d-lg-flex flex-row align-items-center">
+        <li class="nav-item me-3">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active-route">Home</a>
+        </li>
+
+        <li class="nav-item dropdown me-3">
+          <a class="nav-link dropdown-toggle" routerLink="/shop" tabindex="0">Shop</a>
+          <ul class="dropdown-menu shop-dropdown">
+            @if (shopDropdownProducts.length > 0) {
+            @for (product of shopDropdownProducts; track product.id) {
+            <li><a class="dropdown-item" [routerLink]="['/product', getProductSlug(product)]">{{ product.name }}</a></li>
+            }
+            } @else {
+            <li><span class="dropdown-item text-muted">Loading...</span></li>
+            }
+          </ul>
+        </li>
+
+        <li class="nav-item me-3 position-relative">
+          <a class="nav-link" (click)="toggleSearch()" style="cursor: pointer;">
+            <i class="bi bi-search fs-5"></i>
+          </a>
+          @if (showSearchDropdown) { ... }
+        </li>
+
+        <li class="nav-item me-3 position-relative">
+          <a class="nav-link" routerLink="/wishlist">
+            <i class="bi bi-heart fs-5"></i>
+            <span class="position-absolute top-1 start-80 translate-middle badge rounded-pill badge-primary">
+              {{viewModel.wishListItems.length}}
+            </span>
+          </a>
+        </li>
+
+        <li class="nav-item position-relative">
+          <a class="nav-link" style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
+            <i class="bi bi-cart fs-5"></i>
+            <span class="position-absolute top-1 start-100 translate-middle badge rounded-pill badge-primary">
+              {{viewModel.cartItems.length}}
+            </span>
+          </a>
+        </li>
+      </ul>
+
+      <button class="btn btn-outline-secondary border-0 p-0 d-lg-none" type="button" (click)="toggleSearch($event)">
+        <i class="bi bi-search fs-4"></i>
+      </button>
+    </div>
+
+  </div>
+</nav> -->
+<!-- Mobile Search Dropdown (shown below navbar) -->
+@if (showSearchDropdown) {
+<div class="mobile-search-dropdown d-lg-none" (click)="$event.stopPropagation()">
+  <div class="search-input-wrapper">
+    <i class="bi bi-search search-icon"></i>
+    <input type="text" class="form-control search-input" placeholder="Search products..." [(ngModel)]="searchQuery"
+      (input)="onSearchInput($event)" (keydown.enter)="navigateToShop()" #mobileSearchInput autocomplete="off">
+    @if (searchQuery) {
+    <button class="btn-close-search" (click)="clearSearch()" type="button">
+      <i class="bi bi-x"></i>
+    </button>
+    }
+  </div>
+
+  <!-- Search Results -->
+  @if (isSearching) {
+  <div class="search-loading">
+    <div class="spinner-border spinner-border-sm text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <span class="ms-2">Searching...</span>
+  </div>
+  } @else if (searchResults.length > 0) {
+  <div class="search-results">
+    <div class="search-results-header">
+      <span class="text-muted small">{{ searchResults.length }} result(s) found</span>
+    </div>
+    <div class="search-results-list">
+      @for (product of searchResults.slice(0, 5); track product.id) {
+      <div class="search-result-item" (click)="navigateToProduct(product)">
+        <img [src]="getProductImageSrc(product)"
+          alt="{{ product.name }}" class="result-image wvf-protect-asset" draggable="false"
+          (error)="onProductImageError($event, product.id)">
+        <div class="result-info">
+          <div class="result-name">{{ product.name }}</div>
+          <div class="result-price">{{ getProductPrice(product) | currency : 'INR' }}</div>
+        </div>
+      </div>
+      }
+    </div>
+    @if (searchResults.length > 5) {
+    <div class="search-footer">
+      <button class="btn btn-sm btn-outline-primary w-100" (click)="navigateToShop()">
+        View All {{ searchResults.length }} Results
+      </button>
+    </div>
+    }
+  </div>
+  } @else if (searchQuery && searchQuery.length >= 2 && !isSearching) {
+  <div class="search-no-results">
+    <i class="bi bi-search fs-4 text-muted"></i>
+    <p class="text-muted mb-0">No products found</p>
+    <small class="text-muted">Try a different search term</small>
+  </div>
+  } @else if (searchQuery && searchQuery.length < 2) { <div class="search-hint">
+    <small class="text-muted">Type at least 2 characters to search</small>
+</div>
+}
+</div>
+
+<!-- Search Overlay (for mobile) -->
+<div class="search-overlay" (click)="closeSearch()"></div>
+}
+
+<!-- Left Offcanvas Menu -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasLeft" aria-labelledby="offcanvasLeftLabel">
+  <div class="offcanvas-header">
+    <a class="wvf-brand" [routerLink]="['/home']" data-bs-dismiss="offcanvas" aria-label="Wild Valley Foods home">
+      <img src="assets/logo.png" alt="Wild Valley Foods" class="wvf-brand__logo">
+      <span class="wvf-brand__text">
+        <span class="wvf-brand__name font-bilal" id="offcanvasLeftLabel">wild valley foods</span>
+        <span class="wvf-brand__tagline">Fresh From The Farms Of Kashmir</span>
+      </span>
+    </a>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+  <div class="offcanvas-body p-0 d-flex flex-column">
+    <!-- Mobile Search -->
+    <!-- <div class="mobile-search p-3 border-bottom">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="text" class="form-control border-start-0" placeholder="Search products..."
+          [(ngModel)]="searchQuery" (input)="onSearchInput($event)" (keydown.enter)="navigateToShop()"
+          (focus)="showSearchDropdown = true" autocomplete="off" #mobileSearchInput>
+        @if (searchQuery) {
+        <button class="btn btn-outline-secondary border-start-0" type="button" (click)="clearSearch()">
+          <i class="bi bi-x"></i>
+        </button>
+        }
+      </div>
+      @if (showSearchDropdown && searchQuery && searchQuery.length >= 2) {
+      <div class="mobile-search-results mt-2">
+        @if (isSearching) {
+        <div class="text-center py-2">
+          <div class="spinner-border spinner-border-sm text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        } @else if (searchResults.length > 0) {
+        <div class="list-group">
+          @for (product of searchResults.slice(0, 3); track product.id) {
+          <a class="list-group-item list-group-item-action"
+            (click)="navigateToProduct(product); $event.preventDefault()" [routerLink]="['/product', getProductSlug(product)]"
+            data-bs-dismiss="offcanvas">
+            <div class="d-flex align-items-center">
+              <img [src]="getProductImageSrc(product)"
+                alt="{{ product.name }}" class="mobile-search-img me-2 wvf-protect-asset" draggable="false"
+                (error)="onProductImageError($event, product.id)">
+              <div class="flex-grow-1">
+                <div class="fw-semibold small">{{ product.name }}</div>
+                <div class="text-danger small fw-bold">{{ getProductPrice(product) | currency : 'INR' }}</div>
+              </div>
+            </div>
+          </a>
+          }
+          @if (searchResults.length > 3) {
+          <a class="list-group-item list-group-item-action text-center fw-semibold"
+            (click)="navigateToShop(); $event.preventDefault()" routerLink="/shop"
+            [queryParams]="{ search: searchQuery }" data-bs-dismiss="offcanvas">
+            View All {{ searchResults.length }} Results
+          </a>
+          }
+        </div>
+        }
+      </div>
+      }
+    </div> -->
+
+    <!-- Main nav list -->
+    <div class="p-3 flex-grow-1 overflow-auto">
+      <nav class="nav flex-column gap-2">
+        <!-- Main Navigation -->
+        <a class="nav-link d-flex align-items-center" routerLink="/home" data-bs-dismiss="offcanvas" aria-label="Close">
+          <i class="bi bi-house me-3"></i> <span>Home</span>
+        </a>
+        <a class="nav-link d-flex align-items-center" routerLink="/shop" data-bs-dismiss="offcanvas" aria-label="Close">
+          <i class="bi bi-basket-fill me-3"></i> <span>Shop</span>
+        </a>
+
+        <!-- Categories Dropdown -->
+        <div class="nav-item dropdown" (click)="toggleCategories()">
+          <a class="nav-link d-flex align-items-center dropdown-toggle" tabindex="0" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <i class="bi bi-grid me-3"></i> <span>Categories</span>
+          </a>
+          @if (isOpenOffCanvasCategories) {
+          <ul class="dropdown-menu categories-dropdown">
+            <li>
+              <a class="dropdown-item fw-semibold" data-bs-dismiss="offcanvas" aria-label="Close"
+                routerLink="/shop">All products</a>
+            </li>
+            <li><hr class="dropdown-divider m-0" /></li>
+            @for (category of viewModel.categoriesViewModel.categories; track category.id) {
+            <li>
+              <a class="dropdown-item" data-bs-dismiss="offcanvas" aria-label="Close"
+                [routerLink]="['/shop',category.name, category.id]">
+                {{ category.name }}
+              </a>
+            </li>
+            }
+          </ul>
+          }
+        </div>
+
+        <div class="nav-item dropdown" (click)="toggleHealthOffcanvas()">
+          <a class="nav-link d-flex align-items-center dropdown-toggle" tabindex="0"
+            aria-expanded="false">
+            <i class="bi bi-heart-pulse me-3"></i> <span>Health Concerns</span>
+          </a>
+          @if (isOpenOffCanvasHealth) {
+          <ul class="dropdown-menu categories-dropdown">
+            <li>
+              <a class="dropdown-item fw-semibold" data-bs-dismiss="offcanvas" aria-label="Close"
+                routerLink="/health-concerns">All videos</a>
+            </li>
+            <li><hr class="dropdown-divider m-0" /></li>
+            @for (hv of healthConcernNavVideos; track hv.id) {
+            <li>
+              <a class="dropdown-item" data-bs-dismiss="offcanvas" aria-label="Close"
+                [routerLink]="['/health-concerns']" [queryParams]="{ openVideo: hv.id }">
+                {{ hv.title }}
+              </a>
+            </li>
+            }
+          </ul>
+          }
+        </div>
+        @if (showBlogNav) {
+        <a class="nav-link d-flex align-items-center" routerLink="/blog" data-bs-dismiss="offcanvas"
+          aria-label="Close">
+          <i class="bi bi-journal-text me-3"></i> <span>Blog</span>
+        </a>
+        }
+
+        <hr class="my-2">
+
+        <!-- Account & Orders -->
+        <a class="nav-link d-flex align-items-center" routerLink="/my-orders" data-bs-dismiss="offcanvas"
+          aria-label="Close">
+          <i class="bi bi-bag me-3"></i> <span>My Orders</span>
+        </a>
+        <a class="nav-link d-flex align-items-center" data-bs-dismiss="offcanvas" aria-label="Close" routerLink="/cart">
+          <i class="bi bi-cart me-3"></i> <span>Cart</span>
+          @if (viewModel.cartItems.length > 0) {
+          <span class="badge badge-primary text-white ms-auto">{{viewModel.cartItems.length}}</span>
+          }
+        </a>
+        <a class="nav-link d-flex align-items-center" data-bs-dismiss="offcanvas" aria-label="Close"
+          routerLink="/wishlist">
+          <i class="bi bi-heart me-3"></i> <span>Wishlist</span>
+          @if (viewModel.wishListItems.length > 0) {
+          <span class="badge badge-primary text-white ms-auto">{{viewModel.wishListItems.length}}</span>
+          }
+        </a>
+
+        <hr class="my-2">
+
+        <!-- Information -->
+        <a class="nav-link d-flex align-items-center" routerLink="/about-us" data-bs-dismiss="offcanvas"
+          aria-label="Close">
+          <i class="bi bi-info-circle me-3"></i> <span>Our Story</span>
+        </a>
+        <a class="nav-link d-flex align-items-center" routerLink="/contact-us" data-bs-dismiss="offcanvas"
+          aria-label="Close">
+          <i class="bi bi-envelope me-3"></i> <span>Contact</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+<!-- Right Offcanvas Cart -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Your Cart</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+  <div class="offcanvas-body d-flex flex-column p-0">
+    <!-- cart list -->
+    <div class="p-3 flex-grow-1 overflow-auto">
+      <!-- cart item (repeat for each product in cart) -->
+      @for (item of viewModel.cartItems; track $index) {
+      <div class="d-flex gap-3 mb-3 align-items-start">
+        <img [src]="getProductImageSrc(item)" alt="product" width="80"
+          height="80" class="rounded wvf-protect-asset" draggable="false"
+          (error)="onProductImageError($event, item.id)">
+        <div class="flex-fill">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="fw-semibold">{{item.name}}</div>
+            <div class="text-end">
+              <!-- Use utility to get variant price -->
+              <div class="fw-bold">
+                {{ getItemPrice(item) | currency : 'INR' }}
+              </div>
+              @if (getSelectedVariant(item); as variant) {
+              <small class="text-muted d-block">
+                Size: {{ utils.getDisplayUnit(variant) }}
+              </small>
+              }
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 align-items-center mt-2">
+            <!-- quantity controls -->
+            <div class="input-group input-group-sm" style="width:110px;">
+              <button *ngIf="(item.cartQuantity || 1) > 1" class="btn btn-outline-secondary" type="button"
+                (click)="decrement(item)">−</button>
+              <input type="text" class="form-control text-center" [value]="item.cartQuantity" aria-label="Quantity">
+              <button class="btn btn-outline-secondary" type="button" (click)="increment(item)">+</button>
+            </div>
+
+            <button class="btn btn-sm btn-outline-danger ms-2" (click)="removeItem(item)">Remove</button>
+          </div>
+        </div>
+      </div>
+      }
+      @if (viewModel.cartItems.length == 0) {
+      <!-- repeat / no-items fallback -->
+      <div class="text-center text-muted my-5">
+        <i class="bi bi-cart-x fs-1"></i>
+        <div class="mt-2">Your cart is empty</div>
+        <small class="text-muted">Add products to see them here</small>
+      </div>
+      }
+    </div>
+
+    <!-- footer with totals and CTA -->
+    <div class="p-3 border-top">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="small text-muted">Subtotal</div>
+        <div class="fw-semibold">{{viewModel.subTotal | currency : 'INR' }}</div>
+      </div>
+      <div class="d-flex gap-2">
+        <a routerLink="/cart" data-bs-dismiss="offcanvas" aria-label="Close" class="btn btn-outline-secondary w-50">View
+          Cart</a>
+        <a routerLink="/checkout" data-bs-dismiss="offcanvas" aria-label="Close"
+          class="btn btn-primary w-50">Checkout</a>
+      </div>
+
+      <div class="small text-muted mt-2">Shipping & taxes calculated at checkout</div>
+    </div>
+  </div>
+</div>

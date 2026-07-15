@@ -1,0 +1,99 @@
+<main class="contact-page">
+  <section class="contact-shell">
+    <div class="contact-header">
+      <h2>Contact Us</h2>
+      <p>
+        Have questions about our premium Kashmiri dry fruits, saffron, or walnuts?
+        We are here to assist you with product inquiries, bulk orders, shipping details,
+        and any support you need.
+      </p>
+      <a class="bulk-call-pill" href="tel:+917738899165" aria-label="Call for bulk orders">
+        <i class="bi bi-telephone-fill" aria-hidden="true"></i>
+        For Bulk Orders: +91 773 8899 165
+      </a>
+    </div>
+
+    <div class="contact-grid">
+      <div class="info-card">
+        <div class="contact-chip">
+          <div class="chip-icon">
+            <i class="bi bi-house-door"></i>
+          </div>
+          <div>
+            <h4>Address</h4>
+            <p>
+              Wild Valley Foods,<br />
+              Srinagar, Jammu & Kashmir,<br />
+              India
+            </p>
+          </div>
+        </div>
+
+        <div class="contact-chip">
+          <div class="chip-icon">
+            <i class="bi bi-telephone"></i>
+          </div>
+          <div>
+            <h4>Call Us</h4>
+            <a class="contact-phone" href="tel:+917738899165">+91 773 8899 165</a>
+            <p class="phone-note">Available for product support and bulk orders.</p>
+          </div>
+        </div>
+
+        <div class="contact-chip">
+          <div class="chip-icon">
+            <i class="bi bi-share"></i>
+          </div>
+          <div>
+            <h4>Connect With Us</h4>
+            <div class="connect-links">
+              <a href="tel:+917738899165"><i class="bi bi-telephone-fill"></i> Mobile</a>
+              <a href="https://youtube.com/@wildvalleyfoods?si=Z41npDlwf6tBSnBE" target="_blank" rel="noopener"><img src="/assets/social/youtube.png" alt="YouTube" class="social-icon-img" /> YouTube</a>
+              <a href="https://www.facebook.com/wildvalleyfoodskashmir/" target="_blank" rel="noopener"><img src="/assets/social/Facebook_icon.svg.png" alt="Facebook" class="social-icon-img" /> Facebook</a>
+              <a href="https://www.instagram.com/wildvalleyfoods?igsh=MXQ4ZnZmdzl5aXFjag==" target="_blank" rel="noopener"><img src="/assets/social/instagram.jpg" alt="Instagram" class="social-icon-img" /> Instagram</a>
+              <a href="https://chat.whatsapp.com/ITwYgBWNqhM7Km2GHwDeAC?mode=gi_t" target="_blank" rel="noopener"><img src="/assets/whatsAppIcon.png" alt="WhatsApp" class="social-icon-img" /> WhatsApp Community</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <form (ngSubmit)="addcontactUs()" #contactForm="ngForm" novalidate>
+          <h3>Send Us a Message</h3>
+
+          <div class="input-box">
+            <input type="text" name="name" [(ngModel)]="viewModel.contactUsFormData.name" required minlength="2"
+              maxlength="50" #nameCtrl="ngModel" [ngClass]="{ 'is-invalid': nameCtrl.invalid && nameCtrl.touched }" />
+            <span>Enter your full name</span>
+            <div class="invalid-feedback" *ngIf="nameCtrl.invalid && nameCtrl.touched">
+              Name is required (2-50 characters).
+            </div>
+          </div>
+
+          <div class="input-box">
+            <input type="email" name="email" [(ngModel)]="viewModel.contactUsFormData.email" required
+              #emailCtrl="ngModel" [ngClass]="{ 'is-invalid': emailCtrl.invalid && emailCtrl.touched }" />
+            <span>Enter valid email address</span>
+            <div class="invalid-feedback" *ngIf="emailCtrl.invalid && emailCtrl.touched">
+              Please enter a valid email address.
+            </div>
+          </div>
+
+          <div class="input-box">
+            <textarea name="description" [(ngModel)]="viewModel.contactUsFormData.description" rows="4" minlength="10"
+              maxlength="500" #descCtrl="ngModel"
+              [ngClass]="{ 'is-invalid': descCtrl.invalid && descCtrl.touched }"></textarea>
+            <span>Your message...</span>
+            <div class="invalid-feedback" *ngIf="descCtrl.invalid && descCtrl.touched">
+              Description should be at least 10 characters (max 500).
+            </div>
+          </div>
+
+          <div class="input-box submit-box">
+            <input type="submit" value="Send Message" [disabled]="contactForm.invalid || isSubmitting" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>

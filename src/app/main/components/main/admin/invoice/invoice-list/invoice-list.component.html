@@ -1,0 +1,134 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-receipt me-2"></i>Invoices</h2>
+    <div class="btn-group">
+      <button class="btn btn-outline-primary btn-sm" (click)="exportToPDF()" title="Export to PDF">
+        <i class="bi bi-file-pdf me-1"></i>Export PDF
+      </button>
+      <button class="btn btn-outline-success btn-sm" (click)="exportToExcel()" title="Export to Excel">
+        <i class="bi bi-file-excel me-1"></i>Export Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-2">
+          <label class="form-label">Status</label>
+          <select class="form-select" [(ngModel)]="viewModel.filters.status" (change)="applyFilters()">
+            <option value="">All Status</option>
+            <option value="paid">Paid</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Customer</label>
+          <select class="form-select" [(ngModel)]="viewModel.filters.customerId" (change)="applyFilters()">
+            <option [ngValue]="null">All Customers</option>
+            @for (customer of viewModel.customers; track customer.id || $index) {
+              <option [ngValue]="customer.id">
+                {{ customer.fullName }}
+              </option>
+            }
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Start Date</label>
+          <input type="date" class="form-control" [(ngModel)]="viewModel.filters.startDate" (change)="applyFilters()">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">End Date</label>
+          <input type="date" class="form-control" [(ngModel)]="viewModel.filters.endDate" (change)="applyFilters()">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+            <i class="bi bi-x-circle me-1"></i>Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (viewModel.loading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (viewModel.error && !viewModel.loading) {
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ viewModel.error }}
+    </div>
+  }
+
+  <!-- Invoices Table -->
+  @if (!viewModel.loading && !viewModel.error) {
+    <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Order #</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (invoice of viewModel.invoices; track invoice.invoiceNumber) {
+              <tr>
+                <td><strong>{{ invoice.invoiceNumber }}</strong></td>
+                <td>{{ invoice.orderNumber }}</td>
+                <td>{{ formatDate(invoice.invoiceDate) }}</td>
+                <td>
+                  <div>{{ invoice.customerName || 'N/A' }}</div>
+                  <small class="text-muted">{{ invoice.customerEmail || '' }}</small>
+                </td>
+                <td><strong>{{ formatCurrency(invoice.amount) }}</strong></td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusBadgeClass(invoice.status)">
+                    {{ invoice.status || 'N/A' }}
+                  </span>
+                </td>
+                <td>
+                  <a [routerLink]="['/admin/invoice', invoice.invoiceNumber]" class="btn btn-sm btn-primary">
+                    <i class="bi bi-eye me-1"></i>View
+                  </a>
+                </td>
+              </tr>
+            }
+            @if (viewModel.invoices.length === 0) {
+              <tr>
+                <td colspan="7" class="text-center py-4 text-muted">
+                  <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                  No invoices found
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (viewModel.totalCount > 0) {
+        <pagination
+          [viewModel]="viewModel.pagination"
+          (selectedPageNum)="onPageChange($event)">
+        </pagination>
+      }
+    </div>
+    </div>
+  }
+</div>
+

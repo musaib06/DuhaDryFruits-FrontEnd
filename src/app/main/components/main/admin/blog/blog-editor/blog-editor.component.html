@@ -1,0 +1,328 @@
+<div class="blog-editor-page">
+  <div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="mb-1">{{ isEditing ? 'Edit Blog' : 'Create New Blog' }}</h2>
+        <p class="text-muted mb-0">{{ isEditing ? 'Update your blog post' : 'Write a new blog post' }}</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+          <i class="bi bi-x-lg me-1"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveBlog()" [disabled]="loadingBlog || isSaving">
+          <i class="bi bi-check-lg me-1"></i>
+          {{ isSaving ? 'Saving...' : (isEditing ? 'Update Blog' : 'Publish Blog') }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    @if (errorMessage) {
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ errorMessage }}
+        <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+      </div>
+    }
+    @if (successMessage) {
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ successMessage }}
+        <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+      </div>
+    }
+
+    <!-- Loading existing post (edit only) -->
+    @if (loadingBlog && isEditing) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading blog...</p>
+      </div>
+    }
+
+    <!-- Editor Form (same ngForm pattern as admin product form) -->
+    @if (!loadingBlog) {
+      <form #blogEditorForm="ngForm" (ngSubmit)="$event.preventDefault()">
+      <div class="row g-4">
+        <!-- Main Content Column -->
+        <div class="col-lg-8">
+          <!-- Title & Subtitle -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label">Blog Title *</label>
+                <input type="text" class="form-control form-control-lg" 
+                       [(ngModel)]="blog.title" name="title"
+                       (blur)="generateSlug()" placeholder="Enter blog title">
+              </div>
+              <div class="mb-0">
+                <label class="form-label">Subtitle</label>
+                <input type="text" class="form-control" 
+                       [(ngModel)]="blog.subtitle" name="subtitle"
+                       placeholder="Enter subtitle (optional)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Slug -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <label class="form-label">URL Slug</label>
+              <div class="input-group">
+                <span class="input-group-text text-muted">/blog/</span>
+                <input type="text" class="form-control" 
+                       [(ngModel)]="blog.slug" name="slug"
+                       placeholder="auto-generated-from-title">
+              </div>
+              <small class="text-muted">Auto-generated from title if left empty</small>
+            </div>
+          </div>
+
+          <!-- Content Editor -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Content</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label">Excerpt</label>
+                <textarea class="form-control" rows="3" 
+                          [(ngModel)]="blog.excerpt" name="excerpt"
+                          placeholder="Brief summary of the blog post"></textarea>
+              </div>
+              <div class="mb-0">
+                <label class="form-label">Article body *</label>
+                <p class="text-muted small mb-2">
+                  Use the toolbar for headings, lists, bold, links, images, videos, and quotes. No HTML knowledge required. Images can also be uploaded inline or in the gallery below.
+                </p>
+                <div class="blog-quill-wrap">
+                  <quill-editor
+                    [(ngModel)]="blog.content"
+                    name="blogContent"
+                    format="html"
+                    theme="snow"
+                    placeholder="Start writing your blog post…"
+                    [modules]="quillModules"
+                  ></quill-editor>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optional social video links -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Related videos (optional)</h5>
+            </div>
+            <div class="card-body">
+              <p class="text-muted small mb-3">
+                Paste public links to YouTube (including Shorts), Instagram reels/posts, or Facebook videos.
+                Shoppers will see thumbnails and can open them in a new tab.
+              </p>
+              <div class="mb-3">
+                <label class="form-label">YouTube</label>
+                <input type="url" class="form-control" [(ngModel)]="blog.socialVideoYoutubeUrl" name="socialYt"
+                  placeholder="https://www.youtube.com/watch?v=… or https://youtu.be/…">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Instagram</label>
+                <input type="url" class="form-control" [(ngModel)]="blog.socialVideoInstagramUrl" name="socialIg"
+                  placeholder="https://www.instagram.com/reel/… or /p/…">
+              </div>
+              <div class="mb-0">
+                <label class="form-label">Facebook</label>
+                <input type="url" class="form-control" [(ngModel)]="blog.socialVideoFacebookUrl" name="socialFb"
+                  placeholder="https://www.facebook.com/…/videos/…">
+              </div>
+            </div>
+          </div>
+
+          <!-- Images (featured = first new upload; extras saved as gallery media) -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Images</h5>
+            </div>
+            <div class="card-body">
+              <p class="text-muted small mb-3">
+                Choose one or more images. The <strong>first image</strong> in the selection becomes the featured image for cards and SEO.
+                Remove any thumbnail before saving to exclude it.
+              </p>
+              @if (featureImagePreview && pendingImages.length === 0) {
+                <div class="mb-3">
+                  <span class="badge bg-secondary mb-2">Saved featured image</span>
+                  <img [src]="featureImagePreview" class="img-fluid rounded d-block blog-editor-hero-preview" alt="Featured">
+                </div>
+              }
+              <div class="blog-image-grid mb-3">
+                @for (row of existingGallery; track row.id) {
+                  <div class="blog-image-tile">
+                    <img [src]="row.src" alt="">
+                    <button type="button" class="btn btn-remove-img" (click)="removeGalleryImage(row)"
+                      title="Remove from gallery">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                }
+                @for (img of pendingImages; track $index) {
+                  <div class="blog-image-tile">
+                    <img [src]="img.preview" alt="">
+                    @if ($index === 0) {
+                      <span class="badge-featured">Featured</span>
+                    }
+                    <button type="button" class="btn btn-remove-img" (click)="removePendingImage($index)"
+                      title="Remove">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                }
+              </div>
+              <div
+                class="blog-upload-zone mb-3"
+                (click)="$event.stopPropagation()"
+                (mousedown)="$event.stopPropagation()"
+                (pointerdown)="$event.stopPropagation()"
+              >
+                <label class="form-label fw-semibold">Upload New Images</label>
+                <!-- No `name` — avoid NgForm registering file control (can break picker). Input is not display:none so .click() works. -->
+                <input
+                  #galleryFileInput
+                  type="file"
+                  class="blog-gallery-file-native"
+                  tabindex="-1"
+                  multiple
+                  accept="image/*"
+                  aria-hidden="true"
+                  (change)="onGalleryFilesSelected($event)"
+                />
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    aria-label="Choose images to upload"
+                    (click)="openGalleryFilePicker(galleryFileInput, $event)"
+                  >
+                    <i class="bi bi-folder2-open me-1"></i>
+                    Choose images
+                  </button>
+                  <small class="text-muted mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    JPG, PNG, GIF — multiple files allowed
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar Column -->
+        <div class="col-lg-4">
+          <!-- Publish Settings -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Publish Settings</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select class="form-select" [(ngModel)]="blog.status" name="status">
+                  <option [ngValue]="BlogStatus.DRAFT">Draft</option>
+                  <option [ngValue]="BlogStatus.PUBLISHED">Published</option>
+                  <option [ngValue]="BlogStatus.SCHEDULED">Scheduled</option>
+                  <option [ngValue]="BlogStatus.ARCHIVED">Archived</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" 
+                         [(ngModel)]="blog.isFeatured" name="isFeatured" id="isFeatured">
+                  <label class="form-check-label" for="isFeatured">
+                    Featured Post
+                  </label>
+                </div>
+              </div>
+              <div class="mb-0">
+                <label class="form-label">Category</label>
+                <select class="form-select" [(ngModel)]="blog.categoryId" name="categoryId">
+                  <option [ngValue]="null">Select Category</option>
+                  @for (cat of categories; track cat.id) {
+                    <option [ngValue]="cat.id">{{ cat.name }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tags -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Tags</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex flex-wrap gap-2">
+                @for (tag of tags; track tag.id) {
+                  <button type="button" 
+                          class="btn btn-sm"
+                          [class.btn-primary]="isTagSelected(tag.id)"
+                          [class.btn-outline-primary]="!isTagSelected(tag.id)"
+                          (click)="toggleTag(tag.id)"
+                          [style.background-color]="isTagSelected(tag.id) ? tag.color : 'transparent'"
+                          [style.border-color]="tag.color"
+                          [style.color]="isTagSelected(tag.id) ? '#fff' : tag.color">
+                    {{ tag.name }}
+                  </button>
+                }
+              </div>
+              @if (selectedTagIds.length > 0) {
+                <small class="text-muted d-block mt-2">{{ selectedTagIds.length }} tag(s) selected</small>
+              }
+            </div>
+          </div>
+
+          <!-- SEO Settings -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">SEO Settings</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label">Meta Title</label>
+                <input type="text" class="form-control" 
+                       [(ngModel)]="blog.metaTitle" name="metaTitle"
+                       placeholder="SEO title (optional)">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Meta Description</label>
+                <textarea class="form-control" rows="3" 
+                          [(ngModel)]="blog.metaDescription" name="metaDescription"
+                          placeholder="SEO description (optional)"></textarea>
+              </div>
+              <div class="mb-0">
+                <label class="form-label">Keywords</label>
+                <input type="text" class="form-control form-control-sm" 
+                       [(ngModel)]="blog.metaKeywords" name="metaKeywords"
+                       placeholder="Keywords (comma separated)">
+              </div>
+            </div>
+          </div>
+
+          <!-- OG Image -->
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Social Sharing</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-0">
+                <label class="form-label">OG Image URL</label>
+                <input type="text" class="form-control" 
+                       [(ngModel)]="blog.ogImageUrl" name="ogImageUrl"
+                       placeholder="Social sharing image URL">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </form>
+    }
+  </div>
+</div>

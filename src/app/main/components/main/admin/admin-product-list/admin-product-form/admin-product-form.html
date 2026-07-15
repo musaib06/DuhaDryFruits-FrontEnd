@@ -1,0 +1,505 @@
+<form #productForm="ngForm" (ngSubmit)="onSubmit(productForm)">
+
+  <!-- HEADER -->
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+      <i class="bi bi-box-seam me-2"></i>
+      {{ product ? 'Edit Product' : 'Add New Product' }}
+    </h5>
+    <button type="button" class="btn-close btn-close-white"
+            (click)="activeModal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body modal-scroll" style="max-height: 70vh; overflow-y: auto;">
+
+    <!-- BASIC INFO -->
+    <div class="card mb-3">
+      <div class="card-header bg-light">
+        <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Basic Information</h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Product Name *</label>
+          <input class="form-control"
+                 name="name"
+                 [(ngModel)]="viewModel.productFormData.name"
+                 placeholder="Enter product name (e.g., Basmati Rice)"
+                 (input)="generateItemId()"
+                 required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Subtitle <small class="text-muted">(optional)</small></label>
+          <input class="form-control"
+                 name="subtitle"
+                 [(ngModel)]="viewModel.productFormData.subtitle"
+                 placeholder="Short tagline or subtitle (e.g., Single Tree Variety)">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Item ID</label>
+          <input class="form-control bg-light"
+                 name="itemId"
+                 [(ngModel)]="viewModel.productFormData.itemId"
+                 placeholder="Auto-generated from product name"
+                 readonly>
+          <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Auto-generated from product name</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Description <small class="text-muted">(formatting enabled)</small></label>
+          <div class="product-quill-wrap">
+            <quill-editor
+              [(ngModel)]="viewModel.productFormData.description"
+              name="description"
+              format="html"
+              theme="snow"
+              placeholder="Enter product description with headings, lists, bold text..."
+              [modules]="quillModules"
+            ></quill-editor>
+          </div>
+          <small class="text-muted"><i class="bi bi-type-bold me-1"></i>Use the toolbar for bold headers, lists, links, and formatting.</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY & TAX INFO -->
+    <div class="card mb-3">
+      <div class="card-header bg-light">
+        <h6 class="mb-0"><i class="bi bi-tags me-2"></i>Category & Tax Information</h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Category *</label>
+          <select class="form-select"
+                  name="categoryId"
+                  [(ngModel)]="viewModel.productFormData.categoryId"
+                  required
+                  [ngClass]="{ 'is-invalid': viewModel.FormSubmitted && !viewModel.productFormData.categoryId }">
+            <option [ngValue]="null">Select a category</option>
+            <option *ngFor="let c of viewModel.categories" [ngValue]="c.id">
+              {{ c.name }}
+            </option>
+          </select>
+          <div *ngIf="viewModel.FormSubmitted && !viewModel.productFormData.categoryId" class="invalid-feedback">
+            Please select a category
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Secondary Category <small class="text-muted">(optional)</small></label>
+          <select class="form-select"
+                  name="secondaryCategoryId"
+                  [(ngModel)]="viewModel.productFormData.secondaryCategoryId">
+            <option [ngValue]="null">None</option>
+            <option *ngFor="let c of viewModel.categories" [ngValue]="c.id">
+              {{ c.name }}
+            </option>
+          </select>
+          <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Product will also appear under this category.</small>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">HSN Code</label>
+            <input class="form-control"
+                   [(ngModel)]="viewModel.productFormData.hsnCode"
+                   name="hsnCode"
+                   placeholder="Enter HSN code">
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Tax Rate (%)</label>
+            <input type="number"
+                   class="form-control"
+                   [(ngModel)]="viewModel.productFormData.taxRate"
+                   name="taxRate"
+                   placeholder="0"
+                   min="0"
+                   max="100"
+                   step="0.01">
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Shipping Charge (₹, optional)</label>
+            <input type="number"
+                   class="form-control"
+                   [(ngModel)]="viewModel.productFormData.shippingCharge"
+                   name="shippingCharge"
+                   placeholder="0.00"
+                   min="0"
+                   step="0.01">
+            <small class="text-muted">
+              <i class="bi bi-info-circle me-1"></i>
+              Leave blank or 0 for free shipping on this product.
+            </small>
+          </div>
+        </div>
+
+        <!-- FLAGS -->
+        <div class="form-check">
+          <input class="form-check-input"
+                 type="checkbox"
+                 [(ngModel)]="viewModel.productFormData.isActive"
+                 name="isActive"
+                 id="isActive">
+          <label class="form-check-label" for="isActive">
+            <i class="bi bi-shop me-1"></i>Visible on storefront
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input"
+                 type="checkbox"
+                 [(ngModel)]="viewModel.productFormData.isBestSelling"
+                 name="isBestSelling"
+                 id="isBestSelling">
+          <label class="form-check-label" for="isBestSelling">
+            <i class="bi bi-star-fill text-warning me-1"></i>Mark as Best Selling
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- VARIANTS -->
+    <div class="card mb-3">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="bi bi-boxes me-2"></i>Product Variants</h6>
+        <button class="btn btn-sm btn-outline-primary"
+                type="button"
+                (click)="addVariant()">
+          <i class="bi bi-plus-circle me-1"></i>Add Variant
+        </button>
+      </div>
+      <div class="card-body">
+        <div *ngFor="let v of viewModel.productFormData.variants; let i = index"
+             class="border rounded p-3 mb-3 bg-light">
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0 text-primary">Variant #{{ i + 1 }}</h6>
+            <div>
+              <div class="form-check form-check-inline">
+                <input type="radio"
+                       class="form-check-input"
+                       name="defaultVariant"
+                       [id]="'defaultVariant' + i"
+                       [checked]="v.isDefaultVariant"
+                       (change)="setDefaultVariant(i)">
+                <label class="form-check-label" [for]="'defaultVariant' + i">
+                  <i class="bi bi-star-fill text-warning me-1"></i>Default
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input type="checkbox"
+                       class="form-check-input"
+                       [id]="'isActive' + i"
+                       [(ngModel)]="v.isActive"
+                       name="isActive">
+                <label class="form-check-label" [for]="'isActive' + i">
+                  <i class="bi bi-shop me-1"></i>Active
+                </label>
+              </div>
+              <button class="btn btn-sm btn-outline-danger ms-2"
+                      type="button"
+                      (click)="removeVariant(i)"
+                      [disabled]="viewModel.productFormData.variants.length === 1">
+                <i class="bi bi-trash me-1"></i>Remove
+              </button>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <!-- UNIT DROPDOWN -->
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Unit *</label>
+              <select class="form-select"
+                      [(ngModel)]="v.unitValueId"
+                      [name]="'unit' + i"
+                      required
+                      (ngModelChange)="onUnitChange(v)"
+                      [ngClass]="{ 'is-invalid': viewModel.FormSubmitted && !v.unitValueId }">
+                <option [ngValue]="undefined">Select Unit</option>
+                <option *ngFor="let u of viewModel.Units" [ngValue]="u.id">
+                  {{ u.name }} ({{ u.symbol }})
+                </option>
+              </select>
+            </div>
+
+            <!-- QUANTITY -->
+            <div class="col-md-2">
+              <label class="form-label fw-semibold">Quantity *</label>
+              <input type="number"
+                     class="form-control"
+                     [(ngModel)]="v.quantity"
+                     [name]="'qty' + i"
+                     min="0.001"
+                     step="any"
+                     placeholder="1"
+                     required
+                     (change)="onQuantityChange(v)"
+                     [ngClass]="{ 'is-invalid': viewModel.FormSubmitted && (!v.quantity || v.quantity <= 0) }">
+            </div>
+
+            <!-- Pack size (shown on storefront as: value + unit symbol) -->
+            <div class="col-md-2">
+              <label class="form-label fw-semibold">Pack Size *</label>
+              <input type="number"
+                     class="form-control"
+                     [(ngModel)]="v.weight"
+                     [name]="'weight' + i"
+                     min="0.001"
+                     step="any"
+                     placeholder="e.g. 500"
+                     required
+                     (ngModelChange)="onWeightChange(v, $event)"
+                     [ngClass]="{ 'is-invalid': viewModel.FormSubmitted && (!v.weight || v.weight <= 0) }">
+              <div class="form-text small text-muted">
+                Storefront: <strong>{{ formatPackSizePreview(v) }}</strong>
+                <span class="d-block">Uses this value + the unit you select (g, kg, ml, pcs, Box, or any custom unit).</span>
+              </div>
+            </div>
+
+            <!-- PRICE -->
+            <div class="col-md-2">
+              <label class="form-label fw-semibold">Price (₹) *</label>
+              <input type="number"
+                     class="form-control"
+                     [(ngModel)]="v.price"
+                     [name]="'price' + i"
+                     min="0.01"
+                     step="any"
+                     placeholder="0.00"
+                     required
+                     [ngClass]="{ 'is-invalid': viewModel.FormSubmitted && (!v.price || +v.price <= 0) }">
+            </div>
+
+            <!-- COMPARE PRICE -->
+            <div class="col-md-2">
+              <label class="form-label">Compare Price (₹)</label>
+              <input type="number"
+                     class="form-control"
+                     [(ngModel)]="v.comparePrice"
+                     [name]="'compare' + i"
+                     placeholder="0.00"
+                     min="0.01"
+                     step="0.01"
+                     [ngClass]="{ 'is-invalid': viewModel.FormSubmitted && v.comparePrice && +v.comparePrice <= +v.price }">
+            </div>
+
+            <!-- STOCK -->
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Stock *</label>
+              <input type="number"
+                     class="form-control"
+                     [(ngModel)]="v.stock"
+                     [name]="'stock' + i"
+                     min="0"
+                     step="1"
+                     placeholder="0"
+                     required
+                     [ngClass]="{ 'is-invalid': viewModel.FormSubmitted && (v.stock === undefined || v.stock === null || +v.stock < 0) }">
+            </div>
+          </div>
+
+          <div class="row g-3 mt-2">
+            <!-- SKU (AUTO-GENERATED) -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">
+                <i class="bi bi-upc-scan me-1"></i>SKU (Auto-generated & Editable) *
+              </label>
+              <div class="input-group">
+                <input class="form-control"
+                       [(ngModel)]="v.sku"
+                       [name]="'sku' + i"
+                       placeholder="Will be auto-generated"
+                       [ngClass]="{ 'is-invalid': isVariantInvalid(v) && (!v.sku || v.sku.trim() === '') }">
+                <button class="btn btn-outline-secondary" 
+                        type="button" 
+                        (click)="regenerateSku(v)"
+                        title="Regenerate SKU">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
+              <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Format: ITEMID-QUANTITYUNIT (e.g., BASMATIRICE-1KG). Editable for uniqueness.
+              </small>
+            </div>
+
+            <!-- BARCODE -->
+            <div class="col-md-6">
+              <label class="form-label">Barcode</label>
+              <input class="form-control"
+                     [(ngModel)]="v.barcode"
+                     [name]="'barcode' + i"
+                     placeholder="Optional barcode">
+            </div>
+
+            <!-- VARIANT DESCRIPTION -->
+            <div class="col-12">
+              <label class="form-label">Variant Description</label>
+              <textarea class="form-control"
+                        [(ngModel)]="v.variantDescription"
+                        [name]="'variantDescription' + i"
+                        rows="2"
+                        placeholder="Optional specific description for this variant (e.g., 'Premium quality with extra saffron')"></textarea>
+            </div>
+
+            <!-- VARIANT IMAGE -->
+            <div class="col-12">
+              <label class="form-label">Variant Image</label>
+              <div class="d-flex align-items-start gap-3">
+                <div class="flex-grow-1">
+                  <input type="file"
+                         class="form-control"
+                         [name]="'variantImage' + i"
+                         accept="image/*,.heic,.heif"
+                         (change)="onVariantImageChange($event, i)">
+                  <small class="text-muted d-block mt-1">
+                    Optional: Upload a specific image for this variant (max {{ maxImageSizeLabel }}, {{ supportedImageFormats }})
+                  </small>
+                </div>
+                <div *ngIf="v.variantImage" class="position-relative">
+                  <img [src]="v.variantImage"
+                       class="img-thumbnail"
+                       style="width: 80px; height: 80px; object-fit: cover;"
+                       alt="Variant image"
+                       (error)="_commonService.onImageError($event)">
+                  <button type="button"
+                          class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                          style="transform: translate(50%, -50%);"
+                          (click)="removeVariantImage(i)"
+                          title="Remove image">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="viewModel.productFormData.variants.length === 0" class="text-center text-muted py-4">
+          <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+          <p>No variants added. Click "Add Variant" to create one.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMAGES -->
+    <div class="card mb-3">
+      <div class="card-header bg-light">
+        <h6 class="mb-0"><i class="bi bi-images me-2"></i>Product Images</h6>
+      </div>
+      <div class="card-body">
+        <!-- Existing Images Preview -->
+        <div *ngIf="existingImages.length > 0" class="mb-3">
+          <label class="form-label fw-semibold">Existing Images <small class="text-muted">(First image is primary)</small></label>
+          <div class="row g-2">
+            <div *ngFor="let img of existingImages; let i = index" class="col-md-3 col-sm-4 col-6">
+              <div class="position-relative" [class.border-primary]="i === 0" style="border: 2px solid #dee2e6; border-radius: 4px; padding: 4px; transition: border-color 0.2s;">
+                <!-- Primary badge -->
+                <span *ngIf="i === 0" class="badge bg-primary position-absolute top-0 start-0 m-1" style="z-index: 1;">
+                  <i class="bi bi-star-fill me-1"></i>Primary
+                </span>
+                <img [src]="getExistingImageSrc(img)"
+                     class="img-fluid"
+                     style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px;"
+                     [alt]="'Product image ' + (i + 1)"
+                     (error)="onExistingImageError($event, img)">
+                <button type="button"
+                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
+                        style="width: 24px; height: 24px; padding: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center;"
+                        (click)="removeExistingImage(i)"
+                        title="Remove image">
+                  <i class="bi bi-x" style="font-size: 12px;"></i>
+                </button>
+                <!-- Set as Primary button (only for non-primary images) -->
+                <button *ngIf="i > 0" type="button"
+                        class="btn btn-outline-primary btn-sm w-100 mt-1"
+                        style="font-size: 11px; padding: 2px 4px;"
+                        (click)="setPrimaryExistingImage(i)"
+                        title="Make this the primary image">
+                  <i class="bi bi-arrow-up me-1"></i>Set as Primary
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload New Images -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Upload New Images *</label>
+          <input type="file"
+                 class="form-control"
+                 multiple
+                 accept="image/*,.heic,.heif"
+                 (change)="onFileChange($event)">
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Select one or more images. Supported: {{ supportedImageFormats }} (max {{ maxImageSizeLabel }} each). HEIC/iPhone photos are converted automatically when selected.
+          </small>
+        </div>
+
+        <!-- Newly Selected Files Preview -->
+        <div *ngIf="selectedFiles.length > 0" class="mb-3">
+          <label class="form-label fw-semibold">New Images Selected <small class="text-muted">(First image is primary)</small></label>
+          <div class="row g-2">
+            <div *ngFor="let file of selectedFiles; let i = index" class="col-md-3 col-sm-4 col-6">
+              <div class="position-relative" [class.border-primary]="i === 0" style="border: 2px solid #dee2e6; border-radius: 4px; padding: 4px; transition: border-color 0.2s;">
+                <!-- Primary badge -->
+                <span *ngIf="i === 0" class="badge bg-primary position-absolute top-0 start-0 m-1" style="z-index: 1;">
+                  <i class="bi bi-star-fill me-1"></i>Primary
+                </span>
+                <img [src]="getFilePreview(file)"
+                     class="img-fluid"
+                     style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px;"
+                     [alt]="file.name">
+                <button type="button"
+                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
+                        style="width: 24px; height: 24px; padding: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center;"
+                        (click)="removeSelectedFile(i)"
+                        title="Remove image">
+                  <i class="bi bi-x" style="font-size: 12px;"></i>
+                </button>
+                <!-- Set as Primary button (only for non-primary images) -->
+                <button *ngIf="i > 0" type="button"
+                        class="btn btn-outline-primary btn-sm w-100 mt-1"
+                        style="font-size: 11px; padding: 2px 4px;"
+                        (click)="setPrimarySelectedFile(i)"
+                        title="Make this the primary image">
+                  <i class="bi bi-arrow-up me-1"></i>Set as Primary
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Validation Message -->
+        <div *ngIf="!hasImages() && viewModel.FormSubmitted" class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          Please select at least one product image.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="modal-footer bg-light">
+    <button class="btn btn-secondary"
+            type="button"
+            (click)="activeModal.dismiss()"
+            [disabled]="isSubmitting">
+      <i class="bi bi-x-circle me-1"></i>Cancel
+    </button>
+
+    <button class="btn btn-primary"
+            type="submit"
+            [disabled]="isSubmitting || !canSubmitForm()"
+            [title]="!canSubmitForm() ? getValidationMessage() : ''">
+      <i class="bi me-1" [ngClass]="{'bi-check-circle': !isSubmitting, 'bi-hourglass-split': isSubmitting}"></i>
+      <span *ngIf="!isSubmitting">{{ product ? 'Update Product' : 'Create Product' }}</span>
+      <span *ngIf="isSubmitting">Processing...</span>
+    </button>
+  </div>
+
+</form>

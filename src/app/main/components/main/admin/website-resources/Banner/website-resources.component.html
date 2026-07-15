@@ -1,0 +1,89 @@
+<!-- Header: Button & Search -->
+<div class="header-actions">
+  <button class="btn btn-success" (click)="openFormModal()">
+    <i class="bi bi-plus-lg me-1"></i> Add New Banner
+  </button>
+
+  <div class="input-group search-box w-25">
+    <span class="input-group-text bg-light border-end-0">
+      <i class="bi bi-search"></i>
+    </span>
+    <input 
+      type="text" 
+      class="form-control border-start-0" 
+      placeholder="Search banners..." 
+      [(ngModel)]="viewModel.searchTerm"
+      (input)="applyFilter()">
+  </div>
+</div>
+
+<!-- Table -->
+<div class="table-responsive table-hover-wrapper">
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-light sticky-header">
+      <tr>
+        <th>#</th>
+        <th (click)="sortData('title')">
+          Title <i class="bi ms-2" [ngClass]="getSortIcon('title')"></i>
+        </th>
+        <th>Description</th>
+        <th (click)="sortData('sequence')">
+          Sequence <i class="bi ms-2" [ngClass]="getSortIcon('sequence')"></i>
+        </th>
+        <th>CTA Text</th>
+        <th>Link</th>
+        <th>Image</th>
+        <th (click)="sortData('isVisible')">
+          Status <i class="bi ms-2" [ngClass]="getSortIcon('isVisible')"></i>
+        </th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let item of viewModel.filteredBanners; let i = index" class="table-row-hover">
+        <td>{{ i + 1 }}</td>
+        <td class="text-wrap text-break" title="{{ item.title }}">{{ item.title }}</td>
+        <td class="text-wrap text-break" title="{{ item.description }}">{{ item.description }}</td>
+        <td>{{ getBannerSequence(item) }}</td>
+        <td class="text-wrap text-break" title="{{ item.ctaText }}">{{ item.ctaText }}</td>
+        <td class="text-wrap text-break" title="{{ item.link }}">{{ item.link }}</td>
+        <td>
+          <img [src]="bannerImage(item)" alt="Banner" class="table-icon">
+        </td>
+        <td>
+          <span 
+            class="badge" 
+            [ngClass]="item.isVisible ? 'bg-success' : 'bg-secondary'">
+            {{ item.isVisible ? 'Visible' : 'Hidden' }}
+          </span>
+        </td>
+        <td>
+          <div class="d-flex gap-1 flex-wrap">
+            <button class="btn btn-sm btn-primary" (click)="openFormModal(item)">
+              <i class="bi bi-pencil-fill"></i> Edit
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="confirmDelete(item.id!)">
+              <i class="bi bi-trash-fill"></i> Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Empty State -->
+  <div *ngIf="viewModel.filteredBanners.length === 0" class="empty-state">
+    <i class="bi bi-folder-x"></i>
+    <h4>No banners found</h4>
+    <p>Try adjusting your search or add a new banner</p>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="viewModel.pagination && viewModel.pagination.totalCount > 0">
+    <pagination 
+      (selectedPageNum)="loadPagedataWithPagination($event)" 
+      [viewModel]="viewModel.pagination">
+    </pagination>
+  </div>
+</div>

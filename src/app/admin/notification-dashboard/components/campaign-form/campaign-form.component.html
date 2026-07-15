@@ -1,0 +1,128 @@
+<div class="campaign-form-container">
+  <div class="form-header">
+    <h2>{{ isEditMode ? 'Edit Campaign' : 'Create New Campaign' }}</h2>
+    <p class="subtitle">Configure your notification campaign</p>
+  </div>
+  
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <span>Loading campaign...</span>
+  </div>
+  
+  <form [formGroup]="campaignForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+    
+    <!-- Basic Information -->
+    <div class="form-section">
+      <h3>Basic Information</h3>
+      
+      <div class="form-group">
+        <label>Campaign Name *</label>
+        <input type="text" formControlName="name" placeholder="Enter campaign name">
+        <div class="error" *ngIf="campaignForm.get('name')?.touched && campaignForm.get('name')?.errors?.['required']">
+          Campaign name is required
+        </div>
+        <div class="error" *ngIf="campaignForm.get('name')?.touched && campaignForm.get('name')?.errors?.['minlength']">
+          Name must be at least 3 characters
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" rows="2" placeholder="Optional description for internal reference"></textarea>
+      </div>
+    </div>
+    
+    <!-- Content Section (Push notification) -->
+    <div class="form-section" formGroupName="content">
+      <h3>Content</h3>
+
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" formControlName="title" placeholder="Notification title">
+        <div class="error" *ngIf="campaignForm.get('content.title')?.touched && campaignForm.get('content.title')?.errors?.['required']">
+          Title is required
+        </div>
+        <div class="hint">{{ campaignForm.get('content.title')?.value?.length || 0 }}/100 characters</div>
+      </div>
+
+      <div class="form-group">
+        <label>Message Body *</label>
+        <textarea formControlName="body" rows="4" placeholder="Enter your message"></textarea>
+        <div class="error" *ngIf="campaignForm.get('content.body')?.touched && campaignForm.get('content.body')?.errors?.['required']">
+          Message body is required
+        </div>
+        <div class="hint">{{ campaignForm.get('content.body')?.value?.length || 0 }}/240 characters</div>
+      </div>
+
+      <div class="form-group">
+        <label>Media URL (Optional)</label>
+        <input type="url" formControlName="mediaUrl" placeholder="https://example.com/image.jpg">
+        <div class="hint">Image URL for rich notifications</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half">
+          <label>Button Text</label>
+          <input type="text" formControlName="buttonText" placeholder="View Order">
+        </div>
+        <div class="form-group half">
+          <label>Button URL</label>
+          <input type="url" formControlName="buttonUrl" placeholder="https://wildvalleyfoods.in/orders">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Target Audience -->
+    <div class="form-section">
+      <h3>Target Audience</h3>
+      
+      <div class="form-group" formGroupName="segment">
+        <label>Customer Segment *</label>
+        <select formControlName="type">
+          <option *ngFor="let segment of segmentOptions" [value]="segment.value">
+            {{ segment.label }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="segment-preview">
+        <p>Selected segment will target customers based on their purchase history, activity, and preferences.</p>
+      </div>
+    </div>
+    
+    <!-- Scheduling -->
+    <div class="form-section">
+      <h3>Schedule</h3>
+      
+      <div class="schedule-options">
+        <label class="schedule-option">
+          <input type="radio" formControlName="scheduleLater" [value]="false">
+          <span class="option-label">Send immediately</span>
+        </label>
+        
+        <label class="schedule-option">
+          <input type="radio" formControlName="scheduleLater" [value]="true">
+          <span class="option-label">Schedule for later</span>
+        </label>
+      </div>
+      
+      <div class="form-group" *ngIf="campaignForm.get('scheduleLater')?.value">
+        <label>Schedule Date & Time *</label>
+        <input type="datetime-local" formControlName="scheduledAt">
+        <div class="hint">Campaign will be sent at the specified time</div>
+      </div>
+    </div>
+    
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">
+        Cancel
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="isSaving || campaignForm.invalid">
+        <span *ngIf="isSaving">{{ isEditMode ? 'Updating...' : 'Creating...' }}</span>
+        <span *ngIf="!isSaving">{{ isEditMode ? 'Update Campaign' : 'Create Campaign' }}</span>
+      </button>
+    </div>
+    
+  </form>
+</div>

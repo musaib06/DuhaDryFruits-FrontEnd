@@ -1,0 +1,91 @@
+@if (isVisible) {
+<section class="banner-carousel" aria-label="Promotional banners">
+    @if (banners && banners.length > 0) {
+    <div
+      #bannerCarouselEl
+      id="bannerCarousel"
+      class="carousel slide hero-carousel"
+      data-bs-ride="carousel"
+      data-bs-pause="hover"
+      data-bs-touch="true"
+      data-bs-interval="4000"
+    >
+
+        <div class="carousel-inner">
+            @for (banner of banners; track banner; let i = $index) {
+            <div
+              class="carousel-item hero-slide"
+              [class.active]="i === 0"
+              [attr.data-type]="banner.bannerType"
+              [class.hero-slide-clickable]="!!banner.link"
+              (click)="onBannerClick(banner)"
+            >
+
+                <img
+                  [src]="bannerImageSrc(banner)"
+                  class="hero-media wvf-protect-asset"
+                  draggable="false"
+                  [attr.alt]="banner.title || 'Banner'"
+                  [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+                  [attr.fetchpriority]="i === 0 ? 'high' : 'low'"
+                  decoding="async"
+                  (click)="onBannerClick(banner, $event)"
+                />
+
+                <!-- overlay gradient for readable text -->
+                <div class="hero-overlay" aria-hidden="true" (click)="onBannerClick(banner, $event)"></div>
+
+                <!-- content -->
+                <div class="hero-content" (click)="onBannerClick(banner, $event)">
+                  @if (banner.title) {
+                    <h2 class="hero-title font-bilal">
+                      {{ banner.title }}
+                    </h2>
+                  }
+                  @if (showBannerSubtitle(banner)) {
+                    <p class="hero-subtitle">
+                      {{ banner.description }}
+                    </p>
+                  }
+                  @if (banner.ctaText && banner.link) {
+                    <button type="button" (click)="onBannerClick(banner, $event)" class="btn mb-3 hero-cta font-bilal">
+                      {{ banner.ctaText }}
+                    </button>
+                  }
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- Prev button -->
+        <button
+          [disabled]="banners.length <= 1"
+          class="carousel-control-prev hero-nav"
+          type="button"
+          data-bs-target="#bannerCarousel"
+          data-bs-slide="prev"
+          aria-label="Previous banner"
+        >
+          <span class="hero-nav-icon" aria-hidden="true">‹</span>
+        </button>
+
+        <!-- Next button -->
+        <button
+          [disabled]="banners.length <= 1"
+          class="carousel-control-next hero-nav"
+          type="button"
+          data-bs-target="#bannerCarousel"
+          data-bs-slide="next"
+          aria-label="Next banner"
+        >
+          <span class="hero-nav-icon" aria-hidden="true">›</span>
+        </button>
+
+    </div>
+    } @else {
+    <div class="no-banners text-center p-3">
+        No banners to display
+    </div>
+    }
+</section>
+}

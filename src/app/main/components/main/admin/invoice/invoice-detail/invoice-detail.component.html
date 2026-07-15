@@ -1,0 +1,145 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <button class="btn btn-outline-secondary" routerLink="/admin/invoice">
+      <i class="bi bi-arrow-left me-1"></i>Back to Invoices
+    </button>
+    <div>
+      <button class="btn btn-primary me-2" (click)="printInvoice()">
+        <i class="bi bi-printer me-1"></i>Print
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+  </div>
+
+  <!-- Invoice Content -->
+  <div #invoicePrintArea *ngIf="invoice && !loading && !error" class="card">
+    <div class="card-body p-4">
+      <!-- Invoice Header -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h3 class="mb-3">Invoice</h3>
+          <p class="mb-1"><strong>Invoice #:</strong> {{ invoice.invoiceNumber }}</p>
+          <p class="mb-1"><strong>Order #:</strong> {{ invoice.orderNumber }}</p>
+          <p class="mb-0"><strong>Date:</strong> {{ formatDate(invoice.invoiceDate) }}</p>
+        </div>
+        <div class="col-md-6 text-end">
+          <p class="mb-1"><strong>Status:</strong> 
+            <span class="badge bg-success">{{ invoice.status }}</span>
+          </p>
+          <p class="mb-0" *ngIf="invoice.dueDate">
+            <strong>Due Date:</strong> {{ formatDate(invoice.dueDate) }}
+          </p>
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Customer Information -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5 class="mb-3">Bill To:</h5>
+          <p class="mb-1"><strong>{{ invoice.customer?.name || 'N/A' }}</strong></p>
+          <p class="mb-1" *ngIf="invoice.customer?.email">{{ invoice.customer?.email }}</p>
+          <p class="mb-1" *ngIf="invoice.customer?.contact">{{ invoice.customer?.contact }}</p>
+          <div *ngIf="invoiceAddressLines.length" class="invoice-address-block mt-2">
+            <div
+              *ngFor="let line of invoiceAddressLines"
+              class="invoice-address-line"
+            >{{ line }}</div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Invoice Items -->
+      <div class="table-responsive mb-4">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>SKU</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Weight</th>
+              <th>Unit Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of invoice.items">
+              <td>{{ item.productName || 'Unknown Product' }}</td>
+              <!-- <td>{{ item.variantSku || 'N/A' }}</td> -->
+              <td>{{ item.quantity }}</td>
+              <td>{{ formatVariantUnit(item) }}</td>
+              <td>{{ formatVariantWeight(item) }}</td>
+              <td>{{ formatCurrency(item.unitPrice) }}</td>
+              <td><strong>{{ formatCurrency(item.total) }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Totals -->
+      <div class="row">
+        <div class="col-md-6 offset-md-6">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td><strong>Subtotal:</strong></td>
+                <td class="text-end">{{ formatCurrency(invoice.totals?.subtotal) }}</td>
+              </tr>
+              <tr *ngIf="invoice.totals?.taxAmount">
+                <td><strong>Tax:</strong></td>
+                <td class="text-end">{{ formatCurrency(invoice.totals?.taxAmount) }}</td>
+              </tr>
+              <tr *ngIf="invoice.totals?.shippingAmount">
+                <td><strong>Shipping:</strong></td>
+                <td class="text-end">{{ formatCurrency(invoice.totals?.shippingAmount) }}</td>
+              </tr>
+              <tr class="table-primary">
+                <td><strong>Total:</strong></td>
+                <td class="text-end"><strong>{{ formatCurrency(invoice.totals?.totalAmount) }}</strong></td>
+              </tr>
+              <tr *ngIf="invoice.totals?.paidAmount">
+                <td><strong>Paid:</strong></td>
+                <td class="text-end text-success">{{ formatCurrency(invoice.totals?.paidAmount) }}</td>
+              </tr>
+              <tr *ngIf="invoice.totals?.dueAmount">
+                <td><strong>Due:</strong></td>
+                <td class="text-end text-danger">{{ formatCurrency(invoice.totals?.dueAmount) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Payment Information -->
+      <div *ngIf="invoice.payment" class="mt-4">
+        <hr>
+        <h5 class="mb-3">Payment Information</h5>
+        <p class="mb-1" *ngIf="invoice.payment.razorpayPaymentId">
+          <strong>Payment ID:</strong> {{ invoice.payment.razorpayPaymentId }}
+        </p>
+        <p class="mb-1" *ngIf="invoice.payment.method">
+          <strong>Method:</strong> {{ invoice.payment.method }}
+        </p>
+        <p class="mb-0" *ngIf="invoice.payment.paidAt">
+          <strong>Paid At:</strong> {{ formatDate(invoice.payment.paidAt) }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+

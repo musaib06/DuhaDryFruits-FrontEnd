@@ -1,0 +1,287 @@
+<div class="checkout-grid">
+  <!-- Customer Details Form -->
+  <div class="form-panel" [class.hidden]="currentCard === 'order'">
+    <div class="panel-card">
+      <div class="panel-header">
+        <div class="header-content">
+          <div class="header-icon">
+            <!-- Customer Icon SVG -->
+          </div>
+          <div>
+            <h2 class="panel-title">Customer & Delivery Information</h2>
+            <p class="panel-subtitle">Enter your details for order delivery</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <!-- Saved Addresses Section -->
+        @if (savedCustomers.length > 0) {
+          <ng-container>
+            <div class="section-header">
+              <label class="section-label">
+                <!-- Location Icon SVG -->
+                Saved Addresses
+              </label>
+            </div>
+
+            <select class="form-select-modern" [value]="selectedCustomerId || ''" (change)="selectCustomer($event)">
+              <option value="" disabled>Select a saved delivery address</option>
+              @for (cust of savedCustomers; track cust.id) {
+                <option [value]="cust.id" [selected]="selectedCustomerId === cust.id">
+                  {{cust.firstName}} {{cust.lastName}}
+                </option>
+              }
+            </select>
+
+            <!-- Saved Address Tags -->
+            <div class="address-tags">
+              @for (cust of savedCustomers; track cust.id) {
+                <div class="address-tag">
+                  <span class="tag-icon">📍</span>
+                  <span class="tag-name">{{ cust.firstName }} {{ cust.lastName }}</span>
+                  <button type="button" class="tag-delete" (click)="deleteCustomer(cust.id, $event)">
+                    ×
+                  </button>
+                </div>
+              }
+            </div>
+            @if (selectedCustomerId != null) {
+              <button type="button" class="btn-link-modern" (click)="addNewDetails()">
+                <span class="btn-icon">+</span> Add New Delivery Address
+              </button>
+            }
+          </ng-container>
+        }
+
+        <!-- Customer Form -->
+        <form #customerForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+          <!-- Address Type selector -->
+          <div class="form-section">
+            <div class="section-header">
+              <h3 class="section-title">Delivery Address Type</h3>
+              <span class="section-badge">Choose</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label-modern">Address Type</label>
+              <select class="form-input-modern" [(ngModel)]="selectedAddressType" name="addressType">
+                <option value="Home">Home</option>
+                <option value="Work">Work</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Customer Information Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <h3 class="section-title">Personal Information</h3>
+              <span class="section-badge">Required</span>
+            </div>
+            <div class="form-grid">
+              <!-- First Name -->
+              <div class="form-group">
+                <label class="form-label-modern">First Name <span class="required-dot">*</span></label>
+                <input type="text" class="form-input-modern" name="firstName" [(ngModel)]="viewModel.customer.firstName"
+                  [disabled]="isFormDisabled" required placeholder="Enter first name" autocomplete="given-name" />
+                @if (viewModel.submitted && !viewModel.customer.firstName) {
+                  <div class="error-message">First name is required</div>
+                }
+              </div>
+              <!-- Last Name -->
+              <div class="form-group">
+                <label class="form-label-modern">Last Name <span class="required-dot">*</span></label>
+                <input type="text" class="form-input-modern" name="lastName" [(ngModel)]="viewModel.customer.lastName"
+                  [disabled]="isFormDisabled" required placeholder="Enter last name" autocomplete="family-name" />
+                @if (viewModel.submitted && !viewModel.customer.lastName) {
+                  <div class="error-message">Last name is required</div>
+                }
+              </div>
+              <!-- Email -->
+              <div class="form-group">
+                <label class="form-label-modern">Email Address <span class="required-dot">*</span></label>
+                <input type="email" class="form-input-modern" name="email" [(ngModel)]="viewModel.customer.email"
+                  [disabled]="isFormDisabled" required placeholder="you@example.com" autocomplete="email" />
+                @if (viewModel.submitted && !viewModel.customer.email) {
+                  <div class="error-message">Valid email is required</div>
+                }
+              </div>
+              <!-- Contact -->
+              <div class="form-group">
+                <label class="form-label-modern">Contact Number <span class="required-dot">*</span></label>
+                <input type="tel" class="form-input-modern" name="contact" [(ngModel)]="viewModel.customer.contact"
+                  [disabled]="isFormDisabled" required pattern="^\d{10}$" placeholder="10-digit mobile number" autocomplete="tel" />
+                @if (viewModel.submitted && (!viewModel.customer.contact || viewModel.customer.contact.length !== 10)) {
+                  <div class="error-message">
+                    Contact number is required (10 digits)
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Address Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <h3 class="section-title">{{ selectedAddressType }}</h3>
+              <span class="section-badge">Required</span>
+            </div>
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label class="form-label-modern">Street Address <span class="required-dot">*</span></label>
+                <input type="text" class="form-input-modern" name="addressLine1"
+                  [(ngModel)]="viewModel.homeAddress.addressLine1" [disabled]="isFormDisabled" required
+                  placeholder="House number, building name, street" autocomplete="street-address" />
+                @if (viewModel.submitted && !viewModel.homeAddress.addressLine1) {
+                  <div class="error-message">Address is required</div>
+                }
+              </div>
+              <div class="form-group">
+                <label class="form-label-modern">City <span class="required-dot">*</span></label>
+                <input type="text" class="form-input-modern" name="city" [(ngModel)]="viewModel.homeAddress.city"
+                  [disabled]="isFormDisabled" required placeholder="City" autocomplete="address-level2" />
+                @if (viewModel.submitted && !viewModel.homeAddress.city) {
+                  <div class="error-message">City is required</div>
+                }
+              </div>
+              <div class="form-group">
+                <label class="form-label-modern">State / Province <span class="required-dot">*</span></label>
+                <input type="text" class="form-input-modern" name="state" [(ngModel)]="viewModel.homeAddress.state"
+                  [disabled]="isFormDisabled" required placeholder="State" autocomplete="address-level1" />
+                @if (viewModel.submitted && !viewModel.homeAddress.state) {
+                  <div class="error-message">State is required</div>
+                }
+              </div>
+              <div class="form-group">
+                <label class="form-label-modern">Postal Code <span class="required-dot">*</span></label>
+                <input type="text" class="form-input-modern" name="postalCode"
+                  [(ngModel)]="viewModel.homeAddress.postalCode" [disabled]="isFormDisabled" required
+                  placeholder="ZIP / Postal code" autocomplete="postal-code" />
+                @if (viewModel.submitted && !viewModel.homeAddress.postalCode) {
+                  <div class="error-message">Postal code is required</div>
+                }
+              </div>
+              <div class="form-group">
+                <label class="form-label-modern">Country <span class="required-dot">*</span></label>
+                <input type="text" class="form-input-modern" name="country" [(ngModel)]="viewModel.homeAddress.country"
+                  [disabled]="true" readonly required placeholder="Country" autocomplete="country" />
+                @if (viewModel.submitted && !viewModel.homeAddress.country) {
+                  <div class="error-message">Country is required</div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Submit Button -->
+          <div class="form-actions">
+            <button type="submit" class="btn-primary-modern" [disabled]="currentCard === 'order'">
+              <span>{{ submitButtonLabel }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Summary -->
+  <div class="summary-panel" [class.hidden]="currentCard === 'customer'">
+    <div class="panel-card sticky">
+      <div class="panel-header">
+        <div class="header-content">
+          <div class="header-icon">
+            <!-- Cart Icon SVG -->
+          </div>
+          <div>
+            <h2 class="panel-title">Order Summary</h2>
+            <p class="panel-subtitle">Review your cart items</p>
+          </div>
+        </div>
+        @if (currentCard === 'order') {
+          <button type="button" class="btn-back" (click)="backToCustomer()">Back</button>
+        }
+      </div>
+      <div class="panel-body">
+        <!-- Delivery Info Preview -->
+        <div class="delivery-preview">
+          <div class="preview-header"><span>Delivering To</span></div>
+          <div class="preview-content">
+            <p class="preview-name">{{ viewModel.customer.firstName }} {{ viewModel.customer.lastName }}</p>
+            <p class="preview-address">{{ viewModel.homeAddress.addressLine1 }}</p>
+            <p class="preview-address">
+              {{ viewModel.homeAddress.city }}, {{ viewModel.homeAddress.state }} {{ viewModel.homeAddress.postalCode }}
+            </p>
+            <p class="preview-country">{{ viewModel.homeAddress.country }}</p>
+          </div>
+        </div>
+        
+        <!-- Cart Items List -->
+        <div class="cart-section">
+          <h3 class="cart-title">Cart Items <span class="cart-count">{{ viewModel.cartItems.length || 0 }}</span></h3>
+          @if (viewModel.cartItems.length) {
+            <div class="cart-list">
+              @for (item of viewModel.cartItems; track $index) {
+                <div class="cart-item">
+                  <div class="item-image">
+                    <img [src]="imageOf(item)" [alt]="item.name" class="wvf-protect-asset" draggable="false"
+                      (error)="onProductImageError($event, item.id)" />
+                  </div>
+                  <div class="item-details">
+                    <h4 class="item-name">{{ item.name }}</h4>
+                    <!-- Variant SKU and Unit Info -->
+                    <p class="item-sku">
+                      @if (getItemUnitDisplay(item)) {
+                        <span class="text-muted">{{ getItemUnitDisplay(item) }}</span>
+                      }
+                    </p>
+                    <div class="item-footer">
+                      <span class="item-quantity">Qty: {{ item.cartQuantity }}</span>
+                      <span class="item-price">₹{{ getItemPrice(item) | number:'1.2-2' }}</span>
+                    </div>
+                  </div>
+                  <div class="item-total">
+                    ₹{{ getItemTotal(item) | number:'1.2-2' }}
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          @if (!viewModel.cartItems.length) {
+            <div class="cart-empty">
+              <p>Your cart is empty</p>
+            </div>
+          }
+        </div>
+        
+        <!-- Order Calculations -->
+        <div class="order-calculations">
+          <div class="calc-row"><span>Subtotal</span><span>₹{{ subTotal | number:'1.2-2' }}</span></div>
+          <div class="calc-row"><span>Tax (GST)</span><span>₹{{ taxAmount | number:'1.2-2' }}</span></div>
+          <div class="calc-row"><span>Shipping</span><span>{{ shippingLabel }}</span></div>
+          <div class="calc-divider"></div>
+          <div class="calc-row total"><span>Total Amount</span><span>₹{{ viewModel.totalPrice | number:'1.2-2' }}</span></div>
+        </div>
+        
+        <!-- Coupon Section -->
+        <!-- <div class="coupon-section">
+          <label class="coupon-label">Have a Coupon Code?</label>
+          <div class="coupon-input-group">
+            <input class="coupon-input" placeholder="Enter coupon code" [(ngModel)]="couponCode" name="couponCode" />
+            <button class="coupon-btn" (click)="applyCoupon()" type="button">Apply</button>
+          </div>
+          <p class="coupon-hint">Try: SAVE50 (₹50 off) or PCT10 (10% off)</p>
+        </div> -->
+        
+        <!-- Place Order Button -->
+        <div class="order-actions">
+          <button class="btn-order-now" (click)="proceedToPayment()" [disabled]="!canProceed() || isOrderCreating || isPaymentInProgress">Place Order Now</button>
+          @if (isBelowMinimumOrderValue) {
+            <p class="minimum-order-hint">
+              Minimum order value is Rs 500/-. Add items worth Rs {{ minimumOrderRemainingAmount | number:'1.2-2' }} more to proceed.
+            </p>
+          }
+          <p class="order-security">Secure checkout powered by SSL encryption</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

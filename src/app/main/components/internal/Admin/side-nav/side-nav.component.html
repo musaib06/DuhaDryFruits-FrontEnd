@@ -1,0 +1,18 @@
+
+  <aside class="side-nav" [class.open]="isSidebarOpen">
+    <nav>
+      <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/website-resources" routerLinkActive="active">website-Resources</a>
+      <a routerLink="/category-list" routerLinkActive="active">Category List</a>
+      <a routerLink="/contact" routerLinkActive="active">Contact</a>
+      
+      <!-- Notification Module -->
+      <div class="nav-section">
+        <span class="section-title">Notifications</span>
+        <a routerLink="/admin/notifications" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/admin/notifications/send" routerLinkActive="active">Send Notification</a>
+        <a routerLink="/admin/notifications/analytics" routerLinkActive="active">Analytics</a>
+        <a routerLink="/admin/notifications/logs" routerLinkActive="active">Logs</a>
+      </div>
+    </nav>
+  </aside>

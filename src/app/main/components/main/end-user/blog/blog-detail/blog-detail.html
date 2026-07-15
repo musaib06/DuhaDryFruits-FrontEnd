@@ -1,0 +1,292 @@
+<!-- Blog Detail Page -->
+@if (viewModel.blog; as blog) {
+<div class="blog-detail-page">
+  <!-- Reading Progress Bar -->
+  <div class="reading-progress" aria-hidden="true">
+    <div class="progress-bar" [style.width.%]="viewModel.readingProgress"></div>
+  </div>
+
+  <!-- Breadcrumbs — below site header (readable; not hidden under sticky nav) -->
+  <nav aria-label="breadcrumb" class="blog-breadcrumb-bar">
+    <div class="container blog-detail__hero-inner px-3 px-md-4">
+      <ol class="breadcrumb blog-breadcrumb mb-0">
+        <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
+        <li class="breadcrumb-item"><a routerLink="/blog">Blog</a></li>
+        @if (blog.category) {
+          <li class="breadcrumb-item">
+            <a [routerLink]="['/blog']" [queryParams]="{ category: blog.category.id }">
+              {{ blog.category.name }}
+            </a>
+          </li>
+        }
+        <li class="breadcrumb-item active text-truncate" aria-current="page">{{ blog.title }}</li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="blog-hero" aria-labelledby="blog-detail-title">
+    <div class="hero-image">
+      <img [src]="blogImage(blog)"
+           [alt]="blog.title"
+           loading="eager"
+           decoding="async"
+           class="wvf-protect-asset"
+           draggable="false">
+    </div>
+    <div class="hero-overlay">
+      <div class="container blog-detail__hero-inner">
+        <div class="row">
+          <div class="col-12 col-xl-10 mx-auto">
+            <!-- Category -->
+            @if (blog.category) {
+              <span class="category-badge" [style.background-color]="blog.category.color">
+                {{ blog.category.name }}
+              </span>
+            }
+
+            <h1 id="blog-detail-title" class="blog-title">{{ blog.title }}</h1>
+            @if (blog.subtitle) {
+              <p class="blog-subtitle">{{ blog.subtitle }}</p>
+            }
+
+            <!-- Meta Info -->
+            <div class="blog-meta">
+              @if (blog.authorName) {
+                <div class="author">
+                  @if (blog.authorAvatar) {
+                    <img [src]="blog.authorAvatar" [alt]="blog.authorName" class="author-avatar">
+                  } @else {
+                    <div class="author-avatar-placeholder">{{ blog.authorName.charAt(0) }}</div>
+                  }
+                  <span class="author-name">By {{ blog.authorName }}</span>
+                </div>
+              }
+              <span class="blog-meta__sep" aria-hidden="true">·</span>
+              <span class="date">{{ blog.formattedPublishDate }}</span>
+              <span class="blog-meta__sep" aria-hidden="true">·</span>
+              <span class="read-time"><i class="bi bi-clock" aria-hidden="true"></i> {{ blog.formattedReadTime }}</span>
+              <span class="blog-meta__sep" aria-hidden="true">·</span>
+              <span class="views"><i class="bi bi-eye" aria-hidden="true"></i> {{ blog.viewCount }} views</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="blog-content-wrapper">
+    <div class="blog-detail-container">
+        <!-- Main Article -->
+        <main>
+          <article class="blog-article">
+            <!-- Tags -->
+            @if (blog.tags.length > 0) {
+              <div class="tags-section">
+                @for (tag of blog.tags; track tag.id) {
+                  <span class="tag" [style.background-color]="tag.color + '20'"
+                        [style.color]="tag.color">{{ tag.name }}</span>
+                }
+              </div>
+            }
+
+            <!-- Article Body — constrained width for comfortable reading -->
+            <div class="article-body blog-prose" lang="en" [innerHTML]="blog.contentHtml || blog.content"
+                 #articleContent></div>
+
+            @if (blog.socialVideoYoutubeUrl?.trim() || blog.socialVideoInstagramUrl?.trim() || blog.socialVideoFacebookUrl?.trim()) {
+              <section class="blog-social-videos" aria-label="Related videos">
+                <h3 class="blog-social-videos__title">Watch &amp; follow</h3>
+                <p class="blog-social-videos__hint text-muted small">Opens in a new tab on the original platform.</p>
+                <div class="blog-social-videos__grid">
+                  @if (blog.socialVideoYoutubeUrl?.trim()) {
+                    <a class="blog-social-card blog-social-card--youtube" [href]="blog.socialVideoYoutubeUrl!.trim()" target="_blank" rel="noopener noreferrer">
+                      <div class="blog-social-card__media">
+                        @if (blog.socialVideoYoutubeThumbnailUrl) {
+                          <img [src]="blog.socialVideoYoutubeThumbnailUrl" alt="YouTube preview" loading="lazy">
+                        } @else {
+                          <div class="blog-social-card__placeholder"><i class="bi bi-youtube"></i></div>
+                        }
+                        <span class="blog-social-card__play"><i class="bi bi-play-fill"></i></span>
+                      </div>
+                      <span class="blog-social-card__label">YouTube</span>
+                    </a>
+                  }
+                  @if (blog.socialVideoInstagramUrl?.trim()) {
+                    <a class="blog-social-card blog-social-card--instagram" [href]="blog.socialVideoInstagramUrl!.trim()" target="_blank" rel="noopener noreferrer">
+                      <div class="blog-social-card__media">
+                        @if (blog.socialVideoInstagramThumbnailUrl) {
+                          <img [src]="blog.socialVideoInstagramThumbnailUrl" alt="Instagram preview" loading="lazy">
+                        } @else {
+                          <div class="blog-social-card__placeholder"><i class="bi bi-instagram"></i></div>
+                        }
+                        <span class="blog-social-card__play"><i class="bi bi-play-fill"></i></span>
+                      </div>
+                      <span class="blog-social-card__label">Instagram</span>
+                    </a>
+                  }
+                  @if (blog.socialVideoFacebookUrl?.trim()) {
+                    <a class="blog-social-card blog-social-card--facebook" [href]="blog.socialVideoFacebookUrl!.trim()" target="_blank" rel="noopener noreferrer">
+                      <div class="blog-social-card__media">
+                        @if (blog.socialVideoFacebookThumbnailUrl) {
+                          <img [src]="blog.socialVideoFacebookThumbnailUrl" alt="Facebook preview" loading="lazy">
+                        } @else {
+                          <div class="blog-social-card__placeholder"><i class="bi bi-facebook"></i></div>
+                        }
+                        <span class="blog-social-card__play"><i class="bi bi-play-fill"></i></span>
+                      </div>
+                      <span class="blog-social-card__label">Facebook</span>
+                    </a>
+                  }
+                </div>
+              </section>
+            }
+
+            <!-- Share Section — buttons driven by environment.blogShare -->
+            @if (shareUi.facebook || shareUi.twitter || shareUi.linkedin || shareUi.whatsapp) {
+              <div class="share-section">
+                <h4 class="share-section__title">Share this article</h4>
+                <div class="share-buttons">
+                  @if (shareUi.facebook) {
+                    <a [href]="getShareUrl('facebook')" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-share facebook">
+                      <i class="bi bi-facebook" aria-hidden="true"></i><span>Facebook</span>
+                    </a>
+                  }
+                  @if (shareUi.twitter) {
+                    <a [href]="getShareUrl('twitter')" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-share twitter">
+                      <i class="bi bi-twitter-x" aria-hidden="true"></i><span>X</span>
+                    </a>
+                  }
+                  @if (shareUi.linkedin) {
+                    <a [href]="getShareUrl('linkedin')" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-share linkedin">
+                      <i class="bi bi-linkedin" aria-hidden="true"></i><span>LinkedIn</span>
+                    </a>
+                  }
+                  @if (shareUi.whatsapp) {
+                    <a [href]="getShareUrl('whatsapp')" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-share whatsapp">
+                      <i class="bi bi-whatsapp" aria-hidden="true"></i><span>WhatsApp</span>
+                    </a>
+                  }
+                  <button type="button" class="btn btn-share copy" (click)="copyLink()">
+                    <i class="bi bi-link-45deg" aria-hidden="true"></i><span>Copy link</span>
+                  </button>
+                </div>
+              </div>
+            } @else {
+              <div class="share-section share-section--copy-only">
+                <h4 class="share-section__title">Share this article</h4>
+                <div class="share-buttons">
+                  <button type="button" class="btn btn-share copy" (click)="copyLink()">
+                    <i class="bi bi-link-45deg" aria-hidden="true"></i><span>Copy link</span>
+                  </button>
+                </div>
+              </div>
+            }
+
+            <!-- Author Box -->
+            @if (blog.authorName) {
+              <div class="author-box">
+                <div class="author-box__inner">
+                  @if (blog.authorAvatar) {
+                    <img [src]="blog.authorAvatar" [alt]="blog.authorName" class="author-image">
+                  } @else {
+                    <div class="author-image-placeholder">{{ blog.authorName.charAt(0) }}</div>
+                  }
+                  <div class="author-info">
+                    <h5 class="author-info__title">Written by {{ blog.authorName }}</h5>
+                    <p class="author-info__subtitle">Wild Valley Foods</p>
+                  </div>
+                </div>
+              </div>
+            }
+          </article>
+        </main>
+
+        <!-- Sidebar -->
+        <aside class="blog-detail-sidebar">
+          <!-- Table of Contents -->
+          @if (viewModel.tocItems.length > 0) {
+            <div class="sidebar-widget toc-widget">
+              <h5 class="sidebar-widget__title">On this page</h5>
+              <ul class="toc-list">
+                @for (item of viewModel.tocItems; track item.id) {
+                  <li [class.level-2]="item.level === 2" [class.level-3]="item.level >= 3">
+                    <a [href]="'#' + item.id" (click)="scrollToSection(item.id, $event)">
+                      {{ item.text }}
+                    </a>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+          <!-- Related Blogs -->
+          @if (viewModel.relatedBlogs.length > 0) {
+            <div class="sidebar-widget related-widget">
+              <h5 class="sidebar-widget__title">Related articles</h5>
+              @for (related of viewModel.relatedBlogs.slice(0, 4); track related.id) {
+                <article class="related-card" [routerLink]="['/blog', related.slug]">
+                  <div class="related-image">
+                    <img [src]="blogImage(related)"
+                         [alt]="related.title" loading="lazy" class="wvf-protect-asset" draggable="false">
+                  </div>
+                  <div class="related-content">
+                    <h6>{{ related.title }}</h6>
+                    <span class="related-date">{{ related.formattedPublishDate }}</span>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+
+          <!-- Categories -->
+          @if (blog.category) {
+            <div class="sidebar-widget categories-widget">
+              <h5 class="sidebar-widget__title">Category</h5>
+              <a [routerLink]="['/blog']" [queryParams]="{ category: blog.category.id }" 
+                 class="category-link">
+                <span [style.background-color]="blog.category.color + '20'"
+                      [style.color]="blog.category.color">
+                  {{ blog.category.name }}
+                </span>
+              </a>
+            </div>
+          }
+        </aside>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Loading State -->
+@if (viewModel.isLoading) {
+  <div class="blog-detail-page blog-detail-page--state">
+    <div class="blog-detail-state blog-detail-state--loading">
+      <div class="blog-detail-state__card">
+        <div class="spinner-border blog-detail-state__spinner" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="blog-detail-state__text">Loading article…</p>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Error State -->
+@if (viewModel.error) {
+  <div class="blog-detail-page blog-detail-page--state">
+    <div class="blog-detail-state blog-detail-state--error">
+      <div class="blog-detail-state__card">
+        <i class="bi bi-journal-x blog-detail-state__icon" aria-hidden="true"></i>
+        <h4 class="blog-detail-state__heading">Article not found</h4>
+        <p class="blog-detail-state__msg">{{ viewModel.error }}</p>
+        <a routerLink="/blog" class="btn blog-detail-state__cta">Browse all articles</a>
+      </div>
+    </div>
+  </div>
+}

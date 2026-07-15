@@ -1,0 +1,23 @@
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-primary);
+  color: white;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow-md);
+
+  .logo {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .menu-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: none;
+  }
+}

@@ -1,0 +1,84 @@
+<div class="payment-failure-container">
+  <div class="failure-card">
+    <div class="failure-icon">
+      <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+        <circle cx="40" cy="40" r="40" fill="#EF4444" fill-opacity="0.1"/>
+        <circle cx="40" cy="40" r="30" fill="#EF4444" fill-opacity="0.2"/>
+        <path d="M30 30L50 50M50 30L30 50" stroke="#EF4444" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    
+    <h1 class="failure-title">Payment Failed</h1>
+    <p class="failure-message">
+      We're sorry, but your payment could not be processed. Please try again or contact support.
+    </p>
+    
+    @if (orderId) {
+      <div class="order-details">
+        <p class="order-id">
+          <strong>Order ID:</strong> {{ orderId }}
+        </p>
+      </div>
+    }
+    
+    @if (errorMessage) {
+      <div class="error-details">
+        <p class="error-message">
+          <strong>Error:</strong> {{ errorMessage }}
+        </p>
+      </div>
+    }
+    
+    <div class="failure-info">
+      <div class="info-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="#EF4444" stroke-width="2"/>
+          <path d="M12 7V12M12 17H12.01" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Your payment was not successful</span>
+      </div>
+      <div class="info-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M9 11H15M9 15H15" stroke="#6B7280" stroke-width="2" stroke-linecap="round"/>
+          <rect x="3" y="5" width="18" height="14" rx="2" stroke="#6B7280" stroke-width="2"/>
+        </svg>
+        <span>No amount was charged from your account</span>
+      </div>
+      <div class="info-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect x="1" y="3" width="15" height="13" rx="2" stroke="#6B7280" stroke-width="2"/>
+          <path d="M16 8H20C20.5523 8 21 8.44772 21 9V11C21 11.5523 20.5523 12 20 12H16" stroke="#6B7280" stroke-width="2"/>
+          <path d="M4 8H12" stroke="#6B7280" stroke-width="2"/>
+        </svg>
+        <span>Your cart items are still saved</span>
+      </div>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn btn-primary" (click)="tryAgain()">
+        Try Again
+      </button>
+      <button class="btn btn-outline" (click)="goToCart()">
+        View Cart
+      </button>
+    </div>
+    
+    <div class="troubleshooting">
+      <h3>Common Issues:</h3>
+      <ul>
+        <li>Insufficient funds in your account</li>
+        <li>Incorrect card details or CVV</li>
+        <li>Card expired or blocked</li>
+        <li>Network connectivity issues</li>
+        <li>Bank declined the transaction</li>
+      </ul>
+    </div>
+    
+    <div class="help-section">
+      <p>Still having trouble? 
+        <a routerLink="/contact-us" class="help-link">Contact Support</a> or 
+        <a href="tel:+917738899165" class="help-link">Call +91 773 8899 165</a>
+      </p>
+    </div>
+  </div>
+</div>

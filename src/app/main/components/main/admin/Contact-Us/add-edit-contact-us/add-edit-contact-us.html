@@ -1,0 +1,92 @@
+<form #contactUsForm="ngForm" (ngSubmit)="onSubmit(contactUsForm)">
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+      {{ contactUs ? 'Edit Contact' : 'Add New Contact' }}
+    </h5>
+    <button
+      type="button"
+      class="btn-close btn-close-white"
+      aria-label="Close"
+      (click)="activeModal.dismiss()"
+    ></button>
+  </div>
+
+  <div class="modal-body modal-scroll">
+    <!-- Name -->
+    <div class="mb-3">
+      <label class="form-label">Name <span class="text-danger">*</span></label>
+      <input
+        type="text"
+        class="form-control"
+        name="name"
+        placeholder="Enter your name"
+        [(ngModel)]="viewModel.contactUsFormData.name"
+        required
+        minlength="2"
+        maxlength="50"
+        #nameCtrl="ngModel"
+        [ngClass]="{ 'is-invalid': nameCtrl.invalid && nameCtrl.touched }"
+      />
+      <div class="invalid-feedback">
+        Name is required (2–50 characters).
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label class="form-label">Email <span class="text-danger">*</span></label>
+      <input
+        type="email"
+        class="form-control"
+        name="email"
+        placeholder="Enter your email"
+        [(ngModel)]="viewModel.contactUsFormData.email"
+        required
+        #emailCtrl="ngModel"
+        [ngClass]="{ 'is-invalid': emailCtrl.invalid && emailCtrl.touched }"
+      />
+      <div class="invalid-feedback">
+        Please enter a valid email address.
+      </div>
+    </div>
+
+    <!-- Description / Message -->
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea
+        class="form-control"
+        name="description"
+        placeholder="Write your message or inquiry here..."
+        [(ngModel)]="viewModel.contactUsFormData.description"
+        rows="4"
+        minlength="10"
+        maxlength="500"
+        #descCtrl="ngModel"
+        [ngClass]="{ 'is-invalid': descCtrl.invalid && descCtrl.touched }"
+      ></textarea>
+      <div class="invalid-feedback">
+        Description should be at least 10 characters (max 500).
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      [disabled]="isSubmitting"
+      (click)="activeModal.dismiss()"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="isSubmitting || contactUsForm.invalid"
+    >
+      <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+      {{ contactUs ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</form>

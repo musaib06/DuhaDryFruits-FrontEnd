@@ -1,0 +1,126 @@
+<form #unitForm="ngForm" (ngSubmit)="onSubmit(unitForm)">
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+      {{ unit ? 'Edit Unit' : 'Add New Unit' }}
+    </h5>
+    <button type="button"
+            class="btn-close btn-close-white"
+            aria-label="Close"
+            (click)="activeModal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body modal-scroll">
+
+    <!-- Name -->
+    <div class="mb-3">
+      <label class="form-label">
+        Name <span class="text-danger">*</span>
+      </label>
+      <input type="text"
+             class="form-control"
+             name="name"
+             placeholder="Enter unit name"
+             [(ngModel)]="viewModel.UnitsFormData.name"
+             required
+             minlength="2"
+             maxlength="50"
+             #nameCtrl="ngModel"
+             [ngClass]="{ 'is-invalid': nameCtrl.invalid && nameCtrl.touched }">
+
+      <div class="invalid-feedback">
+        Name is required (2–50 characters)
+      </div>
+    </div>
+
+    <!-- Symbol -->
+    <div class="mb-3">
+      <label class="form-label">
+        Symbol <span class="text-danger">*</span>
+      </label>
+      <input type="text"
+             class="form-control"
+             name="symbol"
+             placeholder="Enter symbol"
+             [(ngModel)]="viewModel.UnitsFormData.symbol"
+             required
+             minlength="1"
+             maxlength="5"
+             #symbolCtrl="ngModel"
+             [ngClass]="{ 'is-invalid': symbolCtrl.invalid && symbolCtrl.touched }">
+
+      <div class="invalid-feedback">
+        Symbol is required (1–5 characters)
+      </div>
+    </div>
+
+    <!-- Display Order -->
+    <div class="mb-3">
+      <label class="form-label">
+        Sequence <span class="text-danger">*</span>
+      </label>
+      <input type="number"
+             class="form-control"
+             name="displayOrder"
+             placeholder="Enter display sequence"
+             [(ngModel)]="viewModel.UnitsFormData.displayOrder"
+             min="1"
+             required
+             #displayOrderCtrl="ngModel"
+             [ngClass]="{ 'is-invalid': displayOrderCtrl.invalid && displayOrderCtrl.touched }">
+
+      <div class="invalid-feedback">
+        Sequence must be a positive number
+      </div>
+    </div>
+    <!-- Display Order -->
+    <div class="mb-3">
+      <label class="form-label">
+        Multiplier <span class="text-danger"></span>
+      </label>
+      <input type="number"
+             class="form-control"
+             name="multiplier"
+             placeholder="Enter multiplier"
+             [(ngModel)]="viewModel.UnitsFormData.multiplier"
+             min="1"
+             required
+             #multiplierCtrl="ngModel"
+             [ngClass]="{ 'is-invalid': multiplierCtrl.invalid && multiplierCtrl.touched }">
+      <div class="invalid-feedback">
+        Sequence must be a positive number
+      </div>
+    </div>
+    <!-- Is Base Unit -->
+    <div class="mb-3">
+      <div class="form-check form-switch">
+        <input class="form-check-input"
+               type="checkbox"
+               id="isBaseUnit"
+               name="isBaseUnit"
+               [(ngModel)]="viewModel.UnitsFormData.isBaseUnit">
+        <label class="form-check-label" for="isBaseUnit">
+          Is Base Unit
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button type="button"
+            class="btn btn-secondary"
+            [disabled]="isSubmitting"
+            (click)="activeModal.dismiss()">
+      Cancel
+    </button>
+
+    <button type="submit"
+            class="btn btn-primary"
+            [disabled]="isSubmitting || unitForm.invalid">
+      <span *ngIf="isSubmitting"
+            class="spinner-border spinner-border-sm me-1"></span>
+      {{ unit ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</form>

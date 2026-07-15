@@ -1,0 +1,85 @@
+<div class="container">
+    <h2 class="mb-4 text-center">Shopping Cart</h2>
+
+    <div *ngIf="viewModel.cartItems.length === 0" class="text-center py-5">
+        <p class="fs-4">Your cart is empty</p>
+        <a routerLink="/shop" class="btn btn-primary mt-3">Continue Shopping</a>
+    </div>
+
+    <div *ngIf="viewModel.cartItems.length > 0" class="row g-4">
+        <div class="col-12 col-lg-8">
+            <div class="list-group">
+                <div class="list-group-item d-flex flex-column flex-md-row align-items-center gap-3"
+                    *ngFor="let item of viewModel.cartItems" role="listitem">
+                    <img [src]="productImage(item)" [alt]="item.name" class="cart-item-img rounded wvf-protect-asset" draggable="false" loading="lazy"
+                        (error)="imageError($event, item)" />
+                    <div class="flex-grow-1 px-3">
+                        <h5 class="mb-2">{{ item.name }}</h5>
+                        <!-- Display variant info using utility -->
+                        @if (utils.getSelectedVariant(item); as variant) {
+                        <p class="mb-1 text-muted small">
+                            {{ utils.getVariantSizeAndWeightLabel(item) }} -
+                            Price: {{ variant.price | currency:'INR':'symbol':'1.0-0' }}
+                        </p>
+                        } @else {
+                        <p class="mb-1 text-muted small">Price: {{ utils.getPrice(item) | currency:'INR':'symbol':'1.0-0' }}</p>
+                        }
+                        <div class="input-group quantity-input-group w-auto">
+                            <button *ngIf="(item.cartQuantity || 1) > 1"
+                                class="btn btn-outline-secondary btn-sm" title="Decrease quantity"
+                                (click)="decrement(item)" aria-label="Decrease quantity">
+                                &minus;
+                            </button>
+                            <input type="number" class="form-control form-control-sm text-center"
+                                [value]="item.cartQuantity" (change)="updateQuantity(item, $event)" min="1"
+                                aria-label="Quantity" />
+                            <button class="btn btn-outline-secondary btn-sm" title="Increase quantity"
+                                (click)="increment(item)" aria-label="Increase quantity">
+                                &#43;
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <!-- Use utility for total calculation -->
+                        <p class="mb-2 fw-bold">
+                            {{ (utils.getPrice(item) * item.cartQuantity) | currency:'INR':'symbol':'1.0-0' }}
+                        </p>
+                        <button class="btn btn-danger btn-sm" aria-label="Remove item" (click)="removeItem(item)">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-outline-danger mt-3" (click)="clearCart()" aria-label="Clear all items">
+                Clear Cart
+            </button>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Order Summary</h4>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal</span>
+                        <span>{{viewModel.subTotal | currency:'INR':'symbol':'1.0-0' }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tax ({{ viewModel.taxRate * 100 }}%)</span>
+                        <span>{{ viewModel.tax | currency:'INR':'symbol':'1.0-0' }}</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+                        <span>Total</span>
+                        <span>{{ viewModel.total | currency:'INR':'symbol':'1.0-0' }}</span>
+                    </div>
+
+                    <button (click)="proceedToCheckout()" class="btn btn-primary w-100"
+                        aria-label="Proceed to checkout">
+                        Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

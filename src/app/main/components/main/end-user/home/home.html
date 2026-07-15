@@ -1,0 +1,145 @@
+<div class="home">
+    <div class="hero row">
+        <div class="col-12 col-lg-12 p-0">
+            @if (isLoadingBanners) {
+                <div class="banner-skeleton skeleton-pulse"></div>
+            } @else {
+                <app-banner [banners]="viewModel.banners"></app-banner>
+            }
+        </div>
+    </div>
+
+    <!-- <div>
+        <app-service-banner></app-service-banner>
+    </div> -->
+
+    <div class="container-fluid m-0 newarrivals">
+        <div class="row text-center mb-1">
+            <h1 class="fw-bold">BEST SELLERS</h1>
+        </div>
+
+        @if (isLoadingBestSellers) {
+            <div class="product-skeleton-grid">
+                @for (i of [1,2,3,4]; track i) {
+                    <div class="product-skeleton-card skeleton-pulse">
+                        <div class="skeleton-img"></div>
+                        <div class="skeleton-text">
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        } @else {
+            <div class="row justify-content-center">
+                @for (product of viewModel.newArrivals; track product.id) {
+                <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center">
+                    <app-product [product]="product" (addToCart)="onAddToCart($event)" (view)="openProduct($event)"
+                        (wishlist)="onWishlistChanged($event)" (review)="openProductReview($event)">
+                    </app-product>
+                </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="container-fluid m-0 products">
+        <div class="row text-center mb-4">
+            <h1 class="fw-bold">ALL PRODUCTS</h1>
+        </div>
+
+        @if (isLoadingProducts) {
+            <div class="product-skeleton-grid">
+                @for (i of [1,2,3,4,5,6,7,8]; track i) {
+                    <div class="product-skeleton-card skeleton-pulse">
+                        <div class="skeleton-img"></div>
+                        <div class="skeleton-text">
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        } @else {
+            <div class="row justify-content-center">
+                @for (product of viewModel.productsViewModel.products; track product.id) {
+                <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center">
+                    <app-product [product]="product" (addToCart)="onAddToCart(product)" (view)="openProduct($event)"
+                        (wishlist)="onWishlistChanged($event)" (review)="openProductReview($event)">
+                    </app-product>
+                </div>
+                }
+            </div>
+        }
+        <div class="text-center mb-4">
+          <a routerLink="/shop" class="btn btn-outline-warning btn-view-more">VIEW MORE</a>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <div class="row text-center mb-4">
+          <h1 class="fw-bold">JOIN OUR WELLNESS COMMUNITY</h1>
+          <div class="wellness-socials mt-2">
+            <a href="https://www.facebook.com/wildvalleyfoodskashmir/" target="_blank" rel="noopener" aria-label="Facebook"><img src="/assets/social/Facebook_icon.svg.png" alt="Facebook" class="social-icon-img" /></a>
+            <a href="https://youtube.com/@wildvalleyfoods?si=Z41npDlwf6tBSnBE" target="_blank" rel="noopener" aria-label="Youtube"><img src="/assets/social/youtube.png" alt="YouTube" class="social-icon-img" /></a>
+            <a href="https://www.instagram.com/wildvalleyfoods?igsh=MXQ4ZnZmdzl5aXFjag==" target="_blank" rel="noopener" aria-label="Instagram"><img src="/assets/social/instagram.jpg" alt="Instagram" class="social-icon-img" /></a>
+            <a href="https://chat.whatsapp.com/ITwYgBWNqhM7Km2GHwDeAC?mode=gi_t" target="_blank" rel="noopener" aria-label="WhatsApp"><img src="/assets/whatsAppIcon.png" alt="WhatsApp" class="social-icon-img" /></a>
+          </div>
+        </div>
+        <app-videos></app-videos>
+        <div class="text-center mt-3">
+          <button type="button" class="btn btn-outline-warning btn-view-more" (click)="openHealthConcerns()">
+             Discover More
+          </button>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <div class="row text-center mb-4">
+            <h4 class="fw-bold">WHAT OUR CUSTOMERS SAY!</h4>
+        </div>
+        <app-testimonial></app-testimonial>
+    </div>
+</div>
+
+@if (showReviewModal && selectedProductForReview) {
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Write a Review - {{ selectedProductForReview.name }}</h5>
+          <button type="button" class="btn-close" (click)="closeHomeReviewModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Your Name</label>
+            <input class="form-control" [(ngModel)]="reviewForm.name" type="text" placeholder="Enter your full name" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Your Email</label>
+            <input class="form-control" [(ngModel)]="reviewForm.email" type="email" placeholder="example@email.com" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Rating</label>
+            <div class="home-review-stars">
+              @for (star of [1,2,3,4,5]; track star) {
+                <i class="bi fs-4"
+                   [ngClass]="reviewRating >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                   (click)="setHomeReviewRating(star)"></i>
+              }
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Comment</label>
+            <textarea class="form-control" [(ngModel)]="reviewForm.comment" rows="4" placeholder="Share your experience..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeHomeReviewModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="submitHomeReview()">Submit Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

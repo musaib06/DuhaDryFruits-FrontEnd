@@ -1,0 +1,249 @@
+@use "../../../../../../variable" as *;
+
+.contact-page {
+  width: 100%;
+  padding: clamp(0.9rem, 2vw, 1.4rem);
+  background-image:
+    linear-gradient(135deg, rgba(255, 232, 166, 0.46), rgba(255, 244, 208, 0.32)),
+    url(../../../../../../assets/dryfruits.webp);
+  background-size: cover;
+  background-position: center;
+}
+
+.contact-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  border-radius: 20px;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 210, 87, 0.24);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.1);
+}
+
+.contact-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.contact-header h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  color: #181818;
+}
+
+.contact-header p {
+  margin: 0 auto;
+  max-width: 780px;
+  color: #3f464d;
+  line-height: 1.5;
+}
+
+.bulk-call-pill {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  background: #171717;
+  color: #fff;
+  font-weight: 600;
+}
+
+.bulk-call-pill i {
+  color: #ffd257;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 14px;
+}
+
+.info-card,
+.form-card {
+  border-radius: 16px;
+  padding: clamp(0.9rem, 1.7vw, 1.25rem);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+.info-card {
+  background: #20252c;
+}
+
+.form-card {
+  background: rgba(255, 255, 255, 0.97);
+}
+
+.contact-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.contact-chip + .contact-chip {
+  margin-top: 10px;
+}
+
+.chip-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: #fff;
+  color: #20252c;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.contact-chip h4 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  color: #ffd257;
+}
+
+.contact-chip p {
+  margin: 0;
+  color: #f2f2f2;
+  line-height: 1.45;
+}
+
+.contact-phone {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #ffd257;
+  color: #111;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.phone-note {
+  margin-top: 6px !important;
+  color: rgba(255, 255, 255, 0.86) !important;
+  font-size: 0.92rem;
+}
+
+.connect-links {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+
+  a {
+    color: #f2f2f2;
+    text-decoration: none;
+    font-size: 0.94rem;
+
+    .social-icon-img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+      padding: 2px;
+      margin-right: 6px;
+      vertical-align: text-bottom;
+    }
+  }
+}
+
+.form-card h3 {
+  margin: 0 0 8px;
+  color: #181818;
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+}
+
+.input-box {
+  position: relative;
+  margin-top: 10px;
+}
+
+.input-box input,
+.input-box textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 12px 12px;
+  outline: none;
+  background: #fff;
+  color: #171717;
+}
+
+.input-box textarea {
+  resize: vertical;
+}
+
+.input-box span {
+  position: absolute;
+  left: 10px;
+  top: 11px;
+  font-size: 0.9rem;
+  color: #6d737a;
+  background: #fff;
+  padding: 0 4px;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.input-box input:focus ~ span,
+.input-box input.ng-dirty ~ span,
+.input-box textarea:focus ~ span,
+.input-box textarea.ng-dirty ~ span {
+  top: -8px;
+  font-size: 0.75rem;
+  color: #181818;
+}
+
+.submit-box {
+  margin-top: 12px;
+}
+
+.input-box input[type="submit"] {
+  border: none;
+  background: #ffd257;
+  color: #171717;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.input-box input[type="submit"]:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.invalid-feedback {
+  margin-top: 4px;
+  color: #c33434;
+  font-size: 0.82rem;
+}
+
+@media (max-width: $breakpoint-lg) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .contact-page {
+    padding: 0.7rem;
+  }
+
+  .contact-shell {
+    border-radius: 14px;
+    padding: 0.85rem;
+  }
+
+  .bulk-call-pill {
+    width: 100%;
+    justify-content: center;
+  }
+}

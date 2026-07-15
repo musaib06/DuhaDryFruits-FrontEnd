@@ -1,0 +1,199 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-bag-check me-2"></i>Orders</h2>
+    <div class="btn-group">
+      <button class="btn btn-outline-primary btn-sm" (click)="exportToPDF()" title="Export to PDF">
+        <i class="bi bi-file-pdf me-1"></i>Export PDF
+      </button>
+      <button class="btn btn-outline-success btn-sm" (click)="exportToExcel()" title="Export to Excel">
+        <i class="bi bi-file-excel me-1"></i>Export Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-2">
+          <label class="form-label">Status</label>
+          <select class="form-select" [(ngModel)]="viewModel.filters.status" (change)="applyFilters()">
+            <option value="">All Status</option>
+            <option value="created">Created</option>
+            <option value="paid">Paid</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="resolved">Resolved</option>
+            <option value="failed">Failed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Customer</label>
+          <select class="form-select" [(ngModel)]="viewModel.filters.customerId" (change)="applyFilters()">
+            <option [ngValue]="null">All Customers</option>
+            @for (customer of viewModel.customers; track customer.id || $index) {
+              <option [ngValue]="customer.id">
+                {{ customer.fullName }}
+              </option>
+            }
+          </select>
+        </div>
+        <!-- <div class="col-md-2">
+          <label class="form-label">Start Date</label>
+          <input type="date" class="form-control" [(ngModel)]="viewModel.filters.startDate" (ngModelChange)="onDateChange($event)">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">End Date</label>
+          <input type="date" class="form-control" [(ngModel)]="viewModel.filters.endDate" (ngModelChange)="onDateChange($event)">
+        </div> -->
+
+        <div class="col-md-2">
+          <label class="form-label">Start Date</label>
+          <div class="input-group date-picker-group">
+            <span class="input-group-text bg-light" (click)="openDatePicker('startDate')" style="cursor: pointer;">
+              <i class="bi bi-calendar3"></i>
+            </span>
+            <input type="date"
+                   id="startDate"
+                   class="form-control"
+                   [(ngModel)]="viewModel.filters.startDate"
+                   (change)="onDateChange()">
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">End Date</label>
+          <div class="input-group date-picker-group">
+            <span class="input-group-text bg-light" (click)="openDatePicker('endDate')" style="cursor: pointer;">
+              <i class="bi bi-calendar3"></i>
+            </span>
+            <input type="date"
+                   id="endDate"
+                   class="form-control"
+                   [(ngModel)]="viewModel.filters.endDate"
+                   (change)="onDateChange()">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Search</label>
+          <input type="text" class="form-control" [(ngModel)]="viewModel.filters.search" 
+                 placeholder="Order ID, Receipt..." (keyup.enter)="applyFilters()">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+            <i class="bi bi-x-circle me-1"></i>Clear
+          </button>
+        </div>
+      </div>
+      <div class="row g-3 mt-2">
+        <div class="col-md-3">
+          <label class="form-label">Min Amount (₹)</label>
+          <input type="number" class="form-control" [(ngModel)]="viewModel.filters.minAmount" 
+                 placeholder="0" (change)="applyFilters()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Max Amount (₹)</label>
+          <input type="number" class="form-control" [(ngModel)]="viewModel.filters.maxAmount" 
+                 placeholder="999999" (change)="applyFilters()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (viewModel.loading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (viewModel.error && !viewModel.loading) {
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ viewModel.error }}
+    </div>
+  }
+
+  <!-- Orders Table -->
+  @if (!viewModel.loading && !viewModel.error) {
+    <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Razorpay Order ID</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of viewModel.orders; track order.id) {
+              <tr>
+                <td><strong>#{{ order.id }}</strong></td>
+                <td>
+                  <small class="text-muted">{{ order.razorpayOrderId || 'N/A' }}</small>
+                </td>
+                <td>
+                  <div>{{ order.customer?.firstName || 'N/A' }} {{ order.customer?.lastName || '' }}</div>
+                  <small class="text-muted">{{ order.customer?.email || '' }}</small>
+                </td>
+                <td><strong>{{ formatCurrency(order.amount) }}</strong></td>
+                <td>
+                  <span class="badge" [ngClass]="getPaymentBadgeClass(order)">
+                    {{ getPaymentStatusLabel(order) }}
+                  </span>
+                </td>
+                <td>
+                  <select class="form-select form-select-sm" [value]="order.status"
+                          (change)="updateStatus(order, $any($event.target).value)"
+                          [ngClass]="getStatusBadgeClass(order.status)">
+                    <option value="created">Created</option>
+                    <option value="paid">Paid</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="resolved">Resolved</option>
+                    <option value="failed">Failed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </td>
+                <td>{{ formatDate(order.created_at || order.createdOnUTC) }}</td>
+                <td>
+                  <a [routerLink]="['/admin/order', order.id]" class="btn btn-sm btn-primary me-1">
+                    <i class="bi bi-eye me-1"></i>View
+                  </a>
+                </td>
+              </tr>
+            }
+            @if (viewModel.orders.length === 0) {
+              <tr>
+                <td colspan="8" class="text-center py-4 text-muted">
+                  <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                  No orders found
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (viewModel.totalCount > 0) {
+        <pagination
+          [viewModel]="viewModel.pagination"
+          (selectedPageNum)="onPageChange($event)">
+        </pagination>
+      }
+    </div>
+    </div>
+  }
+</div>
+

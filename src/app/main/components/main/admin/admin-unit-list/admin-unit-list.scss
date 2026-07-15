@@ -1,0 +1,140 @@
+/* =======================
+   Header Actions
+   ======================= */
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  .btn {
+    flex-shrink: 0;
+  }
+
+  .search-box {
+    min-width: 220px;
+    max-width: 400px;
+    flex: 1;
+
+    .input-group-text {
+      background: #f8f9fa;
+      border-right: 0;
+    }
+
+    .form-control {
+      border-left: 0;
+      box-shadow: none !important;
+
+      &:focus {
+        border-color: #198754;
+      }
+    }
+  }
+}
+
+/* =======================
+   Table Styling
+   ======================= */
+.table-hover-wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  min-width: 700px;
+
+  th {
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    position: relative;
+
+    i {
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+  }
+
+  td {
+    vertical-align: middle;
+    max-width: 200px;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .table-icon {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+  }
+
+  .text-wrap {
+    white-space: normal;
+  }
+
+  .table-row-hover:hover {
+    background-color: #f1f3f5;
+  }
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+}
+
+/* =======================
+   Empty State
+   ======================= */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+
+  i {
+    font-size: 3rem;
+    color: #adb5bd;
+  }
+
+  h4 {
+    font-weight: 600;
+    margin-top: 1rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+}
+
+/* =======================
+   Pagination
+   ======================= */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+/* =======================
+   Responsive adjustments
+   ======================= */
+@media (max-width: 768px) {
+  .table th, .table td {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+
+  .table-icon {
+    height: 30px;
+    width: 30px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

@@ -1,0 +1,121 @@
+<form #categoryForm="ngForm" (ngSubmit)="onSubmit(categoryForm)">
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+      {{ category ? 'Edit Category' : 'Add New Category' }}
+    </h5>
+    <button type="button" class="btn-close btn-close-white" aria-label="Close"
+            (click)="activeModal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body modal-scroll">
+    <!-- Name -->
+    <div class="mb-3">
+      <label class="form-label">Name <span class="text-danger">*</span></label>
+      <input type="text"
+             class="form-control"
+             name="name"
+             placeholder="Enter category name"
+             [(ngModel)]="viewModel.categoryFormData.name"
+             required
+             minlength="2"
+             maxlength="50"
+             #nameCtrl="ngModel"
+             [ngClass]="{ 'is-invalid': nameCtrl.invalid && nameCtrl.touched }">
+      <div class="invalid-feedback">
+        Name is required (2–50 characters)
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea class="form-control"
+                name="description"
+                placeholder="Enter category description (optional)"
+                [(ngModel)]="viewModel.categoryFormData.description"
+                rows="3"
+                maxlength="250"></textarea>
+    </div>
+
+    <!-- Sequence & Status -->
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Sequence <span class="text-danger">*</span></label>
+        <input type="number"
+               class="form-control"
+               name="sequence"
+               placeholder="Enter display sequence"
+               [(ngModel)]="viewModel.categoryFormData.sequence"
+               min="0"
+               required
+               #sequenceCtrl="ngModel"
+               [ngClass]="{ 'is-invalid': sequenceCtrl.invalid && sequenceCtrl.touched }">
+        <div class="invalid-feedback">
+          Sequence must be a positive number
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Status <span class="text-danger">*</span></label>
+        <select class="form-select"
+                name="status"
+                [(ngModel)]="viewModel.categoryFormData.status"
+                required>
+          <option value="" disabled>Select status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <div class="invalid-feedback">
+          Status is required
+        </div>
+      </div>
+    </div>
+
+    <!-- Slider Switch -->
+    <div class="mb-3">
+      <div class="form-check form-switch">
+        <input class="form-check-input"
+               type="checkbox"
+               id="sliderSwitch"
+               name="slider"
+               [(ngModel)]="viewModel.categoryFormData.slider">
+        <label class="form-check-label" for="sliderSwitch">Show in Slider</label>
+      </div>
+    </div>
+
+    <!-- Category Icon -->
+    <div class="mb-3">
+      <label class="form-label">Category Icon <span class="text-danger">*</span></label>
+      <input type="file"
+             class="form-control"
+             accept="image/*"
+             (change)="onFileChange($event)"
+             [ngClass]="{
+               'is-invalid': !hasCategoryIcon() && viewModel.FormSubmitted
+             }">
+      <div class="invalid-feedback">
+        Category icon is required
+      </div>
+      @if (hasCategoryIcon()) {
+        <div class="mt-2">
+          <img [src]="getCategoryIconPreview()" alt="Category Icon"
+               class="img-thumbnail" style="max-width: 100px;">
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary"
+            [disabled]="isSubmitting"
+            (click)="activeModal.dismiss()">Cancel</button>
+    <button type="submit" class="btn btn-primary"
+            [disabled]="isSubmitting || categoryForm.invalid || (!selectedFile && !category)">
+      @if (isSubmitting) {
+        <span class="spinner-border spinner-border-sm me-1"></span>
+      }
+      {{ category ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</form>

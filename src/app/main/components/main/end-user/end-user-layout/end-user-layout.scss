@@ -1,0 +1,108 @@
+@use "../../../../../../variable" as *;
+
+/* Mobile category FAB — right edge, vertically centered (thumb-friendly one-handed) */
+.mobile-category-fab {
+  position: fixed;
+  right: calc(#{$spacing-md} + env(safe-area-inset-right, 0px));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1040;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $color-primary, $color-primary-dark);
+  color: $color-text-on-primary;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  font-size: 1.35rem;
+  cursor: pointer;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:active {
+    transform: translateY(-50%) scale(0.96);
+  }
+}
+
+.category-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1030;
+  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.category-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1035;
+  max-height: 72vh;
+  background: $color-bg-primary;
+  border-radius: $border-radius-lg $border-radius-lg 0 0;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
+  transform: translateY(100%);
+  transition: transform 0.28s ease;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  pointer-events: none;
+
+  &--open {
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-md $spacing-lg;
+    border-bottom: 1px solid $gray-200;
+  }
+
+  &__title {
+    font-weight: $font-weight-bold;
+    font-size: 1.05rem;
+  }
+
+  &__body {
+    overflow-y: auto;
+    padding: $spacing-sm 0 $spacing-lg;
+  }
+
+  &__row {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: $spacing-md $spacing-lg;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    color: $color-text-primary;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:hover,
+    &:focus-visible {
+      background: $gray-100;
+    }
+
+    &--all {
+      font-weight: $font-weight-semibold;
+      color: $color-primary-dark;
+    }
+  }
+}
+
+app-header {
+  position: sticky;
+  top: 0;
+  z-index: $z-index-fixed;
+  background: $color-bg-primary;
+}

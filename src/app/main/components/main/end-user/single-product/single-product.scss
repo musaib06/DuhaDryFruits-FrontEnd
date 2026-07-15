@@ -1,0 +1,480 @@
+@use "../../../../../../variable" as *;
+@use "sass:color";
+
+.product-page {
+  color: $color-text-primary;
+
+  .image-card {
+    background: $color-bg-primary;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-base;
+    .main-image-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      border-radius: 10px;
+      min-height: 200px;
+      .main-image {
+        max-height: 400px;
+        object-fit: contain;
+      }
+    }
+
+    .thumbnails {
+      .thumb-img {
+        width: 64px;
+        height: 64px;
+        border-radius: $border-radius-md;
+        object-fit: cover;
+        transition: $transition-fast;
+      }
+      .thumb-btn {
+        position: relative;
+        border: 2px solid transparent;
+        background: transparent;
+        padding: 2px;
+        border-radius: $border-radius-md;
+        transition: border-color 0.2s;
+        &.selected {
+          border-color: $color-primary;
+          .thumb-img {
+            box-shadow: 0 0 0 2px rgba($color-primary, 0.25);
+            transform: scale(1.05);
+          }
+        }
+        &:hover:not(.selected) {
+          border-color: rgba($color-primary, 0.4);
+        }
+      }
+      .variant-thumb-active {
+        border-color: $color-warning-yellow;
+        .thumb-img {
+          box-shadow: 0 0 0 2px rgba($color-warning-yellow, 0.3);
+        }
+      }
+      .variant-thumb-badge {
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 9px;
+        background: $color-warning-yellow;
+        color: #000;
+        padding: 1px 4px;
+        border-radius: 3px;
+        white-space: nowrap;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+    }
+  }
+
+  .product-details-card {
+    border: none;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-base;
+    background: $color-bg-primary;
+
+    .product-title {
+      font-weight: $font-weight-bold;
+      color: #111;
+    }
+
+    .product-subtitle {
+      font-size: 0.95rem;
+      color: #6c757d;
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .price {
+      color: $color-warning-yellow;
+      font-weight: $font-weight-bold;
+      font-size: 1.6rem;
+    }
+
+    .stock-badge {
+      font-size: $font-size-xs;
+      padding: 0.4rem 0.6rem;
+      border-radius: $border-radius-md;
+    }
+
+    .qty-selector {
+      background: $color-bg-quaternary;
+      input {
+        width: 50px;
+        font-weight: $font-weight-semibold;
+      }
+      button {
+        color: $color-text-primary;
+        &:hover {
+          color: $color-info;
+        }
+      }
+    }
+
+    /* Variant dropdown: keep text readable on first focus/tap */
+    select.form-select {
+      color: $color-text-primary;
+      background-color: $color-bg-primary;
+
+      &:focus {
+        color: $color-text-primary;
+        background-color: $color-bg-primary;
+      }
+
+      option {
+        color: $color-text-primary;
+      }
+    }
+  }
+
+  .rating-summary i {
+    font-size: $font-size-lg;
+  }
+
+  .reviews-section {
+    .review-card {
+      border: none;
+      border-radius: $border-radius-lg;
+      background: $color-bg-primary;
+      box-shadow: $shadow-sm;
+      transition: all $transition-fast;
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-md;
+      }
+    }
+
+    .btn-gradient {
+      background: linear-gradient(90deg, $color-info, #6610f2);
+      color: $color-text-on-primary;
+      border: none;
+      transition: $transition-base;
+      &:hover {
+        background: linear-gradient(90deg, #6610f2, $color-info);
+        transform: scale(1.03);
+      }
+    }
+  }
+
+  .rich-desc {
+    background: #f9f9f9;
+    padding: $spacing-lg;
+    border-radius: 10px;
+    p {
+      line-height: $line-height-loose;
+      color: $gray-600;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+
+  .description-content {
+    p {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      line-height: 1.8;
+    }
+  }
+}
+
+.star-rating {
+  display: flex;
+  gap: 4px;
+}
+
+.star-rating i {
+  font-size: 28px;
+  cursor: pointer;
+  color: $gray-300;
+  transition: transform $transition-fast, color $transition-fast;
+}
+
+.bi-star-fill,
+.bi-star-half {
+  color: #ffc107 !important;
+}
+
+.star-rating i:hover {
+  transform: scale(1.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .product-page {
+    .product-title {
+      font-size: 1.25rem;
+      line-height: 1.4;
+    }
+
+    .description-content,
+    .rich-desc {
+      p {
+        font-size: 14px;
+        line-height: 1.9;
+        word-spacing: -0.3px;
+      }
+    }
+
+    .rich-desc {
+      padding: $spacing-md;
+    }
+  }
+}
+
+// Variant selector styles
+.variant-selector {
+  width: 100%;
+  
+  .variant-options {
+    flex-wrap: wrap;
+    max-width: 100%;
+    width: 100%;
+    gap: 8px;
+    
+    .variant-btn {
+      position: relative;
+      min-width: 100px;
+      max-width: 150px;
+      padding: 8px 12px;
+      border: 2px solid $color-border-base;
+      border-radius: $border-radius-md;
+      background: $color-bg-primary;
+      transition: all 0.2s ease;
+
+      .variant-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .variant-img-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: $color-primary;
+        display: block;
+        align-self: flex-end;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+      }
+
+      .variant-size {
+        font-weight: $font-weight-semibold;
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+      }
+
+      .variant-price {
+        font-weight: $font-weight-bold;
+        font-size: $font-size-base;
+        color: $color-warning-yellow;
+      }
+
+      .variant-stock {
+        font-size: $font-size-xs;
+      }
+
+      &:hover:not(:disabled) {
+        border-color: $color-primary;
+        background: rgba($color-primary, 0.15);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($color-primary, 0.25);
+
+        .variant-size {
+          color: $color-text-primary;
+        }
+
+        .variant-price {
+          color: color.adjust($color-warning-yellow, $lightness: -8%);
+        }
+      }
+
+      &.variant-active {
+        border-color: $color-primary;
+        background: linear-gradient(135deg, $color-primary 0%, color.adjust($color-primary, $lightness: -8%) 100%);
+        box-shadow: 0 6px 20px rgba($color-primary, 0.5);
+        transform: translateY(-2px);
+
+        .variant-size {
+          color: #1a1a1a !important;
+          font-weight: $font-weight-bold;
+        }
+
+        .variant-price {
+          color: #5a4a00 !important;
+          font-weight: $font-weight-bold;
+        }
+
+        .variant-stock {
+          color: rgba(0,0,0, 0.7) !important;
+        }
+      }
+
+      &.variant-out-of-stock {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: $gray-100;
+        border-style: dashed;
+
+        .variant-size,
+        .variant-price {
+          color: $gray-500;
+        }
+
+        .variant-stock {
+          color: $gray-400 !important;
+        }
+      }
+    }
+  }
+}
+
+// Description text formatting
+.description-text {
+  white-space: pre-wrap !important;
+  word-wrap: break-word;
+  line-height: 1.8;
+  text-align: justify;
+
+  // Normalize multiple spaces and line breaks
+  &::before {
+    content: "";
+    display: block;
+    height: 0;
+  }
+}
+
+.rich-description-content {
+  line-height: 1.8;
+  text-align: justify;
+
+  p, div, span {
+    margin-bottom: 0.5rem;
+    line-height: 1.8;
+  }
+}
+
+/* ===================== Product FAQs (accordion) ===================== */
+.product-faqs {
+  h2 {
+    font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  }
+
+  .faq-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .faq-item {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+    &.open {
+      border-color: rgba(0, 0, 0, 0.14);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .faq-question-heading {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: transparent;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $color-text-primary;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-primary;
+      outline-offset: -2px;
+    }
+  }
+
+  .faq-question-text {
+    flex: 1 1 auto;
+  }
+
+  .faq-icon {
+    flex: 0 0 auto;
+    font-size: 1rem;
+    transition: transform 0.25s ease;
+  }
+
+  .faq-item.open .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Animated expand/collapse without removing content from the DOM
+     (keeps it SSR-rendered and accessible). */
+  .faq-answer-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+  }
+
+  .faq-item.open .faq-answer-wrap {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-answer {
+    overflow: hidden;
+    min-height: 0;
+    padding: 0 1.25rem;
+    line-height: 1.7;
+    color: $color-text-secondary;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    transition: padding 0.3s ease;
+  }
+
+  .faq-item.open .faq-answer {
+    padding: 0 1.25rem 1.15rem;
+  }
+
+  @media (max-width: 576px) {
+    .faq-question {
+      padding: 0.85rem 1rem;
+      font-size: 0.95rem;
+    }
+    .faq-answer {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    .faq-item.open .faq-answer {
+      padding: 0 1rem 1rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-faqs .faq-answer-wrap,
+  .product-faqs .faq-icon,
+  .product-faqs .faq-answer {
+    transition: none;
+  }
+}

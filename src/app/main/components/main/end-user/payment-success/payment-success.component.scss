@@ -1,0 +1,189 @@
+.payment-success-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.success-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-icon {
+  margin-bottom: 24px;
+  animation: scaleIn 0.5s ease-out 0.2s both;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.success-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #10B981;
+  margin-bottom: 16px;
+  animation: fadeIn 0.5s ease-out 0.4s both;
+}
+
+.success-message {
+  font-size: 16px;
+  color: #6B7280;
+  margin-bottom: 32px;
+  line-height: 1.5;
+  animation: fadeIn 0.5s ease-out 0.6s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.order-details {
+  background: #F9FAFB;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 32px;
+  animation: fadeIn 0.5s ease-out 0.8s both;
+}
+
+.order-id, .order-amount {
+  font-size: 14px;
+  color: #374151;
+  margin: 8px 0;
+}
+
+.success-info {
+  margin-bottom: 32px;
+  animation: fadeIn 0.5s ease-out 1s both;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+  text-align: left;
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.info-item svg {
+  flex-shrink: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  animation: fadeIn 0.5s ease-out 1.2s both;
+}
+
+.btn {
+  flex: 1;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary {
+  background: #10B981;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-outline {
+  background: white;
+  color: #6B7280;
+  border: 2px solid #E5E7EB;
+}
+
+.btn-outline:hover {
+  border-color: #10B981;
+  color: #10B981;
+  transform: translateY(-2px);
+}
+
+.help-section {
+  padding-top: 24px;
+  border-top: 1px solid #E5E7EB;
+  animation: fadeIn 0.5s ease-out 1.4s both;
+}
+
+.help-section p {
+  font-size: 14px;
+  color: #6B7280;
+  margin: 0;
+}
+
+.help-link {
+  color: #10B981;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.help-link:hover {
+  text-decoration: underline;
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .success-card {
+    padding: 24px;
+    margin: 10px;
+  }
+  
+  .success-title {
+    font-size: 24px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}

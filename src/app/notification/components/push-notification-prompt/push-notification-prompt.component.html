@@ -1,0 +1,42 @@
+<div *ngIf="showPrompt" class="push-prompt-overlay" @fadeInOut>
+  <div class="push-prompt-container">
+    <button class="close-btn" (click)="onDismiss()">&times;</button>
+    
+    <div class="prompt-content">
+      <div class="prompt-icon">🔔</div>
+      <h3>Stay Updated!</h3>
+      <p>Enable push notifications to get real-time updates about your orders, exclusive offers, and more.</p>
+      
+      <div class="benefits">
+        <div class="benefit-item">
+          <span class="benefit-icon">📦</span>
+          <span>Order updates</span>
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-icon">🏷️</span>
+          <span>Exclusive offers</span>
+        </div>
+        <div class="benefit-item">
+          <span class="benefit-icon">🚚</span>
+          <span>Delivery alerts</span>
+        </div>
+      </div>
+      
+      <div class="prompt-actions">
+        <button 
+          class="btn btn-primary" 
+          (click)="onEnable()"
+          [disabled]="isLoading">
+          <span *ngIf="!isLoading">Enable Notifications</span>
+          <span *ngIf="isLoading">Enabling...</span>
+        </button>
+        <button 
+          class="btn btn-secondary" 
+          (click)="onDismiss()"
+          [disabled]="isLoading">
+          Not Now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+<div class="dashboard-stats">
+  <div class="dashboard-header">
+    <h2>Notification Dashboard</h2>
+    <div class="dashboard-header-actions">
+      <a class="btn btn-primary" routerLink="/admin/notifications/send">
+        + Send Notification
+      </a>
+      <button class="btn btn-secondary" (click)="refresh()" [disabled]="isLoading">
+        {{ isLoading ? 'Loading...' : 'Refresh' }}
+      </button>
+    </div>
+  </div>
+  
+  <!-- Backend Unavailable Warning -->
+  <div class="alert alert-warning" *ngIf="backendUnavailable">
+    <strong>⚠️ Service Unavailable:</strong> The notification service is currently unavailable. 
+    Please check if the backend is deployed or try again later.
+  </div>
+  
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading && !backendUnavailable">
+    <div class="spinner"></div>
+    <p>Loading dashboard data...</p>
+  </div>
+  
+  <!-- Health Status -->
+  <div class="health-section" *ngIf="healthStatus">
+    <h3>Service Health</h3>
+    <div class="health-cards">
+      <div class="health-card">
+        <div class="health-indicator" [style.background-color]="getHealthColor('redis')"></div>
+        <span class="health-label">Redis</span>
+        <span class="health-status">{{ healthStatus.redis?.healthy ? 'Healthy' : 'Unhealthy' }}</span>
+        <span class="health-error" *ngIf="!healthStatus.redis?.healthy && healthStatus.redis?.error"
+              [title]="healthStatus.redis?.error">{{ healthStatus.redis?.error }}</span>
+      </div>
+      <div class="health-card">
+        <div class="health-indicator" [style.background-color]="getHealthColor('fcm')"></div>
+        <span class="health-label">FCM</span>
+        <span class="health-status">{{ healthStatus.fcm?.healthy ? 'Healthy' : 'Unhealthy' }}</span>
+        <span class="health-error" *ngIf="!healthStatus.fcm?.healthy && healthStatus.fcm?.error"
+              [title]="healthStatus.fcm?.error">{{ healthStatus.fcm?.error }}</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Today's Stats -->
+  <div class="stats-section" *ngIf="stats">
+    <h3>Today's Activity</h3>
+    <div class="stats-grid">
+      <div class="stat-card sent">
+        <div class="stat-icon">📤</div>
+        <div class="stat-value">{{ stats.today?.sent || 0 }}</div>
+        <div class="stat-label">Sent</div>
+      </div>
+      <div class="stat-card delivered">
+        <div class="stat-icon">✓</div>
+        <div class="stat-value">{{ stats.today?.delivered || 0 }}</div>
+        <div class="stat-label">Delivered</div>
+      </div>
+      <div class="stat-card failed">
+        <div class="stat-icon">❌</div>
+        <div class="stat-value">{{ stats.today?.failed || 0 }}</div>
+        <div class="stat-label">Failed</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Queue Stats -->
+  <div class="queue-section" *ngIf="queueStats?.length">
+    <h3>Queue Status</h3>
+    <div class="queue-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Queue</th>
+            <th>Waiting</th>
+            <th>Active</th>
+            <th>Failed</th>
+            <th>Delayed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let queue of queueStats">
+            <td class="queue-name">{{ queue.name }}</td>
+            <td class="queue-count waiting">{{ queue.waiting }}</td>
+            <td class="queue-count active">{{ queue.active }}</td>
+            <td class="queue-count failed">{{ queue.failed }}</td>
+            <td class="queue-count delayed">{{ queue.delayed }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

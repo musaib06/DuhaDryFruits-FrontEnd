@@ -1,0 +1,37 @@
+// Custom styles for ngx-ui-loader logo to show only center portion
+// This crops the full logo to show only the inner circle (landscape + "Wild Valley Foods" text)
+::ng-deep {
+  // Target the logo image directly
+  .ngx-ui-loader-logo,
+  .ngx-ui-loader-logo img {
+    // Zoom into the center portion by scaling up
+    transform: scale(1.8);
+    transform-origin: center center;
+    
+    // Ensure proper positioning
+    object-fit: cover;
+    object-position: center center;
+    
+    // Maintain aspect ratio
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  // Container to crop the edges (show only center)
+  .ngx-ui-loader-logo-wrapper,
+  .ngx-ui-loader-logo-container,
+  [class*="logo"] {
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-right: 30px !important; // Adjust as needed to center the cropped logo
+    // border-radius: 50% !important; // Keep it circular
+    
+    img {
+      transform: scale(1.8) !important;
+      transform-origin: center center !important;
+    }
+  }
+}
+

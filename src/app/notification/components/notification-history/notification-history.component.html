@@ -1,0 +1,97 @@
+<div class="notification-history-container">
+  <h2>Notification History</h2>
+  <p class="subtitle">View your recent notifications</p>
+  
+  <!-- Filters -->
+  <div class="filters">
+    <div class="filter-group">
+      <label>Type:</label>
+      <select [(ngModel)]="filterType" (change)="onFilterChange()">
+        <option value="">All Types</option>
+        <option value="whatsapp">WhatsApp</option>
+        <option value="push">Push</option>
+        <option value="email">Email</option>
+        <option value="sms">SMS</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label>Status:</label>
+      <select [(ngModel)]="filterStatus" (change)="onFilterChange()">
+        <option value="">All Status</option>
+        <option value="sent">Sent</option>
+        <option value="delivered">Delivered</option>
+        <option value="read">Read</option>
+        <option value="failed">Failed</option>
+        <option value="pending">Pending</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <span>Loading notifications...</span>
+  </div>
+  
+  <!-- Notification List -->
+  <div *ngIf="!isLoading" class="notification-list">
+    <div *ngIf="logs.length === 0" class="empty-state">
+      <span class="empty-icon">📭</span>
+      <p>No notifications found</p>
+    </div>
+    
+    <div *ngFor="let log of logs" class="notification-item">
+      <div class="notification-icon" [style.background-color]="getStatusColor(log.status)">
+        {{ getTypeIcon(log.type) }}
+      </div>
+      
+      <div class="notification-content">
+        <div class="notification-header">
+          <span class="notification-type">{{ log.type | titlecase }}</span>
+          <span class="notification-status" [style.color]="getStatusColor(log.status)">
+            {{ log.status | titlecase }}
+          </span>
+        </div>
+        
+        <div class="notification-details">
+          <p *ngIf="log.templateName" class="template-name">
+            Template: {{ log.templateName }}
+          </p>
+          <p *ngIf="log.messageContent" class="message-preview">
+            {{ log.messageContent | slice:0:100 }}{{ log.messageContent.length > 100 ? '...' : '' }}
+          </p>
+        </div>
+        
+        <div class="notification-meta">
+          <span class="timestamp">{{ formatDate(log.createdAt) }}</span>
+          <span *ngIf="log.deliveredAt" class="delivered-time">
+            Delivered: {{ formatDate(log.deliveredAt) }}
+          </span>
+          <span *ngIf="log.readAt" class="read-time">
+            Read: {{ formatDate(log.readAt) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Pagination -->
+  <div *ngIf="!isLoading && totalPages > 1" class="pagination">
+    <button 
+      class="page-btn" 
+      [disabled]="page === 1"
+      (click)="onPageChange(page - 1)">
+      ← Previous
+    </button>
+    
+    <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+    
+    <button 
+      class="page-btn" 
+      [disabled]="page === totalPages"
+      (click)="onPageChange(page + 1)">
+      Next →
+    </button>
+  </div>
+</div>

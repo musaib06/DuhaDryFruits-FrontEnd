@@ -1,0 +1,276 @@
+.send-notification-container {
+  max-width: 640px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.form-header h2 {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+  color: #222;
+}
+
+.form-header .subtitle {
+  margin: 0 0 20px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d5d5d5;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+.hint {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: #999;
+}
+
+.error {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #e53935;
+}
+
+.form-actions {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.inline-result {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.inline-result-success {
+  color: #2e7d32;
+}
+
+.inline-result-error {
+  color: #c62828;
+}
+
+.btn {
+  padding: 11px 22px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #4caf50;
+  color: #fff;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  font-size: 0.9rem;
+}
+
+.alert-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.alert-error {
+  background: #fdecea;
+  color: #c62828;
+  border: 1px solid #f5c6cb;
+}
+
+/* ===== Audience selector ===== */
+.audience-options {
+  display: grid;
+  gap: 10px;
+}
+
+.audience-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 400 !important;
+  margin: 0 !important;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.audience-option.active {
+  border-color: #4caf50;
+  background: #f4fbf4;
+}
+
+.audience-option:focus-visible {
+  outline: 2px solid #4caf50;
+  outline-offset: 2px;
+}
+
+.audience-option input {
+  width: auto !important;
+  margin-top: 3px;
+}
+
+/* Custom radio indicator (the option cards are the click targets, so we render
+   the radio ourselves instead of relying on a native input). */
+.audience-radio {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  border: 2px solid #b5b5b5;
+  border-radius: 50%;
+  position: relative;
+  transition: border-color 0.15s ease;
+}
+
+.audience-radio.checked {
+  border-color: #4caf50;
+}
+
+.audience-radio.checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4caf50;
+  transform: translate(-50%, -50%);
+}
+
+.audience-option span {
+  display: flex;
+  flex-direction: column;
+}
+
+.audience-option strong {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.audience-option small {
+  color: #888;
+  font-size: 0.78rem;
+}
+
+/* ===== Customer picker ===== */
+.selected-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+}
+
+.chip-remove {
+  border: none;
+  background: transparent;
+  color: #2e7d32;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.customer-results {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-top: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.customer-loading,
+.customer-empty {
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.customer-result {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.customer-result:last-child {
+  border-bottom: none;
+}
+
+.customer-result:hover {
+  background: #f4fbf4;
+}
+
+.cr-name {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.cr-meta {
+  font-size: 0.78rem;
+  color: #888;
+}

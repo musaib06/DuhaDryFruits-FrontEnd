@@ -1,0 +1,92 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-people-fill me-2"></i>Customers</h2>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-10">
+          <label class="form-label">Search</label>
+          <input type="text" class="form-control" [(ngModel)]="viewModel.filters.search" 
+                 placeholder="Search by name, email, contact..." 
+                 (keyup.enter)="applyFilters()"
+                 (input)="applyFilters()">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+            <i class="bi bi-x-circle me-1"></i>Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="viewModel.loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="viewModel.error && !viewModel.loading" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ viewModel.error }}
+  </div>
+
+  <!-- Customers Table -->
+  <div *ngIf="!viewModel.loading && !viewModel.error" class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Contact</th>
+              <th>Address</th>
+              <th>Registered</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let customer of viewModel.customers">
+              <td><strong>#{{ customer.id }}</strong></td>
+              <td>
+                <div class="fw-semibold">{{ getFullName(customer) }}</div>
+              </td>
+              <td>{{ customer.email || 'N/A' }}</td>
+              <td>{{ customer.contact || 'N/A' }}</td>
+              <td>
+                <small class="text-muted">{{ getPrimaryAddress(customer) }}</small>
+              </td>
+              <td>{{ formatDate(customer.createdOnUTC) }}</td>
+              <td>
+                <button class="btn btn-sm btn-danger" (click)="deleteCustomer(customer)">
+                  <i class="bi bi-trash me-1"></i>Delete
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="viewModel.customers.length === 0">
+              <td colspan="7" class="text-center py-4 text-muted">
+                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                No customers found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="viewModel.totalCount > 0">
+        <pagination
+          [viewModel]="viewModel.pagination"
+          (selectedPageNum)="onPageChange($event)">
+        </pagination>
+      </div>
+    </div>
+  </div>
+</div>
+

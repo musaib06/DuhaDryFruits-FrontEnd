@@ -1,0 +1,87 @@
+<!-- Header: Button & Search -->
+<div class="header-actions">
+  <button class="btn btn-success" (click)="openFormModal()">
+    <i class="bi bi-plus-lg me-1"></i> Add New Item
+  </button>
+
+  <div class="input-group search-box">
+    <span class="input-group-text bg-light border-end-0">
+      <i class="bi bi-search"></i>
+    </span>
+    <input 
+      type="text" 
+      class="form-control border-start-0"
+      placeholder="Search categories..."
+      [(ngModel)]="viewModel.searchTerm"
+      (input)="applyFilter()">
+  </div>
+</div>
+
+<!-- Table -->
+<div class="table-responsive table-hover-wrapper">
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-light sticky-header">
+      <tr>
+        <th>#</th>
+        <th (click)="sortData('name')">
+          Name <i class="bi ms-2" [ngClass]="getSortIcon('name')"></i>
+        </th>
+        <th (click)="sortData('sequence')">
+          Order <i class="bi ms-2" [ngClass]="getSortIcon('sequence')"></i>
+        </th>
+        <th>Description</th>
+        <th>Icon</th>
+        <th (click)="sortData('status')">
+          Status <i class="bi ms-2" [ngClass]="getSortIcon('status')"></i>
+        </th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let category of viewModel.filteredCategories; let i = index" class="table-row-hover">
+        <td>{{ i + 1 }}</td>
+        <td class="text-wrap text-break">{{ category.name }}</td>
+        <td>{{ category.sequence }}</td>
+        <td class="text-wrap text-break" title="{{ category.description }}">
+          {{ category.description || '-' }}
+        </td>
+        <td>
+          <img [src]="categoryIcon(category)" alt="Icon" class="table-icon">
+        </td>
+        <td>
+          <span 
+            class="badge" 
+            [ngClass]="category.status === 'active' ? 'bg-success' : 'bg-secondary'">
+            {{ category.status }}
+          </span>
+        </td>
+        <td>
+          <div class="d-flex gap-1 flex-wrap">
+            <button class="btn btn-sm btn-primary" (click)="openFormModal(category)">
+              <i class="bi bi-pencil-fill"></i> Edit
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="confirmDelete(category.id!)">
+              <i class="bi bi-trash-fill"></i> Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Empty State -->
+  <div *ngIf="viewModel.filteredCategories.length === 0" class="empty-state">
+    <i class="bi bi-folder-x"></i>
+    <h4>No categories found</h4>
+    <p>Try adjusting your search or add a new category</p>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="viewModel.pagination && viewModel.pagination.totalCount > 0">
+    <pagination 
+      (selectedPageNum)="loadPagedataWithPagination($event)" 
+      [viewModel]="viewModel.pagination">
+    </pagination>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+@use "../../../../../../variable" as *;
+
+.features {
+  background: $color-bg-primary;
+
+  .feature-box {
+    background: $gray-100;
+    border-radius: $border-radius-md;
+    transition: all $transition-fast;
+    cursor: default;
+    padding: $spacing-xl $spacing-md !important;
+
+    &:hover {
+      background: $color-bg-primary;
+      box-shadow: $shadow-md;
+      transform: translateY(-4px);
+    }
+
+    .icon-wrap {
+      font-size: $font-size-h2;
+      color: $color-primary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .title {
+      font-weight: $font-weight-semibold;
+      font-size: $font-size-base;
+      color: $color-text-primary;
+    }
+
+    .desc {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+    }
+  }
+}

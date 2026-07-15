@@ -1,0 +1,32 @@
+export const environment = {
+  appVersion: '0.0.0',
+  production: true,
+  apiResponseCacheTimeoutInMinutes: 5,
+  enableResponseCacheProcessing: true,
+  applicationVersion: '0.0.1',
+  apiBaseUrl: 'https://wild-valley-foods-backend-api.onrender.com',
+  apiDefaultTimeout: 10,
+  indexedDBName: 'WildValleyFoodsDB',
+  indexedDBVersion: 1,
+  LoggingInfo: {
+    cacheLogs: false,
+    cacheLogsToConsole: true,
+    logToConsole: true,
+    logToFile: false,
+    logToApi: false,
+    logToElasticCluster: false,
+    exceptionToConsole: true,
+    exceptionToFile: false,
+    exceptionToApi: false,
+    exceptionToElasticCluster: false,
+    localLogFilePath: 'Sample.log',
+  },
+  encryptionKey: '12345678',
+
+  blogShare: {
+    facebook: true,
+    twitter: true,
+    linkedin: true,
+    whatsAppNumber: '917738899165',
+  },
+};

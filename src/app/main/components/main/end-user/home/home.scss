@@ -1,0 +1,116 @@
+@use "../../../../../../variable" as *;
+
+.container-fluid {
+  width: 100%;
+}
+
+/* Skeleton loading animations */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.skeleton-pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+}
+
+.banner-skeleton {
+  width: 100%;
+  height: clamp(220px, 24vw, 480px);
+  background: linear-gradient(90deg, #f5f5f5 25%, #ececec 50%, #f5f5f5 75%);
+  background-size: 200% 100%;
+  border-radius: $border-radius-md;
+}
+
+.product-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  padding: 0 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.product-skeleton-card {
+  background: #fff;
+  border-radius: $border-radius-md;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+  .skeleton-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #e9ecef;
+  }
+  .skeleton-text {
+    padding: 0.75rem;
+    .skeleton-line {
+      height: 12px;
+      background: #e9ecef;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      &:nth-child(1) { width: 70%; }
+      &:nth-child(2) { width: 40%; }
+    }
+  }
+}
+
+.products {
+  width: 100%;
+}
+
+.newarrivals {
+  width: 100%;
+  background-color: aliceblue;
+  padding-top: $spacing-md;
+}
+
+.btn-view-more {
+  border-radius: 999px;
+  font-weight: $font-weight-semibold;
+  padding: 0.5rem 1rem;
+}
+
+.wellness-socials {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+
+  a {
+    width: 45px;
+    height: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    color: $color-text-primary;
+    text-decoration: none;
+    
+    .social-icon-img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+  }
+}
+
+.home-review-stars {
+  display: flex;
+  gap: 6px;
+
+  i {
+    cursor: pointer;
+  }
+}

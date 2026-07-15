@@ -1,0 +1,135 @@
+<form #TestimonialForm="ngForm" (ngSubmit)="onSubmit(TestimonialForm)">
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+      {{ Testimonial ? 'Edit Testimonial' : 'Add New Testimonial' }}
+    </h5>
+    <button
+      type="button"
+      class="btn-close btn-close-white"
+      aria-label="Close"
+      (click)="activeModal.dismiss()"
+    ></button>
+  </div>
+
+  <div class="modal-body modal-scroll">
+    <!-- Name -->
+    <div class="mb-3">
+      <label class="form-label">Full Name <span class="text-danger">*</span></label>
+      <input
+        type="text"
+        class="form-control"
+        name="name"
+        placeholder="Enter full name"
+        [(ngModel)]="viewModel.TestimonialFormData.name"
+        required
+        minlength="2"
+        maxlength="50"
+        #nameCtrl="ngModel"
+        [ngClass]="{ 'is-invalid': nameCtrl.invalid && nameCtrl.touched }"
+      />
+      <div class="invalid-feedback" *ngIf="nameCtrl.errors?.['required']">
+        Name is required
+      </div>
+      <div class="invalid-feedback" *ngIf="nameCtrl.errors?.['minlength']">
+        Name must be at least 2 characters
+      </div>
+      <div class="invalid-feedback" *ngIf="nameCtrl.errors?.['maxlength']">
+        Name cannot exceed 50 characters
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label class="form-label">Email <span class="text-danger">*</span></label>
+      <input
+        type="email"
+        class="form-control"
+        name="email"
+        placeholder="Enter email address"
+        [(ngModel)]="viewModel.TestimonialFormData.email"
+        required
+        email
+        #emailCtrl="ngModel"
+        [ngClass]="{ 'is-invalid': emailCtrl.invalid && emailCtrl.touched }"
+      />
+      <div class="invalid-feedback" *ngIf="emailCtrl.errors?.['required']">
+        Email is required
+      </div>
+      <div class="invalid-feedback" *ngIf="emailCtrl.errors?.['email']">
+        Enter a valid email address
+      </div>
+    </div>
+
+    <!-- Rating -->
+    <div class="mb-3">
+      <label class="form-label">Rating (1–5) <span class="text-danger">*</span></label>
+      <input
+        type="number"
+        class="form-control"
+        name="rating"
+        placeholder="Enter rating (1 to 5)"
+        [(ngModel)]="viewModel.TestimonialFormData.rating"
+        required
+        min="1"
+        max="5"
+        #ratingCtrl="ngModel"
+        [ngClass]="{ 'is-invalid': ratingCtrl.invalid && ratingCtrl.touched }"
+      />
+      <div class="invalid-feedback" *ngIf="ratingCtrl.errors?.['required']">
+        Rating is required
+      </div>
+      <div class="invalid-feedback" *ngIf="ratingCtrl.errors?.['min']">
+        Rating must be at least 1
+      </div>
+      <div class="invalid-feedback" *ngIf="ratingCtrl.errors?.['max']">
+        Rating cannot exceed 5
+      </div>
+    </div>
+
+    <!-- Message -->
+    <div class="mb-3">
+      <label class="form-label">Message <span class="text-danger">*</span></label>
+      <textarea
+        class="form-control"
+        name="message"
+        placeholder="Write your testimonial message"
+        [(ngModel)]="viewModel.TestimonialFormData.message"
+        required
+        rows="3"
+        minlength="10"
+        maxlength="500"
+        #messageCtrl="ngModel"
+        [ngClass]="{ 'is-invalid': messageCtrl.invalid && messageCtrl.touched }"
+      ></textarea>
+      <div class="invalid-feedback" *ngIf="messageCtrl.errors?.['required']">
+        Message is required
+      </div>
+      <div class="invalid-feedback" *ngIf="messageCtrl.errors?.['minlength']">
+        Message must be at least 10 characters
+      </div>
+      <div class="invalid-feedback" *ngIf="messageCtrl.errors?.['maxlength']">
+        Message cannot exceed 500 characters
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Footer -->
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      [disabled]="isSubmitting"
+      (click)="activeModal.dismiss()"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="isSubmitting || TestimonialForm.invalid"
+    >
+      <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+      {{ Testimonial ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</form>

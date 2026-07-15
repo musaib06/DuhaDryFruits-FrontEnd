@@ -1,0 +1,52 @@
+<app-header></app-header>
+<router-outlet></router-outlet>
+<app-footer></app-footer>
+
+<!-- Mobile-only: quick category menu (replaces floating WhatsApp on layout) -->
+@if (categorySheetOpen) {
+  <button
+    type="button"
+    class="category-sheet-backdrop d-lg-none"
+    aria-label="Close categories"
+    (click)="closeCategorySheet()"></button>
+}
+
+<div
+  id="mobile-category-sheet"
+  class="category-sheet d-lg-none"
+  [class.category-sheet--open]="categorySheetOpen"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Shop categories">
+  <div class="category-sheet__header">
+    <span class="category-sheet__title">Categories</span>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeCategorySheet()"></button>
+  </div>
+  <div class="category-sheet__body">
+    <button type="button" class="category-sheet__row category-sheet__row--all" (click)="goAllProducts()">
+      <i class="bi bi-grid-fill me-2"></i> All products
+    </button>
+    @for (cat of categories; track cat.id) {
+      <button type="button" class="category-sheet__row" (click)="openCategory(cat)">
+        {{ cat.name }}
+      </button>
+    }
+    @if (categories.length === 0) {
+      <p class="text-muted small px-3 py-2 mb-0">Categories will appear here when available.</p>
+    }
+  </div>
+</div>
+
+<button
+  type="button"
+  class="mobile-category-fab d-lg-none"
+  [attr.aria-expanded]="categorySheetOpen"
+  aria-controls="mobile-category-sheet"
+  (click)="categorySheetOpen = !categorySheetOpen"
+  aria-label="Browse shop categories">
+  @if (categorySheetOpen) {
+    <i class="bi bi-x-lg"></i>
+  } @else {
+    <i class="bi bi-grid-3x3-gap-fill"></i>
+  }
+</button>

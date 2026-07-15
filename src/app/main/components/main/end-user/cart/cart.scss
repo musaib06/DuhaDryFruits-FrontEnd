@@ -1,0 +1,35 @@
+@use "../../../../../../variable" as *;
+
+.container {
+  max-width: $container-lg;
+}
+
+.cart-item-img {
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 0.375rem;
+}
+
+.quantity-input-group {
+  max-width: 130px;
+
+  input[type="number"] {
+    cursor: pointer;
+  }
+
+  button {
+    user-select: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .cart-item-img {
+    width: 100%;
+    height: auto;
+  }
+
+  .quantity-input-group {
+    max-width: 100%;
+  }
+}

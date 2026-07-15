@@ -1,0 +1,12 @@
+diff --git a/node_modules/@angular/ssr/fesm2022/node.mjs b/node_modules/@angular/ssr/fesm2022/node.mjs
+index e5f3e6e..cbc64e1 100644
+--- a/node_modules/@angular/ssr/fesm2022/node.mjs
++++ b/node_modules/@angular/ssr/fesm2022/node.mjs
+@@ -234,6 +234,7 @@ class CommonEngine {
+         const commonRenderingOptions = {
+             url: opts.url,
+             document,
++            allowedHosts: [...this.allowedHosts],
+         };
+         return isBootstrapFn(moduleOrFactory)
+             ? renderApplication(moduleOrFactory, {

@@ -1,0 +1,128 @@
+<!-- Loading State -->
+@if (loading) {
+  <div class="testimonial-loading text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading testimonials...</span>
+    </div>
+    <p class="text-muted mt-2">Loading testimonials...</p>
+  </div>
+}
+
+<!-- Error State -->
+@else if (error) {
+  <div class="testimonial-error text-center py-5">
+    <i class="bi bi-exclamation-circle text-danger fs-1 d-block mb-2"></i>
+    <p class="text-muted">{{ error }}</p>
+    <button class="btn btn-outline-primary btn-sm" (click)="loadTestimonials()">
+      <i class="bi bi-arrow-clockwise me-1"></i> Try Again
+    </button>
+  </div>
+}
+
+<!-- Empty State -->
+@else if (testimonials.length === 0) {
+  <div class="testimonial-empty text-center py-5">
+    <i class="bi bi-chat-quote text-muted fs-1 d-block mb-2"></i>
+    <p class="text-muted">No testimonials yet</p>
+  </div>
+}
+
+<!-- Testimonials Carousel -->
+@else {
+  <div class="testimonial-section px-3">
+    <div id="testimonialCarousel" class="carousel slide">
+      <div class="carousel-inner">
+        @for (group of groupedTestimonials; track trackByIndex($index); let i = $index) {
+          <div class="carousel-item" [class.active]="i === 0">
+            <div class="row justify-content-center g-4 px-md-5">
+              @for (testimonial of group; track trackByTestimonial($index, testimonial); let j = $index) {
+                <div class="col-12 col-md-6">
+                  <div class="testimonial-card">
+                    <!-- Quote Icon -->
+                    <div class="quote-icon">
+                      <i class="bi bi-quote"></i>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="testimonial-content">
+                      <p class="testimonial-message">
+                        "{{ testimonial.message }}"
+                      </p>
+                    </div>
+                    
+                    <!-- Rating -->
+                    <div class="testimonial-rating mb-3">
+                      @for (star of getStars(testimonial.rating); track $index) {
+                        <i class="bi"
+                           [class.bi-star-fill]="star.filled"
+                           [class.bi-star]="!star.filled"
+                           [class.text-warning]="star.filled"
+                           [class.text-muted]="!star.filled">
+                        </i>
+                      }
+                    </div>
+
+                    <!-- Author -->
+                    <div class="testimonial-author d-flex align-items-center gap-2">
+                      <div class="author-avatar" [style.background]="getAvatarColor(testimonial.name)">
+                        {{ getInitials(testimonial.name) }}
+                      </div>
+                      <div>
+                        <div class="author-name">{{ testimonial.name }}</div>
+                        <small class="text-muted">Verified Buyer</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Navigation Controls: Only show if more than one slide -->
+      @if (groupedTestimonials.length > 1) {
+        <!-- Prev Button -->
+        <button 
+          class="carousel-control-prev" 
+          type="button" 
+          data-bs-target="#testimonialCarousel" 
+          data-bs-slide="prev"
+          (click)="onManualNavigation()">
+          <span class="carousel-nav-btn">
+            <i class="bi bi-chevron-left"></i>
+          </span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+
+        <!-- Next Button -->
+        <button 
+          class="carousel-control-next" 
+          type="button" 
+          data-bs-target="#testimonialCarousel" 
+          data-bs-slide="next"
+          (click)="onManualNavigation()">
+          <span class="carousel-nav-btn">
+            <i class="bi bi-chevron-right"></i>
+          </span>
+          <span class="visually-hidden">Next</span>
+        </button>
+
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+          @for (group of groupedTestimonials; track trackByIndex($index); let i = $index) {
+            <button
+              type="button"
+              data-bs-target="#testimonialCarousel"
+              [attr.data-bs-slide-to]="i"
+              [class.active]="i === currentSlide"
+              [attr.aria-current]="i === currentSlide ? 'true' : null"
+              [attr.aria-label]="'Slide ' + (i + 1)"
+              (click)="onManualNavigation()">
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}

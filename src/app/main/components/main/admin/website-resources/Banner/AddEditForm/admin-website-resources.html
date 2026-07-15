@@ -1,0 +1,136 @@
+<form #bannerForm="ngForm" (ngSubmit)="onSubmit(bannerForm)">
+  <div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">{{ banner ? 'Edit Banner' : 'Add New Banner' }}</h5>
+    <button type="button" class="btn-close btn-close-white" aria-label="Close"
+            (click)="activeModal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body modal-scroll">
+    <!-- Title -->
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      <input type="text"
+             class="form-control"
+             name="title"
+             placeholder="Enter banner title (optional)"
+             [(ngModel)]="viewModel.bannerFormData.title"
+             maxlength="100"
+             #titleCtrl="ngModel">
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea class="form-control"
+                name="description"
+                placeholder="Enter banner description"
+                rows="3"
+                maxlength="300"
+                [(ngModel)]="viewModel.bannerFormData.description"></textarea>
+    </div>
+
+    <!-- Link, Banner Type & Sequence -->
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Link <span class="text-danger">*</span></label>
+        <input type="url"
+               class="form-control"
+               name="link"
+               placeholder="Enter URL (https://example.com)"
+               [(ngModel)]="viewModel.bannerFormData.link"
+               required
+               #linkCtrl="ngModel"
+               [ngClass]="{ 'is-invalid': linkCtrl.invalid && linkCtrl.touched }">
+        <div class="invalid-feedback">Please enter a valid URL</div>
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Banner Type <span class="text-danger">*</span></label>
+        <select class="form-select"
+                name="bannerType"
+                [(ngModel)]="viewModel.bannerFormData.bannerType"
+                required>
+          <option value="" disabled *ngIf="!banner">-- Select Type --</option>
+          <option value="Slider">Slider</option>
+          <option value="ShortAdd">Short Add</option>
+          <option value="LongAdd">Long Add</option>
+          <option value="Sales">Sales</option>
+          <option value="Voucher">Voucher</option>
+        </select>
+        <div class="invalid-feedback">Banner type is required</div>
+      </div>
+
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Sequence <span class="text-danger">*</span></label>
+        <input type="number"
+               class="form-control"
+               name="sequence"
+               placeholder="Enter sequence (e.g. 1, 2, 3)"
+               [(ngModel)]="viewModel.bannerFormData.sequence"
+               required
+               min="0"
+               step="1"
+               #sequenceCtrl="ngModel"
+               [ngClass]="{ 'is-invalid': sequenceCtrl.invalid && sequenceCtrl.touched }">
+        <div class="invalid-feedback">Sequence is required and must be 0 or greater</div>
+      </div>
+    </div>
+
+    <!-- Visibility Switch -->
+    <div class="mb-3">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox"
+               id="sliderSwitch"
+               name="isVisible"
+               [(ngModel)]="viewModel.bannerFormData.isVisible">
+        <label class="form-check-label" for="sliderSwitch">Show Banner</label>
+      </div>
+    </div>
+
+    <!-- Banner Image -->
+    <div class="mb-3">
+      <label class="form-label">Image <span class="text-danger">*</span></label>
+      <input type="file"
+             class="form-control"
+             accept="image/*"
+             (change)="onFileChange($event)"
+             [ngClass]="{ 'is-invalid': !hasBannerImage() && bannerForm.submitted }">
+      <div class="invalid-feedback">Banner image is required</div>
+
+      @if (hasBannerImage()) {
+        <div class="mt-2">
+          <img [src]="getBannerPreview()" alt="Banner preview" class="img-thumbnail" style="max-width: 160px;">
+        </div>
+      }
+
+      <div *ngIf="banner && hasBannerImage() && !selectedFile" class="mt-2 small text-muted">
+        Existing image present. Selecting a new file will replace it.
+      </div>
+    </div>
+
+    <!-- CTA Text -->
+    <div class="mb-3">
+      <label class="form-label">CTA Text</label>
+      <input type="text"
+             class="form-control"
+             name="ctaText"
+             placeholder="Enter Call-to-Action text (optional)"
+             [(ngModel)]="viewModel.bannerFormData.ctaText"
+             maxlength="50"
+             #ctaTextCtrl="ngModel">
+      <div class="form-text">Optional, max 50 characters</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary"
+            [disabled]="isSubmitting"
+            (click)="activeModal.dismiss()">Cancel</button>
+    <button type="submit" class="btn btn-primary"
+            [disabled]="isSubmitting || (!selectedFile && !banner)">
+      <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+      {{ banner ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</form>

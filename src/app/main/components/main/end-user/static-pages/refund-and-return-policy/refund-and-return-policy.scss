@@ -1,0 +1,49 @@
+@use "../../../../../../../variable" as *;
+
+.refund-container {
+  color: $color-text-primary;
+  line-height: $line-height-relaxed;
+
+  .refund-title {
+    font-size: $font-size-h2;
+    font-weight: $font-weight-bold;
+    color: $color-warning-yellow;
+    text-align: center;
+  }
+
+  .refund-section {
+    background: $color-bg-primary;
+    padding: $spacing-lg;
+    border-radius: $border-radius-md;
+    box-shadow: $shadow-sm;
+
+    h3 {
+      font-size: $font-size-h4;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-sm;
+      color: $color-text-secondary;
+      border-left: 4px solid $color-warning-yellow;
+      padding-left: $spacing-sm;
+    }
+
+    p, li {
+      font-size: $font-size-base;
+      color: $color-text-secondary;
+    }
+
+    ul {
+      padding-left: $spacing-lg;
+      margin-top: $spacing-sm;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .refund-container {
+    padding: $spacing-md;
+
+    .refund-title {
+      font-size: $font-size-h3;
+    }
+  }
+}

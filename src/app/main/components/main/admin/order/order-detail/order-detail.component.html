@@ -1,0 +1,169 @@
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <button class="btn btn-outline-secondary" routerLink="/admin/order">
+      <i class="bi bi-arrow-left me-1"></i>Back to Orders
+    </button>
+    <div>
+      @if (order && shouldShowInvoice(order.status)) {
+        <a [routerLink]="['/admin/invoice/order', order.id]" class="btn btn-primary me-2">
+          <i class="bi bi-receipt me-1"></i>View Invoice
+        </a>
+      }
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error && !loading) {
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+    </div>
+  }
+
+  <!-- Order Content -->
+  @if (order && !loading && !error) {
+    <div>
+    <!-- Order Header -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h3 class="mb-3">Order Details</h3>
+            <p class="mb-1"><strong>Order ID:</strong> #{{ order.id }}</p>
+            <p class="mb-1"><strong>Razorpay Order ID:</strong> {{ order.razorpayOrderId || 'N/A' }}</p>
+            <p class="mb-1"><strong>Receipt:</strong> {{ order.receipt || 'N/A' }}</p>
+            <p class="mb-0"><strong>Date:</strong> {{ formatDate(order.createdOnUTC) }}</p>
+          </div>
+          <div class="col-md-6 text-end">
+            <p class="mb-2"><strong>Status:</strong></p>
+            <select class="form-select" [value]="order.status" 
+                    (change)="updateStatus($any($event.target).value)"
+                    [ngClass]="getStatusBadgeClass(order.status)">
+              <option value="created">Created</option>
+              <option value="paid">Paid</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="failed">Failed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Customer Information -->
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-person me-2"></i>Customer Information</h5>
+          </div>
+          <div class="card-body">
+            @if (order.customer) {
+              <p class="mb-1">
+                <strong>Name:</strong> {{ order.customer.firstName }} {{ order.customer.lastName }}
+              </p>
+            }
+            @if (order.customer?.email) {
+              <p class="mb-1">
+                <strong>Email:</strong> {{ order.customer?.email }}
+              </p>
+            }
+            @if (order.customer?.contact) {
+              <p class="mb-0">
+                <strong>Contact:</strong> {{ order.customer?.contact }}
+              </p>
+            }
+            @if (order.customer?.addresses?.[0]; as addr) {
+              <hr />
+              <p class="mb-1">
+                <strong>Address:</strong> {{ addr.addressLine1 }}
+              </p>
+              <p class="mb-0 text-muted">
+                {{ addr.city }} {{ addr.state }} {{ addr.postalCode }}
+              </p>
+            }
+            @if (order.customerId && !order.customer) {
+              <p class="mb-0">
+                <strong>Customer ID:</strong> {{ order.customerId }}
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Information -->
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>Payment Information</h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-1"><strong>Amount:</strong> {{ formatCurrency(order.amount) }}</p>
+            <p class="mb-1"><strong>Paid:</strong> {{ formatCurrency(order.paid_amount) }}</p>
+            <p class="mb-1"><strong>Due:</strong> {{ formatCurrency(order.due_amount) }}</p>
+            <p class="mb-1"><strong>Currency:</strong> {{ order.currency || 'INR' }}</p>
+            @if (order.paymentId) {
+              <p class="mb-0">
+                <strong>Payment ID:</strong> {{ order.paymentId }}
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Order Items</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th>Weight</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of order.items; track $index) {
+                <tr>
+                  <td>{{ item.product?.name || 'Unknown Product' }}</td>
+                  <td>{{ item.variant?.sku || item.variantDetails?.sku || 'N/A' }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ formatVariantUnit(item) }}</td>
+                  <td>{{ formatVariantWeight(item) }}</td>
+                  <td>{{ formatCurrency(item.price) }}</td>
+                  <td><strong>{{ formatCurrency(item.total) }}</strong></td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr class="table-primary">
+                <td colspan="6" class="text-end"><strong>Total:</strong></td>
+                <td><strong>{{ formatCurrency(order.amount) }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+    </div>
+  }
+</div>
+

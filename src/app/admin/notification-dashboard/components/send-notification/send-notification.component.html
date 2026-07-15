@@ -1,0 +1,118 @@
+<div class="send-notification-container">
+  <div class="form-header">
+    <h2>Send Push Notification</h2>
+    <p class="subtitle">Send a push notification to all subscribed devices.</p>
+  </div>
+
+  <div class="alert" *ngIf="result" [class.alert-success]="result.type === 'success'"
+       [class.alert-error]="result.type === 'error'">
+    {{ result.text }}
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Title *</label>
+      <input type="text" formControlName="title" placeholder="Notification title" maxlength="100">
+      <div class="error" *ngIf="title?.touched && title?.errors?.['required']">Title is required</div>
+      <div class="hint">{{ form.get('title')?.value?.length || 0 }}/100 characters</div>
+    </div>
+
+    <div class="form-group">
+      <label>Message *</label>
+      <textarea formControlName="message" rows="4" placeholder="Notification message" maxlength="500"></textarea>
+      <div class="error" *ngIf="message?.touched && message?.errors?.['required']">Message is required</div>
+      <div class="hint">{{ form.get('message')?.value?.length || 0 }}/500 characters</div>
+    </div>
+
+    <div class="form-group">
+      <label>Product (optional)</label>
+      <select formControlName="productId">
+        <option [ngValue]="null">— No product —</option>
+        <option *ngFor="let product of products" [ngValue]="product.id">{{ product.name }}</option>
+      </select>
+      <div class="hint">If selected, clicking the notification opens this product's page.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Custom URL / Route (optional)</label>
+      <input type="text" formControlName="url" placeholder="/shop or https://wildvalleyfoods.in/offers">
+      <div class="hint">Used when no product is selected. Leave blank to open the homepage.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Image URL (optional)</label>
+      <input type="url" formControlName="imageUrl" placeholder="https://example.com/banner.jpg">
+      <div class="hint">Shown as the notification's large image.</div>
+    </div>
+
+    <div class="form-group">
+      <label>Audience</label>
+      <div class="audience-options">
+        <div class="audience-option" [class.active]="audience === 'all'"
+             role="radio" [attr.aria-checked]="audience === 'all'" tabindex="0"
+             (click)="setAudience('all')" (keydown.enter)="setAudience('all')" (keydown.space)="setAudience('all')">
+          <span class="audience-radio" [class.checked]="audience === 'all'" aria-hidden="true"></span>
+          <span>
+            <strong>All subscribed devices</strong>
+            <small>Everyone who allowed notifications (anonymous + logged-in).</small>
+          </span>
+        </div>
+        <div class="audience-option" [class.active]="audience === 'customers'"
+             role="radio" [attr.aria-checked]="audience === 'customers'" tabindex="0"
+             (click)="setAudience('customers')" (keydown.enter)="setAudience('customers')" (keydown.space)="setAudience('customers')">
+          <span class="audience-radio" [class.checked]="audience === 'customers'" aria-hidden="true"></span>
+          <span>
+            <strong>All registered customers</strong>
+            <small>Only devices linked to a customer account.</small>
+          </span>
+        </div>
+        <div class="audience-option" [class.active]="audience === 'selected'"
+             role="radio" [attr.aria-checked]="audience === 'selected'" tabindex="0"
+             (click)="setAudience('selected')" (keydown.enter)="setAudience('selected')" (keydown.space)="setAudience('selected')">
+          <span class="audience-radio" [class.checked]="audience === 'selected'" aria-hidden="true"></span>
+          <span>
+            <strong>Selected customers</strong>
+            <small>Pick specific customers to notify.</small>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group" *ngIf="audience === 'selected'">
+      <label>Select customers</label>
+
+      <div class="selected-chips" *ngIf="selectedCustomers.length > 0">
+        <span class="chip" *ngFor="let c of selectedCustomers">
+          {{ c.name }}
+          <button type="button" class="chip-remove" (click)="removeCustomer(c.id)" aria-label="Remove">&times;</button>
+        </span>
+      </div>
+
+      <input type="text" [(ngModel)]="customerSearch" [ngModelOptions]="{ standalone: true }"
+             (ngModelChange)="onCustomerSearchChange()"
+             placeholder="Search customers by name, email or phone…">
+
+      <div class="customer-results" *ngIf="customerSearch">
+        <div class="customer-loading" *ngIf="isSearchingCustomers">Searching…</div>
+        <div class="customer-empty" *ngIf="!isSearchingCustomers && customerResults.length === 0">No matching customers.</div>
+        <button type="button" class="customer-result" *ngFor="let c of customerResults" (click)="addCustomer(c)">
+          <span class="cr-name">{{ (c.firstName || '') + ' ' + (c.lastName || '') | titlecase }}</span>
+          <span class="cr-meta">{{ c.email }}<span *ngIf="c.contact"> · {{ c.contact }}</span></span>
+        </button>
+      </div>
+
+      <div class="hint">{{ selectedCustomers.length }} customer(s) selected.</div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="isSending">
+        {{ isSending ? 'Sending…' : 'Send Notification' }}
+      </button>
+      <span class="inline-result" *ngIf="result"
+            [class.inline-result-success]="result.type === 'success'"
+            [class.inline-result-error]="result.type === 'error'">
+        {{ result.text }}
+      </span>
+    </div>
+  </form>
+</div>

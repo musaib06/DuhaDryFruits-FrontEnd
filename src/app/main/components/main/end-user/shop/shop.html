@@ -1,0 +1,87 @@
+<div class="container-fluid container-md my-3 my-md-3 px-2 px-md-3">
+  <div class="row">
+    <!-- PRODUCTS -->
+    <section class="col-12">
+      <!-- Header Section - Responsive -->
+      <div class="shop-header mb-3">
+        <!-- Title & Count -->
+        <div class="shop-title-section mb-3 mb-md-0">
+          <h5 class="mb-1 mb-md-0 shop-title">{{viewModel.PageTitle}}</h5>
+          <div class="small text-muted">{{ viewModel.pagination.totalCount }} items</div>
+        </div>
+
+        <!-- Search & Filter Row -->
+        <div class="shop-controls">
+          <!-- Search -->
+          <div class="shop-search">
+            <input class="form-control form-control-sm" placeholder="🔍 Search products (min 2 chars)..."
+              [(ngModel)]="viewModel.searchstring" (ngModelChange)="onSearchChange($event)"
+              aria-label="Search products" autocomplete="off" />
+          </div>
+
+          <!-- Filter -->
+          <div class="shop-filter">
+            <select class="form-select form-select-sm" [(ngModel)]="selectedSort" (ngModelChange)="onSortChange()"
+              aria-label="Sort products">
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="name_asc">Name: A → Z</option>
+              <option value="name_desc">Name: Z → A</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRID -->
+      <div class="products-grid">
+        @if (viewModel.products && viewModel.products.length) {
+          @for (p of viewModel.products; track trackByProduct($index, p)) {
+            <div class="product-item-wrapper">
+              <app-product class="product-item" [product]="p" (addToCart)="onAddToCart($event)"
+                (view)="openProduct($event)" (wishlist)="onWishlistChanged($event)">
+              </app-product>
+            </div>
+          }
+        } @else {
+          <div class="no-products text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+            <p class="text-muted mb-0">No products match your filters.</p>
+          </div>
+        }
+      </div>
+
+      <!-- PAGINATION -->
+      <nav class="pagination-wrapper mt-4" aria-label="Page navigation">
+        <div class="pagination-modern">
+          <button
+            type="button"
+            class="pager-btn prev-btn"
+            [disabled]="currentPage === 1"
+            (click)="goToPage(currentPage - 1)">
+            <i class="bi bi-chevron-left"></i> Prev
+          </button>
+
+          <div class="page-dots" aria-label="Select page">
+            @for (p of [].constructor(totalPages); track $index) {
+              <button
+                type="button"
+                class="page-dot"
+                [class.active]="$index + 1 === currentPage"
+                [attr.aria-label]="'Go to page ' + ($index + 1)"
+                (click)="goToPage($index + 1)">
+              </button>
+            }
+          </div>
+
+          <button
+            type="button"
+            class="pager-btn next-btn"
+            [disabled]="currentPage >= totalPages"
+            (click)="goToPage(currentPage + 1)">
+            Next <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </nav>
+    </section>
+  </div>
+</div>

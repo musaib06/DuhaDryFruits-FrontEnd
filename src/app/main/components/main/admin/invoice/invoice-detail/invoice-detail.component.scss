@@ -1,0 +1,29 @@
+@media print {
+  .btn, .d-flex.justify-content-between {
+    display: none !important;
+  }
+  
+  .card {
+    border: none;
+    box-shadow: none;
+  }
+}
+
+.table {
+  th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+  }
+}
+
+.invoice-address-block {
+  max-width: 420px;
+}
+
+.invoice-address-line {
+  display: block;
+  margin: 0 0 4px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+

@@ -1,0 +1,88 @@
+@use "../../../../variable" as *;
+
+.login-container {
+  min-height: 100vh;
+  background-color: $color-bg-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-lg;
+  font-family: $font-family-base;
+}
+
+.login-card {
+  background-color: $color-bg-primary;
+  padding: $spacing-xl;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  width: 100%;
+  max-width: 400px;
+}
+
+.title {
+  font-size: $font-size-xl;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+  color: $color-primary;
+}
+
+.form-group {
+  margin-bottom: $spacing-md;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: $spacing-xs;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+input, select {
+  padding: $spacing-sm;
+  border: 1px solid $gray-300;
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  background-color: $color-bg-primary;
+  transition: border-color $transition-base;
+}
+
+input:focus, select:focus {
+  border-color: $color-primary;
+  outline: none;
+}
+
+.login-btn {
+  width: 100%;
+  padding: $spacing-sm;
+  background-color: $color-primary;
+  color: $color-text-on-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  border: none;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  margin-top: $spacing-sm;
+  transition: background-color $transition-base;
+}
+
+.login-btn:hover {
+  background-color: $color-primary-light;
+}
+
+.login-btn:disabled {
+  background-color: $gray-400;
+  cursor: not-allowed;
+}
+
+.link {
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  color: $color-primary;
+  font-size: $font-size-sm;
+  margin-top: $spacing-md;
+  cursor: pointer;
+}

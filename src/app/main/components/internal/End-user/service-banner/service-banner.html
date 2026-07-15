@@ -1,0 +1,18 @@
+<section class="features py-4">
+    <div class="container-fluid">
+        <div class="row g-3">
+            <!-- Feature Item -->
+            <div class="col-6 col-sm-6 col-lg-4" *ngFor="let feature of features">
+                <div class="feature-box h-100 d-flex align-items-center p-3">
+                    <div class="icon-wrap me-3">
+                        <i [class]="feature.icon"></i>
+                    </div>
+                    <div class="text-wrap">
+                        <h6 class="title mb-1">{{ feature.title }}</h6>
+                        <p class="desc mb-0">{{ feature.desc }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
