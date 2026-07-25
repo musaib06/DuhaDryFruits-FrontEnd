@@ -36,7 +36,7 @@ export class EndUserLayout implements OnInit, OnDestroy {
     const node = sel.anchorNode;
     const el =
       node?.nodeType === Node.ELEMENT_NODE ? (node as Element) : node?.parentElement;
-    if (el?.closest('img.wvf-protect-asset')) {
+    if (el?.closest('img.duha-protect-asset')) {
       event.preventDefault();
     }
   };
@@ -54,8 +54,22 @@ export class EndUserLayout implements OnInit, OnDestroy {
       document.addEventListener('dragstart', this.onDragStart, true);
       document.addEventListener('selectstart', this.onSelectStart, true);
       document.addEventListener('copy', this.onCopy, true);
+      // FAB categories are client-only — header already loads categories for SSR nav.
+      // Defer so home banners/products get the network first.
+      this.scheduleFabCategoryLoad();
     }
-    void this.loadCategoriesForFab();
+  }
+
+  private scheduleFabCategoryLoad(): void {
+    const run = () => void this.loadCategoriesForFab();
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+    };
+    if (typeof w.requestIdleCallback === 'function') {
+      w.requestIdleCallback(run, { timeout: 3500 });
+    } else {
+      setTimeout(run, 1800);
+    }
   }
 
   ngOnDestroy(): void {
@@ -85,12 +99,12 @@ export class EndUserLayout implements OnInit, OnDestroy {
 
   openCategory(cat: CategorySM): void {
     this.categorySheetOpen = false;
-    void this.router.navigate(['/shop', cat.name, cat.id]);
+    void this.router.navigate(['/buy-dry-fruits', cat.name, cat.id]);
   }
 
   goAllProducts(): void {
     this.categorySheetOpen = false;
-    void this.router.navigate(['/shop']);
+    void this.router.navigate(['/buy-dry-fruits']);
   }
 
   /** Right-click “Save image” — only blocked on marked catalog / product / promo images */

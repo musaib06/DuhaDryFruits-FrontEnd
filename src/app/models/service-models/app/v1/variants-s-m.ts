@@ -1,4 +1,4 @@
-import { WildValleyFoodsServiceModelBase } from "../base/WildValleyFoods-service-model-base";
+import { DuhaDryFruitsServiceModelBase } from "../base/DuhaDryFruits-service-model-base";
 
 /**
  * Product Variant Service Model
@@ -10,7 +10,7 @@ import { WildValleyFoodsServiceModelBase } from "../base/WildValleyFoods-service
  * - unitName and unitSymbol are denormalized for easy access
  * - Includes order quantity constraints and stock management
  */
-export class ProductVariantSM extends WildValleyFoodsServiceModelBase<number> {
+export class ProductVariantSM extends DuhaDryFruitsServiceModelBase<number> {
   productId!: number;
   unitId?: number;              // selected from Unit dropdown (maps to unitValueId from backend)
   unitName?: string;            // denormalized from Unit (from unitValue.name)

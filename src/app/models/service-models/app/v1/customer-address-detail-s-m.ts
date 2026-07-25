@@ -1,7 +1,7 @@
-import { WildValleyFoodsServiceModelBase } from '../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../base/DuhaDryFruits-service-model-base';
 import { AddressType } from '../enums/address-type-s-m.enum';
 
-export class CustomerAddressDetailSM extends WildValleyFoodsServiceModelBase<number> {
+export class CustomerAddressDetailSM extends DuhaDryFruitsServiceModelBase<number> {
   addressLine1!: string;
   addressLine2?: string;
   city!: string;

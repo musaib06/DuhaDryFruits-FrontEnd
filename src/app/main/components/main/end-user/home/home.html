@@ -1,105 +1,339 @@
 <div class="home">
-    <div class="hero row">
-        <div class="col-12 col-lg-12 p-0">
-            @if (isLoadingBanners) {
-                <div class="banner-skeleton skeleton-pulse"></div>
+    <!-- 1. HERO -->
+    <section class="hero-section">
+        @if (isLoadingBanners) {
+            <div class="banner-skeleton skeleton-pulse"></div>
+        } @else {
+            <app-banner [banners]="viewModel.banners"></app-banner>
+        }
+    </section>
+
+    <!-- 2. STATIC HIGHLIGHT CARDS (compact chips on mobile) -->
+    <app-service-banner></app-service-banner>
+
+    <!-- Mobile-only shop nudge -->
+    <div class="container">
+      <div class="home-shop-nudge">
+        <div class="home-shop-nudge__copy">
+          <strong>Shop the pantry</strong>
+          <span>Fresh picks ready to add to your bag</span>
+        </div>
+        <a routerLink="/buy-dry-fruits" class="btn btn-primary">Browse</a>
+      </div>
+    </div>
+
+    <!-- 3. FRESH ARRIVALS -->
+    <section class="collection-section fresh-arrivals">
+        <div class="container">
+            <div class="section-head section-head--rail">
+                <div class="section-head__copy">
+                    <span class="section-eyebrow">New in pantry</span>
+                    <h2 class="section-title">Fresh Arrivals</h2>
+                    <p class="section-lead">Just packed — the newest Duha selections.</p>
+                </div>
+                <div class="rail-toolbar" aria-hidden="false">
+                    <span class="rail-toolbar__hint">
+                        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 12h14M13 6l6 6-6 6"/></svg>
+                        Swipe for more
+                    </span>
+                    <div class="rail-toolbar__nav">
+                        <button type="button" class="rail-nav-btn" (click)="scrollProductRail('fresh', -1)" aria-label="Previous products">‹</button>
+                        <button type="button" class="rail-nav-btn" (click)="scrollProductRail('fresh', 1)" aria-label="Next products">›</button>
+                    </div>
+                </div>
+            </div>
+
+            @if (isLoadingFreshArrivals) {
+                <div class="product-skeleton-grid">
+                    @for (i of [1,2,3,4]; track i) {
+                        <div class="product-skeleton-card skeleton-pulse">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-text">
+                                <div class="skeleton-line"></div>
+                                <div class="skeleton-line"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            } @else if (viewModel.freshArrivals.length > 0) {
+                <div class="product-rail-shell">
+                    <div class="product-rail" id="product-rail-fresh" tabindex="0" aria-label="Fresh arrivals — swipe sideways">
+                        @for (product of viewModel.freshArrivals; track product.id; let i = $index) {
+                        <div class="product-rail__item">
+                            <app-product [product]="product" [imageLoading]="i < 4 ? 'eager' : 'lazy'" (addToCart)="onAddToCart($event)" (view)="openProduct($event)"
+                                (wishlist)="onWishlistChanged($event)" (review)="openProductReview($event)">
+                            </app-product>
+                        </div>
+                        }
+                    </div>
+                    <div class="product-rail-shell__fade" aria-hidden="true"></div>
+                </div>
+                <p class="rail-scroll-cue">
+                    <span class="rail-scroll-cue__h">← Swipe for products</span>
+                    <span class="rail-scroll-cue__sep" aria-hidden="true">·</span>
+                    <span class="rail-scroll-cue__v">Scroll down for more ↓</span>
+                </p>
             } @else {
-                <app-banner [banners]="viewModel.banners"></app-banner>
+                <p class="text-muted mb-0">Fresh stock is on the way — check back soon.</p>
             }
         </div>
-    </div>
+    </section>
 
-    <!-- <div>
-        <app-service-banner></app-service-banner>
-    </div> -->
+    <!-- 4. TRENDING PRODUCTS (formerly Best Sellers) -->
+    <section class="collection-section best-sellers trending-products">
+        <div class="container">
+            <div class="section-head section-head--rail">
+                <div class="section-head__copy">
+                    <span class="section-eyebrow">Most loved</span>
+                    <h2 class="section-title">Trending Now</h2>
+                    <p class="section-lead">What families are ordering this week.</p>
+                </div>
+                <div class="rail-toolbar">
+                    <span class="rail-toolbar__hint">
+                        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 12h14M13 6l6 6-6 6"/></svg>
+                        Swipe for more
+                    </span>
+                    <div class="rail-toolbar__nav">
+                        <button type="button" class="rail-nav-btn" (click)="scrollProductRail('trending', -1)" aria-label="Previous products">‹</button>
+                        <button type="button" class="rail-nav-btn" (click)="scrollProductRail('trending', 1)" aria-label="Next products">›</button>
+                    </div>
+                </div>
+            </div>
 
-    <div class="container-fluid m-0 newarrivals">
-        <div class="row text-center mb-1">
-            <h1 class="fw-bold">BEST SELLERS</h1>
+            @if (isLoadingBestSellers) {
+                <div class="product-skeleton-grid">
+                    @for (i of [1,2,3,4]; track i) {
+                        <div class="product-skeleton-card skeleton-pulse">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-text">
+                                <div class="skeleton-line"></div>
+                                <div class="skeleton-line"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <div class="product-rail-shell">
+                    <div class="product-rail" id="product-rail-trending" tabindex="0" aria-label="Trending products — swipe sideways">
+                        @for (product of viewModel.newArrivals; track product.id; let i = $index) {
+                        <div class="product-rail__item">
+                            <app-product [product]="product" [imageLoading]="i < 4 ? 'eager' : 'lazy'" (addToCart)="onAddToCart($event)" (view)="openProduct($event)"
+                                (wishlist)="onWishlistChanged($event)" (review)="openProductReview($event)">
+                            </app-product>
+                        </div>
+                        }
+                    </div>
+                    <div class="product-rail-shell__fade" aria-hidden="true"></div>
+                </div>
+                <p class="rail-scroll-cue">
+                    <span class="rail-scroll-cue__h">← Swipe for products</span>
+                    <span class="rail-scroll-cue__sep" aria-hidden="true">·</span>
+                    <span class="rail-scroll-cue__v">Scroll down for more ↓</span>
+                </p>
+            }
         </div>
+    </section>
 
-        @if (isLoadingBestSellers) {
-            <div class="product-skeleton-grid">
+    <!-- 5. BRAND STORY -->
+    <section class="story-section">
+        <div class="container">
+            <div class="story-grid">
+                <div class="story-copy">
+                    <span class="section-eyebrow">Why Duha</span>
+                    <h2 class="section-title">From Kashmir&rsquo;s saffron land</h2>
+                    <p>
+                        Rooted in Pampore, we grow from our own farms and pack with care —
+                        so every almond, fig, date and strand of saffron that reaches your table
+                        is authentic, pure and truly Duha.
+                    </p>
+                    <ul class="story-points">
+                        <li><i class="ri-checkbox-circle-line"></i> Own farms in Kashmir&rsquo;s saffron land</li>
+                        <li><i class="ri-checkbox-circle-line"></i> Authentic, farm-grown purity</li>
+                        <li><i class="ri-checkbox-circle-line"></i> Sealed fresh for your pantry</li>
+                    </ul>
+                    <div class="story-actions">
+                        <a routerLink="/buy-dry-fruits" class="btn btn-primary">Shop Collection</a>
+                        <a routerLink="/about-duha" class="btn btn-outline-primary">Our Story</a>
+                    </div>
+                </div>
+                <div class="story-media">
+                    <img src="/assets/dryfruits.webp" alt="Assorted premium dry fruits" loading="lazy" />
+                    <span class="story-badge">
+                        <i class="ri-verified-badge-fill"></i> Sourced with care
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. FULL COLLECTION -->
+    <section class="collection-section products">
+        <div class="container">
+            <div class="section-head section-head--left">
+                <span class="section-eyebrow">Pantry range</span>
+                <h2 class="section-title">Shop the Shelf</h2>
+                <p class="section-lead">Nuts, dates, seeds and more — ready to add to bag.</p>
+                <p class="section-scroll-note">Scroll down to browse the full collection</p>
+            </div>
+
+            @if (isLoadingProducts) {
+                <div class="product-skeleton-grid">
+                    @for (i of [1,2,3,4,5,6,7,8]; track i) {
+                        <div class="product-skeleton-card skeleton-pulse">
+                            <div class="skeleton-img"></div>
+                            <div class="skeleton-text">
+                                <div class="skeleton-line"></div>
+                                <div class="skeleton-line"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <div class="product-grid">
+                    @for (product of viewModel.productsViewModel.products; track product.id) {
+                    <div class="product-grid__item">
+                        <app-product [product]="product" (addToCart)="onAddToCart(product)" (view)="openProduct($event)"
+                            (wishlist)="onWishlistChanged($event)" (review)="openProductReview($event)">
+                        </app-product>
+                    </div>
+                    }
+                </div>
+            }
+            <div class="text-center mt-4">
+              <a routerLink="/buy-dry-fruits" class="btn btn-outline-warning btn-view-more">Browse Full Pantry</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. PROMISE STATS -->
+    <section class="promise-band">
+        <div class="container">
+            <div class="promise-grid">
+                <div class="promise-item">
+                    <span class="promise-num">100%</span>
+                    <span class="promise-label">Natural &amp; Pure</span>
+                </div>
+                <div class="promise-item">
+                    <span class="promise-num">50k+</span>
+                    <span class="promise-label">Happy Customers</span>
+                </div>
+                <div class="promise-item">
+                    <span class="promise-num">4.9<i class="ri-star-fill"></i></span>
+                    <span class="promise-label">Average Rating</span>
+                </div>
+                <div class="promise-item">
+                    <span class="promise-num">24h</span>
+                    <span class="promise-label">Fresh Dispatch</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. BULK / B2B -->
+    <section class="bulk-promo-band">
+        <div class="container">
+            <div class="bulk-promo-inner">
+                <div class="bulk-promo-copy">
+                    <span class="section-eyebrow">For business</span>
+                    <h2 class="bulk-promo-title">Need wholesale quantities?</h2>
+                    <p>Volume pricing, dedicated support, and fast processing for retailers, hotels, and corporate buyers. Request a quote — no upfront payment.</p>
+                    <a routerLink="/wholesale-dry-fruits" class="btn btn-primary btn-lg bulk-cta">
+                        <i class="ri-stack-line me-2"></i>Start Bulk Request
+                    </a>
+                </div>
+                <div class="bulk-promo-cards">
+                    <div class="bulk-benefit-chip"><i class="ri-price-tag-3-line"></i><span>Better Pricing</span></div>
+                    <div class="bulk-benefit-chip"><i class="ri-customer-service-2-line"></i><span>Dedicated Support</span></div>
+                    <div class="bulk-benefit-chip"><i class="ri-flashlight-line"></i><span>Fast Processing</span></div>
+                    <div class="bulk-benefit-chip"><i class="ri-building-4-line"></i><span>Business Orders</span></div>
+                    <div class="bulk-benefit-chip"><i class="ri-truck-line"></i><span>Direct Shipment</span></div>
+                    <div class="bulk-benefit-chip"><i class="ri-add-circle-line"></i><span>Custom Products</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. GIFTING -->
+    <section class="gifting-band">
+        <div class="container">
+            <div class="gifting-inner">
+                <div class="gifting-copy">
+                    <span class="section-eyebrow">Gifting</span>
+                    <h2 class="gifting-title">Hampers worth sharing</h2>
+                    <p>Curated dry-fruit hampers for festivals, corporate gifting and every celebration. Custom packaging and bulk pricing on request.</p>
+                    <div class="gifting-actions">
+                        <a routerLink="/contact" class="btn btn-primary">Enquire for Gifting</a>
+                        <a href="https://chat.whatsapp.com/KC1L9atxXOQ1y33nt7YOrl?s=cl&p=i&mlu=0&amv=2" target="_blank" rel="noopener" class="btn btn-outline-primary">
+                            <i class="ri-whatsapp-line me-1"></i> WhatsApp Us
+                        </a>
+                    </div>
+                </div>
+                <div class="gifting-features">
+                    <div class="gifting-feature"><i class="ri-archive-2-line"></i><span>Custom Packaging</span></div>
+                    <div class="gifting-feature"><i class="ri-price-tag-3-line"></i><span>Bulk Pricing</span></div>
+                    <div class="gifting-feature"><i class="ri-global-line"></i><span>International Shipping</span></div>
+                    <div class="gifting-feature"><i class="ri-calendar-check-line"></i><span>Festive Hampers</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. SOCIAL PROOF — deferred until near viewport (avoids slow API on first paint) -->
+    <section class="testimonial-section">
+        <div class="container">
+            <div class="section-head">
+                <span class="section-eyebrow">Voices</span>
+                <h2 class="section-title">Loved by homes &amp; kitchens</h2>
+            </div>
+            @defer (on viewport; prefetch on idle) {
+              <app-testimonial></app-testimonial>
+            } @placeholder {
+              <div class="product-skeleton-grid" aria-hidden="true">
+                @for (i of [1,2,3]; track i) {
+                  <div class="product-skeleton-card skeleton-pulse">
+                    <div class="skeleton-img"></div>
+                    <div class="skeleton-text">
+                      <div class="skeleton-line"></div>
+                      <div class="skeleton-line"></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+        </div>
+    </section>
+
+    <!-- 11. COMMUNITY — deferred until near viewport -->
+    <section class="wellness-section">
+        <div class="container">
+            <div class="section-head">
+                <span class="section-eyebrow">Community</span>
+                <h2 class="section-title">Follow the Duha kitchen</h2>
+                <div class="wellness-socials mt-2">
+                    <a href="https://www.facebook.com/share/1FtSnnPYYW/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook"><img src="/assets/social/Facebook_icon.svg.png" alt="Facebook" class="social-icon-img" loading="lazy" /></a>
+                    <a href="https://www.youtube.com/@DuhaDryFruits" target="_blank" rel="noopener" aria-label="Youtube"><img src="/assets/social/youtube.png" alt="YouTube" class="social-icon-img" loading="lazy" /></a>
+                    <a href="https://www.instagram.com/duhadryfruits?igsh=MWg1aTR1MHRveDRjdA%3D%3D&utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram"><img src="/assets/social/instagram.jpg" alt="Instagram" class="social-icon-img" loading="lazy" /></a>
+                    <a href="https://chat.whatsapp.com/KC1L9atxXOQ1y33nt7YOrl?s=cl&p=i&mlu=0&amv=2" target="_blank" rel="noopener" aria-label="WhatsApp"><img src="/assets/whatsAppIcon.png" alt="WhatsApp" class="social-icon-img" loading="lazy" /></a>
+                </div>
+            </div>
+            @defer (on viewport; prefetch on idle) {
+              <app-videos></app-videos>
+            } @placeholder {
+              <div class="product-skeleton-grid" aria-hidden="true">
                 @for (i of [1,2,3,4]; track i) {
-                    <div class="product-skeleton-card skeleton-pulse">
-                        <div class="skeleton-img"></div>
-                        <div class="skeleton-text">
-                            <div class="skeleton-line"></div>
-                            <div class="skeleton-line"></div>
-                        </div>
-                    </div>
+                  <div class="product-skeleton-card skeleton-pulse">
+                    <div class="skeleton-img"></div>
+                  </div>
                 }
+              </div>
+            }
+            <div class="text-center mt-3">
+              <button type="button" class="btn btn-outline-warning btn-view-more" (click)="openHealthConcerns()">
+                 Explore Wellness
+              </button>
             </div>
-        } @else {
-            <div class="row justify-content-center">
-                @for (product of viewModel.newArrivals; track product.id) {
-                <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center">
-                    <app-product [product]="product" (addToCart)="onAddToCart($event)" (view)="openProduct($event)"
-                        (wishlist)="onWishlistChanged($event)" (review)="openProductReview($event)">
-                    </app-product>
-                </div>
-                }
-            </div>
-        }
-    </div>
-
-    <div class="container-fluid m-0 products">
-        <div class="row text-center mb-4">
-            <h1 class="fw-bold">ALL PRODUCTS</h1>
         </div>
-
-        @if (isLoadingProducts) {
-            <div class="product-skeleton-grid">
-                @for (i of [1,2,3,4,5,6,7,8]; track i) {
-                    <div class="product-skeleton-card skeleton-pulse">
-                        <div class="skeleton-img"></div>
-                        <div class="skeleton-text">
-                            <div class="skeleton-line"></div>
-                            <div class="skeleton-line"></div>
-                        </div>
-                    </div>
-                }
-            </div>
-        } @else {
-            <div class="row justify-content-center">
-                @for (product of viewModel.productsViewModel.products; track product.id) {
-                <div class="col-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center">
-                    <app-product [product]="product" (addToCart)="onAddToCart(product)" (view)="openProduct($event)"
-                        (wishlist)="onWishlistChanged($event)" (review)="openProductReview($event)">
-                    </app-product>
-                </div>
-                }
-            </div>
-        }
-        <div class="text-center mb-4">
-          <a routerLink="/shop" class="btn btn-outline-warning btn-view-more">VIEW MORE</a>
-        </div>
-    </div>
-
-    <div class="mb-4">
-        <div class="row text-center mb-4">
-          <h1 class="fw-bold">JOIN OUR WELLNESS COMMUNITY</h1>
-          <div class="wellness-socials mt-2">
-            <a href="https://www.facebook.com/wildvalleyfoodskashmir/" target="_blank" rel="noopener" aria-label="Facebook"><img src="/assets/social/Facebook_icon.svg.png" alt="Facebook" class="social-icon-img" /></a>
-            <a href="https://youtube.com/@wildvalleyfoods?si=Z41npDlwf6tBSnBE" target="_blank" rel="noopener" aria-label="Youtube"><img src="/assets/social/youtube.png" alt="YouTube" class="social-icon-img" /></a>
-            <a href="https://www.instagram.com/wildvalleyfoods?igsh=MXQ4ZnZmdzl5aXFjag==" target="_blank" rel="noopener" aria-label="Instagram"><img src="/assets/social/instagram.jpg" alt="Instagram" class="social-icon-img" /></a>
-            <a href="https://chat.whatsapp.com/ITwYgBWNqhM7Km2GHwDeAC?mode=gi_t" target="_blank" rel="noopener" aria-label="WhatsApp"><img src="/assets/whatsAppIcon.png" alt="WhatsApp" class="social-icon-img" /></a>
-          </div>
-        </div>
-        <app-videos></app-videos>
-        <div class="text-center mt-3">
-          <button type="button" class="btn btn-outline-warning btn-view-more" (click)="openHealthConcerns()">
-             Discover More
-          </button>
-        </div>
-    </div>
-
-    <div class="mb-4">
-        <div class="row text-center mb-4">
-            <h4 class="fw-bold">WHAT OUR CUSTOMERS SAY!</h4>
-        </div>
-        <app-testimonial></app-testimonial>
-    </div>
+    </section>
 </div>
 
 @if (showReviewModal && selectedProductForReview) {
@@ -124,8 +358,8 @@
             <label class="form-label">Rating</label>
             <div class="home-review-stars">
               @for (star of [1,2,3,4,5]; track star) {
-                <i class="bi fs-4"
-                   [ngClass]="reviewRating >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                <i class="ri fs-4"
+                   [ngClass]="reviewRating >= star ? 'ri-star-fill text-warning' : 'ri-star-line text-muted'"
                    (click)="setHomeReviewRating(star)"></i>
               }
             </div>

@@ -1,11 +1,11 @@
-import { WildValleyFoodsServiceModelBase } from '../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../base/DuhaDryFruits-service-model-base';
 import { ProductVariantSM } from './variants-s-m';
 import { ProductSM } from './product-s-m';
 
 /**
  * Order Record Service Model (Order Items)
  */
-export class OrderRecordSM extends WildValleyFoodsServiceModelBase<number> {
+export class OrderRecordSM extends DuhaDryFruitsServiceModelBase<number> {
   orderId!: number;
   productVariantId!: number;
   productId!: number;

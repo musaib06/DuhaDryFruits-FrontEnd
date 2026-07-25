@@ -120,7 +120,14 @@ export class Banner implements AfterViewInit, OnChanges, OnDestroy {
     if (!text) {
       return false;
     }
-    const tagline = 'FRESH FROM THE FARMS OF KASHMIR';
-    return text.toUpperCase() !== tagline;
+    // Hide legacy / generic site taglines if they were saved as banner descriptions.
+    const hide = [
+      'FRESH FROM THE FARMS OF KASHMIR',
+      'PREMIUM DRY FRUITS · PACKED FRESH',
+      'PREMIUM DRY FRUITS - PACKED FRESH',
+      "FROM KASHMIR'S SAFFRON LAND",
+      'FROM KASHMIR’S SAFFRON LAND',
+    ];
+    return !hide.includes(text.toUpperCase());
   }
 }

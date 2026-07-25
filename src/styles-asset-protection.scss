@@ -2,7 +2,7 @@
  * Deter casual saving of catalog / product imagery (mobile + desktop).
  * Note: Screenshots, devtools, and network requests can still capture pixels — this is not DRM.
  */
-img.wvf-protect-asset {
+img.duha-protect-asset {
   -webkit-user-drag: none;
   user-select: none;
   -webkit-user-select: none;
@@ -12,6 +12,6 @@ img.wvf-protect-asset {
 }
 
 /* Thumbnails inside buttons still need clicks; image itself is non-draggable */
-button .wvf-protect-asset {
+button .duha-protect-asset {
   pointer-events: none;
 }

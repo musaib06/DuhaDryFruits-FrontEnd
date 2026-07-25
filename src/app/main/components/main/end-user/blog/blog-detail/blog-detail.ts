@@ -128,7 +128,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     }
 
     if (this.isBrowser) {
-      document.body.classList.add('wvf-blog-reading');
+      document.body.classList.add('duha-blog-reading');
     }
 
     this.tabResumeTeardown = this.tabResume.subscribe(() => void this.reloadBlogDetailAfterTabVisible());
@@ -155,7 +155,7 @@ export class BlogDetailComponent implements OnInit, OnDestroy {
     this.tabResumeTeardown?.();
     this.tabResumeTeardown = null;
     if (this.isBrowser) {
-      document.body.classList.remove('wvf-blog-reading');
+      document.body.classList.remove('duha-blog-reading');
       if (this.scrollListener) {
         window.removeEventListener('scroll', this.scrollListener);
       }

@@ -128,6 +128,10 @@ export class DashboardComponent extends BaseComponent<AdminDashboardViewModel> i
       this.viewModel.recentOrders = data.widgets.recentOrders || [];
       this.viewModel.topProducts = data.widgets.topProducts || [];
     }
+
+    if (data.bulkOrderSummary) {
+      this.viewModel.bulkOrderSummary = data.bulkOrderSummary;
+    }
   }
 
   // KPI Data (exposed for template)
@@ -423,7 +427,8 @@ export class DashboardComponent extends BaseComponent<AdminDashboardViewModel> i
       month: 'short', 
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: 'Asia/Kolkata'
     });
   }
 

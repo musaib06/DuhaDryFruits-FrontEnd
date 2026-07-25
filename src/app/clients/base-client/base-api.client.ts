@@ -1,4 +1,4 @@
-import { AxiosResponse, Method } from 'axios';
+import axios, { AxiosResponse, Method } from 'axios';
 import { AdditionalRequestDetails, Authentication } from '../../models/internal/additional-request-details';
 import { BaseAjaxClient } from './base-ajax.client';
 import { CommonResponseCodeHandler } from '../helpers/common-response-code-handler.helper';
@@ -96,6 +96,9 @@ export abstract class BaseApiClient extends BaseAjaxClient {
     } catch (x) {
       let msg = x instanceof Error ? x.message : JSON.stringify(x);
       if (msg === 'Network Error') {
+        msg = AppConstants.ErrorPrompts.Network_Error;
+      }
+      if (axios.isAxiosError(x) && (x.code === 'ECONNABORTED' || x.code === 'ETIMEDOUT')) {
         msg = AppConstants.ErrorPrompts.Network_Error;
       }
       const resp = this.CreateGenericApiResponseObject<OutResp>(msg);

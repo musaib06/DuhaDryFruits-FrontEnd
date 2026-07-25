@@ -37,6 +37,16 @@ yarn-error.log
 testem.log
 /typings
 
-# System files
-.DS_Store
-Thumbs.db
+# Windows reserved device names (can break `git add`)
+/nul
+/NUL
+/con
+/CON
+/prn
+/PRN
+
+# Environment files
+.env
+.env.*
+!.env.example
+

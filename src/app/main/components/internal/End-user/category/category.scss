@@ -21,25 +21,27 @@
   align-items: center;
   text-align: center;
   padding: $spacing-sm;
-  border-bottom: 1px solid $gray-300;
-  transition: transform $transition-fast, box-shadow $transition-fast;
+  border-bottom: 1px solid $color-border-light;
+  border-radius: $border-radius-md;
+  transition: transform $transition-fast, box-shadow $transition-fast, background $transition-fast;
   cursor: pointer;
   background: transparent;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: $shadow-md;
+    box-shadow: 0 12px 24px -16px rgba($color-primary-dark, 0.45);
+    background: $color-bg-secondary;
   }
 
   .img-wrap {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: $border-radius-md;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.03);
+    background: $color-bg-secondary;
 
     img {
       width: 100%;

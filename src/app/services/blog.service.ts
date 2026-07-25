@@ -263,12 +263,12 @@ export class BlogService extends BaseService {
   // ==================== SEO MANAGEMENT ====================
 
   private setupBlogSEO(blog: BlogSM): void {
-    const siteUrl = 'https://wildvalleyfoods.in';
-    const blogUrl = `${siteUrl}/blog/${blog.slug}`;
+    const siteUrl = 'https://duhadryfruits.com';
+    const blogUrl = `${siteUrl}/journal/${blog.slug}`;
     const imageUrl = blog.ogImageUrl || blog.ogImage || blog.featureImage || `${siteUrl}/assets/logo.png`;
     const absoluteImageUrl = imageUrl.startsWith('http') ? imageUrl : `${siteUrl}${imageUrl}`;
 
-    this.title.setTitle(`${blog.seoTitle} - Blog - Wild Valley Foods`);
+    this.title.setTitle(`${blog.seoTitle} - Blog - Duha Dryfruits`);
     this.meta.updateTag({ name: 'description', content: blog.seoDescription });
     this.meta.updateTag({ name: 'keywords', content: blog.metaKeywords || blog.tagNames });
     this.meta.updateTag({ rel: 'canonical', href: blog.canonicalUrl || blogUrl });
@@ -277,9 +277,9 @@ export class BlogService extends BaseService {
     this.meta.updateTag({ property: 'og:image', content: absoluteImageUrl });
     this.meta.updateTag({ property: 'og:url', content: blogUrl });
     this.meta.updateTag({ property: 'og:type', content: 'article' });
-    this.meta.updateTag({ property: 'og:site_name', content: 'Wild Valley Foods' });
+    this.meta.updateTag({ property: 'og:site_name', content: 'Duha Dryfruits' });
     this.meta.updateTag({ property: 'article:published_time', content: blog.publishDate?.toString() || '' });
-    this.meta.updateTag({ property: 'article:author', content: blog.authorName || 'Wild Valley Foods' });
+    this.meta.updateTag({ property: 'article:author', content: blog.authorName || 'Duha Dryfruits' });
     this.meta.updateTag({ property: 'article:section', content: blog.category?.name || 'Blog' });
     this.meta.updateTag({ property: 'article:tag', content: blog.tagNames });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
@@ -296,7 +296,7 @@ export class BlogService extends BaseService {
     this.meta.updateTag({ property: 'og:title', content: viewModel.pageTitle });
     this.meta.updateTag({ property: 'og:description', content: viewModel.pageDescription });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
-    this.meta.updateTag({ property: 'og:url', content: 'https://wildvalleyfoods.in/blog' });
+    this.meta.updateTag({ property: 'og:url', content: 'https://duhadryfruits.com/journal' });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary' });
   }
 
@@ -577,7 +577,7 @@ export class BlogService extends BaseService {
     platform?: 'facebook' | 'twitter' | 'linkedin' | 'whatsapp',
     articleTitle?: string
   ): string {
-    const baseUrl = `https://wildvalleyfoods.in/blog/${slug}`;
+    const baseUrl = `https://duhadryfruits.com/journal/${slug}`;
     const encodedUrl = encodeURIComponent(baseUrl);
     const waDigits = String(environment.blogShare?.whatsAppNumber ?? '').replace(/\D/g, '');
     const waMessage =

@@ -94,10 +94,10 @@ function buildAllowedHosts(): readonly string[] {
   const defaults = [
     'localhost',
     '127.0.0.1',
-    'wildvalleyfoods.in',
-    'www.wildvalleyfoods.in',
-    'dev.wildvalleyfoods.in',
-    '*.wildvalleyfoods.in',
+    'duhadryfruits.com',
+    'www.duhadryfruits.com',
+    'dev.duhadryfruits.com',
+    '*.duhadryfruits.com',
   ];
 
   const parseList = (raw: string | undefined): string[] =>

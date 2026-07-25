@@ -1,6 +1,6 @@
-import { WildValleyFoodsServiceModelBase } from "../../base/WildValleyFoods-service-model-base";
+import { DuhaDryFruitsServiceModelBase } from "../../base/DuhaDryFruits-service-model-base";
 
-export class VideoSM extends WildValleyFoodsServiceModelBase<number> {
+export class VideoSM extends DuhaDryFruitsServiceModelBase<number> {
   title!: string;
   youtubeUrl!: string;        // validated URL
   description?: string;       // optional

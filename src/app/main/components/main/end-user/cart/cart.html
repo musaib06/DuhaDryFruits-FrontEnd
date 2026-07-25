@@ -1,85 +1,105 @@
-<div class="container">
-    <h2 class="mb-4 text-center">Shopping Cart</h2>
-
-    <div *ngIf="viewModel.cartItems.length === 0" class="text-center py-5">
-        <p class="fs-4">Your cart is empty</p>
-        <a routerLink="/shop" class="btn btn-primary mt-3">Continue Shopping</a>
+<div class="cart-page">
+  <header class="cart-toolbar">
+    <div class="cart-toolbar__inner">
+      <div>
+        <span class="cart-toolbar__eyebrow">Your selection</span>
+        <h1 class="cart-toolbar__title">Shopping Bag</h1>
+        <p class="cart-toolbar__meta">
+          @if (viewModel.cartItems.length > 0) {
+            {{ viewModel.cartItems.length }} item{{ viewModel.cartItems.length === 1 ? '' : 's' }} ready for checkout
+          } @else {
+            Add fresh picks from the pantry to get started
+          }
+        </p>
+      </div>
+      <a routerLink="/buy-dry-fruits" class="btn btn-outline-primary cart-toolbar__shop">Continue Shopping</a>
     </div>
+  </header>
 
-    <div *ngIf="viewModel.cartItems.length > 0" class="row g-4">
-        <div class="col-12 col-lg-8">
-            <div class="list-group">
-                <div class="list-group-item d-flex flex-column flex-md-row align-items-center gap-3"
-                    *ngFor="let item of viewModel.cartItems" role="listitem">
-                    <img [src]="productImage(item)" [alt]="item.name" class="cart-item-img rounded wvf-protect-asset" draggable="false" loading="lazy"
-                        (error)="imageError($event, item)" />
-                    <div class="flex-grow-1 px-3">
-                        <h5 class="mb-2">{{ item.name }}</h5>
-                        <!-- Display variant info using utility -->
-                        @if (utils.getSelectedVariant(item); as variant) {
-                        <p class="mb-1 text-muted small">
-                            {{ utils.getVariantSizeAndWeightLabel(item) }} -
-                            Price: {{ variant.price | currency:'INR':'symbol':'1.0-0' }}
-                        </p>
-                        } @else {
-                        <p class="mb-1 text-muted small">Price: {{ utils.getPrice(item) | currency:'INR':'symbol':'1.0-0' }}</p>
-                        }
-                        <div class="input-group quantity-input-group w-auto">
-                            <button *ngIf="(item.cartQuantity || 1) > 1"
-                                class="btn btn-outline-secondary btn-sm" title="Decrease quantity"
-                                (click)="decrement(item)" aria-label="Decrease quantity">
-                                &minus;
-                            </button>
-                            <input type="number" class="form-control form-control-sm text-center"
-                                [value]="item.cartQuantity" (change)="updateQuantity(item, $event)" min="1"
-                                aria-label="Quantity" />
-                            <button class="btn btn-outline-secondary btn-sm" title="Increase quantity"
-                                (click)="increment(item)" aria-label="Increase quantity">
-                                &#43;
-                            </button>
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <!-- Use utility for total calculation -->
-                        <p class="mb-2 fw-bold">
-                            {{ (utils.getPrice(item) * item.cartQuantity) | currency:'INR':'symbol':'1.0-0' }}
-                        </p>
-                        <button class="btn btn-danger btn-sm" aria-label="Remove item" (click)="removeItem(item)">
-                            Remove
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <button class="btn btn-outline-danger mt-3" (click)="clearCart()" aria-label="Clear all items">
-                Clear Cart
-            </button>
-        </div>
-
-        <div class="col-12 col-lg-4">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title mb-3">Order Summary</h4>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Subtotal</span>
-                        <span>{{viewModel.subTotal | currency:'INR':'symbol':'1.0-0' }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Tax ({{ viewModel.taxRate * 100 }}%)</span>
-                        <span>{{ viewModel.tax | currency:'INR':'symbol':'1.0-0' }}</span>
-                    </div>
-                    <hr />
-                    <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
-                        <span>Total</span>
-                        <span>{{ viewModel.total | currency:'INR':'symbol':'1.0-0' }}</span>
-                    </div>
-
-                    <button (click)="proceedToCheckout()" class="btn btn-primary w-100"
-                        aria-label="Proceed to checkout">
-                        Proceed to Checkout
-                    </button>
-                </div>
-            </div>
-        </div>
+  @if (viewModel.cartItems.length === 0) {
+    <div class="cart-empty">
+      <div class="cart-empty__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="36" height="36">
+          <path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"
+            d="M6 8h12l-1 12H7L6 8zm3-3a3 3 0 016 0"/>
+        </svg>
+      </div>
+      <h2 class="cart-empty__title">Your bag is empty</h2>
+      <p class="cart-empty__text">Discover hand-picked dry fruits, nuts and seeds curated just for you.</p>
+      <a routerLink="/buy-dry-fruits" class="btn btn-primary">Browse Collection</a>
     </div>
+  }
+
+  @if (viewModel.cartItems.length > 0) {
+    <div class="cart-layout">
+      <section class="cart-main" aria-label="Bag items">
+        <ul class="cart-list">
+          @for (item of viewModel.cartItems; track $index) {
+            <li class="cart-item">
+              <div class="cart-item__media">
+                <img [src]="productImage(item)" [alt]="item.name" class="cart-item-img duha-protect-asset"
+                  draggable="false" loading="lazy" (error)="imageError($event, item)" />
+              </div>
+              <div class="cart-item__info">
+                <h2 class="cart-item__name">{{ item.name }}</h2>
+                @if (utils.getSelectedVariant(item); as variant) {
+                  <p class="cart-item__meta">
+                    {{ utils.getVariantSizeAndWeightLabel(item) }} ·
+                    {{ variant.price | currency:'INR':'symbol':'1.0-0' }}
+                  </p>
+                } @else {
+                  <p class="cart-item__meta">{{ utils.getPrice(item) | currency:'INR':'symbol':'1.0-0' }}</p>
+                }
+                <div class="cart-item__qty" role="group" aria-label="Quantity">
+                  @if ((item.cartQuantity || 1) > 1) {
+                    <button type="button" class="cart-item__qty-btn" (click)="decrement(item)"
+                      aria-label="Decrease quantity">−</button>
+                  }
+                  <input type="number" class="cart-item__qty-input" [value]="item.cartQuantity"
+                    (change)="updateQuantity(item, $event)" min="1" aria-label="Quantity" />
+                  <button type="button" class="cart-item__qty-btn" (click)="increment(item)"
+                    aria-label="Increase quantity">+</button>
+                </div>
+              </div>
+              <div class="cart-item__side">
+                <p class="cart-item__price">
+                  {{ (utils.getPrice(item) * item.cartQuantity) | currency:'INR':'symbol':'1.0-0' }}
+                </p>
+                <button type="button" class="cart-item__remove" (click)="removeItem(item)" aria-label="Remove item">
+                  Remove
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+
+        <button type="button" class="cart-clear" (click)="clearCart()" aria-label="Clear all items">
+          Clear bag
+        </button>
+      </section>
+
+      <aside class="cart-summary" aria-label="Order summary">
+        <div class="cart-summary__inner">
+          <h2 class="cart-summary__title">Order Summary</h2>
+          <div class="cart-summary__row">
+            <span>Subtotal</span>
+            <span>{{ viewModel.subTotal | currency:'INR':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="cart-summary__row">
+            <span>Tax ({{ viewModel.taxRate * 100 }}%)</span>
+            <span>{{ viewModel.tax | currency:'INR':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="cart-summary__total">
+            <span>Total</span>
+            <span>{{ viewModel.total | currency:'INR':'symbol':'1.0-0' }}</span>
+          </div>
+          <button type="button" class="btn btn-primary w-100 cart-summary__checkout"
+            (click)="proceedToCheckout()" aria-label="Proceed to checkout">
+            Proceed to Checkout
+          </button>
+          <a routerLink="/buy-dry-fruits" class="cart-summary__continue">Continue shopping</a>
+        </div>
+      </aside>
+    </div>
+  }
 </div>

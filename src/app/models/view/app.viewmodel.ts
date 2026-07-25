@@ -1,7 +1,7 @@
 import { BaseViewModel } from "../internal/base.viewmodel";
 
 export class AppViewModel extends BaseViewModel {
-    title = 'Musaib:WildValleyFoods';
+    title = 'DuhaDryFruits';
     routerSubscription: any;
     location: any;
   

@@ -79,9 +79,10 @@ export class Checkout
     this.selectedAddressType = AddressType.Home;
     this.viewModel.homeAddress.addressType = AddressType.Home;
     this.enforceIndiaCountry();
-    
-    // Load Razorpay key securely from backend
-    await this.loadRazorpayKey();
+
+    // Prefetch payment SDK + key in background — do not block the form.
+    void this.ensureRazorpaySdk().catch(() => undefined);
+    void this.loadRazorpayKey();
   }
 
   ngOnDestroy(): void {
@@ -109,6 +110,40 @@ export class Checkout
     if (!Number.isFinite(pendingAmount) || Math.abs(pendingAmount - cartTotal) > 0.01) {
       this.pendingCheckoutOrder = null;
     }
+  }
+
+  /**
+   * Load Razorpay Checkout SDK only when needed (not on every page via index.html).
+   */
+  private ensureRazorpaySdk(): Promise<void> {
+    if (typeof window === 'undefined') {
+      return Promise.reject(new Error('Razorpay requires a browser'));
+    }
+    if (typeof Razorpay !== 'undefined') {
+      return Promise.resolve();
+    }
+    const existing = document.querySelector(
+      'script[data-razorpay-sdk="1"]'
+    ) as HTMLScriptElement | null;
+    if (existing) {
+      return new Promise((resolve, reject) => {
+        existing.addEventListener('load', () => resolve(), { once: true });
+        existing.addEventListener(
+          'error',
+          () => reject(new Error('Failed to load Razorpay SDK')),
+          { once: true }
+        );
+      });
+    }
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.dataset['razorpaySdk'] = '1';
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('Failed to load Razorpay SDK'));
+      document.head.appendChild(script);
+    });
   }
 
   /**
@@ -757,7 +792,19 @@ export class Checkout
       return;
     }
 
-    // Validate Razorpay SDK is loaded
+    // Validate Razorpay SDK is loaded (fetch on demand — not bundled in index.html)
+    try {
+      await this.ensureRazorpaySdk();
+    } catch {
+      this._commonService.showSweetAlertToast({
+        title: 'Error',
+        text: 'Payment gateway SDK not loaded. Please check your connection and try again.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
     if (typeof Razorpay === 'undefined') {
       this._commonService.showSweetAlertToast({
         title: 'Error',
@@ -778,7 +825,7 @@ export class Checkout
         key: this.razorpayKeyId, // Public key from backend
         amount: Math.round(orderData.order.amount * 100), // Convert to paise
         currency: 'INR',
-        name: 'Wild Valley Foods',
+        name: 'Duha Dryfruits',
         description: `Order #${order.id}`,
         order_id: order.razorpayOrderId,
         
@@ -914,7 +961,7 @@ export class Checkout
 
       // Redirect to home or order success page
       setTimeout(() => {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       }, 2000);
 
     } catch (error: any) {

@@ -1,0 +1,341 @@
+<div class="bulk-page">
+  <!-- Compact hero + immediate CTA -->
+  <section class="bulk-hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Wholesale &amp; Business Orders</span>
+          <h1 class="hero-title">Need Large Quantities?</h1>
+          <p class="hero-lead">
+            Premium dry fruits at wholesale pricing — dedicated support, custom packaging,
+            and nationwide delivery for your business.
+          </p>
+          <div class="hero-actions">
+            <button type="button" class="btn btn-gold btn-lg" (click)="goToStep('products')">
+              <i class="ri ri-stack-line me-2"></i>Start Bulk Request
+            </button>
+            <button type="button" class="btn btn-outline-primary btn-lg" (click)="openBulkList()">
+              Bulk List
+              @if (viewModel.cartItems.length + viewModel.customItems.length) {
+                ({{ viewModel.cartItems.length + viewModel.customItems.length }})
+              }
+            </button>
+            <a routerLink="/my-wholesale-requests" class="track-link">Track requests</a>
+          </div>
+        </div>
+        <div class="hero-benefits-mini">
+          @for (b of benefits; track b.title) {
+            <div class="mini-chip">
+              <i class="ri" [ngClass]="b.icon"></i>
+              <span>{{ b.title }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sticky action bar — always reachable without scrolling far -->
+  <div class="bulk-sticky-bar" id="bulk-form">
+    <div class="container">
+      <div class="sticky-inner">
+        <input
+          type="search"
+          class="form-control"
+          placeholder="Search products..."
+          [(ngModel)]="viewModel.searchTerm"
+          (ngModelChange)="onSearchChange()"
+        />
+        <select class="form-select" [(ngModel)]="viewModel.selectedCategoryId" (ngModelChange)="loadProducts()">
+          <option [ngValue]="null">All Categories</option>
+          @for (cat of categories; track cat.id) {
+            <option [ngValue]="cat.id">{{ cat.name }}</option>
+          }
+        </select>
+        <button type="button" class="btn btn-outline-primary" (click)="viewModel.showCustomForm = true">
+          <i class="ri ri-add-circle-line me-1"></i>Custom
+        </button>
+        <button type="button" class="btn btn-gold position-relative" (click)="openBulkList()">
+          Bulk List
+          @if (viewModel.cartItems.length + viewModel.customItems.length) {
+            <span class="cart-badge">{{ viewModel.cartItems.length + viewModel.customItems.length }}</span>
+          }
+        </button>
+        <button
+          type="button"
+          class="btn btn-continue"
+          [disabled]="!viewModel.cartItems.length && !viewModel.customItems.length"
+          (click)="goToStep('company')"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products -->
+  <section class="bulk-products">
+    <div class="container">
+      <div class="section-head">
+        <h2>Select Products</h2>
+        <p>Add items to your bulk list — no payment until your request is approved.</p>
+      </div>
+
+      @if (viewModel.isLoadingProducts) {
+        <div class="skeleton-grid">
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+            <div class="skeleton-card"></div>
+          }
+        </div>
+      } @else if (!viewModel.products.length) {
+        <div class="empty-products text-center py-5 text-muted">
+          <i class="ri ri-archive-2-line d-block mb-2" style="font-size: 2rem"></i>
+          No products found. Try another search or category.
+        </div>
+      } @else {
+        <div class="product-grid">
+          @for (product of viewModel.products; track product.id) {
+            <div class="bulk-product-card">
+              <div class="product-img-wrap">
+                @if (getProductImage(product)) {
+                  <img [src]="getProductImage(product)" [alt]="product.name || ''" loading="lazy" />
+                } @else {
+                  <div class="img-placeholder"><i class="ri ri-image-line"></i></div>
+                }
+                <span class="stock-badge" [class.oos]="isOutOfStock(product)">
+                  {{ getStockStatus(product) }}
+                </span>
+              </div>
+              <div class="product-body">
+                <h3 [title]="product.name">{{ product.name }}</h3>
+                <p class="meta">{{ getVariantLabel(product) }} · Min {{ getMinQty(product) }}</p>
+                @if (getVariantPrice(product)) {
+                  <p class="price">₹{{ getVariantPrice(product) | number: '1.0-0' }} <small>/ unit</small></p>
+                }
+                <button
+                  type="button"
+                  class="btn btn-sm btn-gold w-100"
+                  (click)="addToBulkList(product)"
+                  [disabled]="isOutOfStock(product)"
+                >
+                  Add To Bulk List
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Bulk Cart Panel -->
+  @if (viewModel.showCartPanel) {
+    <div class="cart-panel" (click)="viewModel.showCartPanel = false">
+      <div class="cart-panel-inner" (click)="$event.stopPropagation()">
+        <div class="cart-header">
+          <h3>Bulk Request List</h3>
+          <button type="button" class="btn-close" (click)="viewModel.showCartPanel = false"></button>
+        </div>
+        @if (!viewModel.cartItems.length && !viewModel.customItems.length) {
+          <p class="text-muted p-3 mb-0">Your bulk list is empty. Add products above.</p>
+        }
+        @for (item of viewModel.cartItems; track item.productVariantId) {
+          <div class="cart-item">
+            <div>
+              <strong>{{ item.productName }}</strong>
+              <small class="d-block text-muted">{{ item.unit }} · ₹{{ item.unitPrice }}</small>
+            </div>
+            <input
+              type="number"
+              class="form-control form-control-sm qty-input"
+              [(ngModel)]="item.requestedQuantity"
+              (ngModelChange)="bulkCart.updateQuantity(item.productVariantId, item.requestedQuantity)"
+              min="1"
+            />
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeFromCart(item.productVariantId)">
+              <i class="ri ri-delete-bin-6-line"></i>
+            </button>
+          </div>
+        }
+        @for (item of viewModel.customItems; track $index) {
+          <div class="cart-item custom">
+            <div>
+              <strong>{{ item.productName }}</strong>
+              <span class="badge bg-secondary ms-1">Custom</span>
+            </div>
+            <span>Qty: {{ item.requiredQuantity }}</span>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeCustom($index)">
+              <i class="ri ri-delete-bin-6-line"></i>
+            </button>
+          </div>
+        }
+        <div class="cart-footer">
+          <button type="button" class="btn btn-gold w-100" (click)="goToStep('company')">
+            Continue to Company Info
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Custom Product Modal -->
+  @if (viewModel.showCustomForm) {
+    <div class="modal-backdrop" (click)="viewModel.showCustomForm = false"></div>
+    <div class="custom-modal">
+      <h3>Custom Product Request</h3>
+      <div class="mb-2">
+        <input class="form-control" placeholder="Product Name *" [(ngModel)]="viewModel.customProduct.productName" />
+      </div>
+      <div class="mb-2">
+        <textarea class="form-control" placeholder="Description" rows="2" [(ngModel)]="viewModel.customProduct.description"></textarea>
+      </div>
+      <div class="row g-2 mb-2">
+        <div class="col-6">
+          <input type="number" class="form-control" placeholder="Quantity" [(ngModel)]="viewModel.customProduct.requiredQuantity" min="1" />
+        </div>
+        <div class="col-6">
+          <input class="form-control" placeholder="Packaging" [(ngModel)]="viewModel.customProduct.packaging" />
+        </div>
+      </div>
+      <div class="row g-2 mb-2">
+        <div class="col-6">
+          <input type="number" class="form-control" placeholder="Expected Budget (₹)" [(ngModel)]="viewModel.customProduct.expectedBudget" />
+        </div>
+        <div class="col-6">
+          <input type="date" class="form-control" [(ngModel)]="viewModel.customProduct.expectedDeliveryDate" />
+        </div>
+      </div>
+      <textarea class="form-control mb-3" placeholder="Additional notes" rows="2" [(ngModel)]="viewModel.customProduct.additionalNotes"></textarea>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-gold" (click)="addCustomProduct()">Add Request</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="viewModel.showCustomForm = false">Cancel</button>
+      </div>
+    </div>
+  }
+
+  <!-- Company Info -->
+  @if (viewModel.currentStep === 'company' || viewModel.currentStep === 'review') {
+    <section class="bulk-company" id="bulk-company">
+      <div class="container">
+        <h2 class="section-title">Company Information</h2>
+        <div class="company-form glass-card">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label>Company Name *</label>
+              <input class="form-control" [(ngModel)]="viewModel.companyInfo.companyName" />
+            </div>
+            <div class="col-md-6">
+              <label>GST Number</label>
+              <input class="form-control" [(ngModel)]="viewModel.companyInfo.gstNumber" />
+            </div>
+            <div class="col-md-6">
+              <label>Business Type</label>
+              <select class="form-select" [(ngModel)]="viewModel.companyInfo.businessType">
+                <option value="">Select</option>
+                <option>Retailer</option>
+                <option>Wholesaler</option>
+                <option>Restaurant/Hotel</option>
+                <option>Corporate</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label>Contact Person *</label>
+              <input class="form-control" [(ngModel)]="viewModel.companyInfo.contactPerson" />
+            </div>
+            <div class="col-md-6">
+              <label>Phone *</label>
+              <input class="form-control" [(ngModel)]="viewModel.companyInfo.phone" />
+            </div>
+            <div class="col-md-6">
+              <label>Email *</label>
+              <input type="email" class="form-control" [(ngModel)]="viewModel.companyInfo.email" />
+            </div>
+            <div class="col-12">
+              <label>Shipping Address *</label>
+              <textarea class="form-control" rows="2" [(ngModel)]="viewModel.companyInfo.shippingAddress"></textarea>
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="sameBill" [(ngModel)]="viewModel.sameAsBilling" />
+                <label class="form-check-label" for="sameBill">Billing address same as shipping</label>
+              </div>
+            </div>
+            @if (!viewModel.sameAsBilling) {
+              <div class="col-12">
+                <label>Billing Address</label>
+                <textarea class="form-control" rows="2" [(ngModel)]="viewModel.companyInfo.billingAddress"></textarea>
+              </div>
+            }
+            <div class="col-md-4">
+              <label>City *</label>
+              <input class="form-control" [(ngModel)]="viewModel.companyInfo.city" />
+            </div>
+            <div class="col-md-4">
+              <label>State *</label>
+              <input class="form-control" [(ngModel)]="viewModel.companyInfo.state" />
+            </div>
+            <div class="col-md-4">
+              <label>PIN Code *</label>
+              <input class="form-control" [(ngModel)]="viewModel.companyInfo.pinCode" />
+            </div>
+            <div class="col-12">
+              <label>Additional Notes</label>
+              <textarea class="form-control" rows="2" [(ngModel)]="viewModel.customerNotes"></textarea>
+            </div>
+            <div class="col-12">
+              <label>Attachments</label>
+              <input type="file" class="form-control" multiple accept="image/*,.pdf" (change)="onFileSelect($event)" />
+            </div>
+          </div>
+          <div class="form-actions mt-4">
+            <button type="button" class="btn btn-outline-secondary" (click)="viewModel.currentStep = 'products'">Back</button>
+            <button type="button" class="btn btn-gold btn-lg" [disabled]="viewModel.isSubmitting" (click)="submitRequest()">
+              @if (viewModel.isSubmitting) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+              }
+              Submit Bulk Request
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- How it works + FAQ (below fold) -->
+  <section class="bulk-process">
+    <div class="container">
+      <h2 class="section-title text-center">How It Works</h2>
+      <div class="timeline">
+        @for (s of processSteps; track s.step) {
+          <div class="timeline-step">
+            <div class="step-num">{{ s.step }}</div>
+            <h4>{{ s.title }}</h4>
+            <p>{{ s.desc }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="bulk-faq">
+    <div class="container">
+      <h2 class="section-title text-center">Frequently Asked Questions</h2>
+      <div class="faq-list">
+        @for (f of faqs; track f.q) {
+          <details class="faq-item">
+            <summary>{{ f.q }}</summary>
+            <p>{{ f.a }}</p>
+          </details>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="bulk-contact">
+    <div class="container text-center">
+      <h2>Need Help?</h2>
+      <p>Call us at <a href="tel:+919796764475">+91 97967 64475</a></p>
+    </div>
+  </section>
+</div>

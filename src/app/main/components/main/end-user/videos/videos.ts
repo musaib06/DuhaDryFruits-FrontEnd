@@ -152,7 +152,7 @@ export class Videos
     // Backdrop removal can lag one frame after hide()
     setTimeout(() => {
       this._commonService.stripBootstrapModalArtifacts();
-      void this.router.navigate(['/product', productId]);
+      void this.router.navigate(['/dry-fruits', productId]);
     }, 0);
   }
 

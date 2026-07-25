@@ -1,4 +1,4 @@
-import { WildValleyFoodsServiceModelBase } from '../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../base/DuhaDryFruits-service-model-base';
 import { OrderSM } from './order-s-m';
 
 /**
@@ -98,10 +98,16 @@ export class DashboardWidgetsSM {
 /**
  * Dashboard Service Model
  */
-export class DashboardSM extends WildValleyFoodsServiceModelBase<number> {
+export class DashboardSM extends DuhaDryFruitsServiceModelBase<number> {
   kpis!: DashboardKPISM;
   charts!: DashboardChartsSM;
   widgets!: DashboardWidgetsSM;
+  bulkOrderSummary?: {
+    todayRequests: number;
+    pending: number;
+    revenue: number;
+    growth: number;
+  };
   lastUpdated!: string;
 }
 

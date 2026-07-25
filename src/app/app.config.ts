@@ -4,6 +4,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection, isDevMode,
 } from '@angular/core';
+import { DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
 import { provideRouter, withPreloading, withInMemoryScrolling } from '@angular/router';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideServerRendering, withRoutes } from '@angular/ssr';
@@ -34,36 +35,36 @@ const quillToolbar = [
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   // Background spinner (non-blocking small spinner)
-  bgsColor: '#ff4081',
-  bgsOpacity: 0.3,
+  bgsColor: '#c6a15b',
+  bgsOpacity: 0.4,
   bgsPosition: POSITION.bottomRight,
   bgsSize: 30,
   bgsType: SPINNER.rectangleBounce,
 
   // Foreground loader (blocks UI with spinner + progress bar)
-  fgsColor: '#ffea00ff',
+  fgsColor: '#435a34',
   fgsPosition: POSITION.centerCenter,
-  fgsSize: 60, // Reduced size to make logo more prominent
+  fgsSize: 70,
   fgsType: SPINNER.threeStrings,
 
-  // Display a logo above the spinner (showing only center portion)
-  logoUrl: 'assets/loader-no-bg.png', // Transparent background logo optimized for loader
-  logoSize: 210, // Optimized size to show center logo portion clearly
+  // Logo removed for the Duha rebrand — clean branded spinner only
+  logoUrl: '',
+  logoSize: 210,
   logoPosition: POSITION.centerCenter,
 
   // Progress bar
-  pbColor: '#ffd740',
+  pbColor: '#c6a15b',
   pbDirection: PB_DIRECTION.leftToRight,
   pbThickness: 6,
   hasProgressBar: true,
 
   // Loading message
   text: 'Loading, please wait...',
-  textColor: '#ffffff',
+  textColor: '#435a34',
   textPosition: POSITION.centerCenter,
 
   // Aesthetic effects
-  overlayColor: 'transparent',
+  overlayColor: 'rgba(251, 249, 243, 0.75)',
   overlayBorderRadius: '8px',
   blur: 4,
   fastFadeOut: true,
@@ -76,6 +77,9 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
+    // Render all `date` pipe output in IST (UTC+5:30) regardless of the
+    // viewer's device or the SSR server timezone.
+    { provide: DATE_PIPE_DEFAULT_OPTIONS, useValue: { timezone: '+0530' } },
     provideRouter(
       routes,
       withPreloading(CustomPreloadingStrategy),

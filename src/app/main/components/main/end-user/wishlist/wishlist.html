@@ -1,110 +1,82 @@
-<div class="wishlist-root">
-  <div class="toolbar">
-    <div class="title-wrap">
-      <h1>
-        My Wishlist <span class="count">({{ viewModel.totalCount }})</span>
-      </h1>
+<div class="wishlist-page">
+  <header class="wishlist-toolbar">
+    <div class="wishlist-toolbar__inner">
+      <div>
+        <span class="wishlist-toolbar__eyebrow">Saved for later</span>
+        <h1 class="wishlist-toolbar__title">
+          Your Wishlist
+          <span class="wishlist-toolbar__count">{{ viewModel.totalCount }}</span>
+        </h1>
+        <p class="wishlist-toolbar__meta">Items you’ve marked to revisit from the Duha pantry.</p>
+      </div>
+      @if (viewModel.allItems.length > 0) {
+        <div class="wishlist-toolbar__controls">
+          <label class="wishlist-search">
+            <span class="visually-hidden">Search wishlist</span>
+            <svg class="wishlist-search__icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M16.5 16.5L21 21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            <input type="search" placeholder="Find a saved item…" [(ngModel)]="viewModel.searchTerm"
+              (input)="applySearch()" />
+          </label>
+        </div>
+      }
     </div>
-    <div class="controls">
-      <input type="search" placeholder="Search products, titles..." [(ngModel)]="viewModel.searchTerm" class="search"
-        (input)="applySearch()" />
+  </header>
+
+  @if (viewModel.allItems.length === 0) {
+    <div class="wishlist-empty">
+      <div class="wishlist-empty__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="36" height="36">
+          <path fill="none" stroke="currentColor" stroke-width="1.6"
+            d="M12.1 18.55l-.1.1-.11-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/>
+        </svg>
+      </div>
+      <h2>Nothing saved yet</h2>
+      <p>Tap the heart on any product to keep it here for later.</p>
+      <a routerLink="/buy-dry-fruits" class="btn btn-primary">Browse Collection</a>
     </div>
-  </div>
-  @if (viewModel.allItems.length===0) {
-  <div class="empty-state">
-    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" alt="" />
-    <h2>Your wishlist is empty</h2>
-    <p>
-      Add products to your wishlist from the store
-    </p>
-  </div>}
+  }
 
   @if (viewModel.allItems.length > 0) {
-  <div class="content-area">
-    <!-- Desktop table -->
-    <table class="wishlist-table" *ngIf="! viewModel.isMobile">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Product</th>
-          <th>Title</th>
-          <th>Price</th>
-
-          <th class="text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of viewModel.allItems; track $index) {
-        <tr>
-          <td class="checkbox-cell">
-
-          </td>
-          <td>
-            <img [src]="productImage(item)" [alt]="item.name" class="product-img wvf-protect-asset" draggable="false" loading="lazy"
-              (error)="_commonService.onProductImageError($event, item.id)" />
-          </td>
-          <td class="title-col">
-            <div class="title">{{ item.name }}</div>
-          </td>
-
-          <!-- Use utility for variant price -->
-          <td class="price-col">
-            {{ utils.getPrice(item) | currency : "INR" }}
-            @if (utils.getSelectedVariant(item); as variant) {
-              <small class="text-muted d-block">{{ utils.getDisplayUnit(variant) }}</small>
-            }
-          </td>
-
-          <td class="actions text-right">
-            <button class="icon" (click)="moveToCart(item)">🛒</button>
-            <button class="icon" (click)="shareItem(item)">🔗</button>
-            <button class="icon" (click)="removeFromWishlist(item.id, item.selectedVariantId)">
-              ✖
-            </button>
-          </td>
-        </tr>}
-      </tbody>
-    </table>
-
-    <!-- Mobile cards -->
-    <div class="card-grid" *ngIf=" viewModel.isMobile">
-      <div class="card" *ngFor="let item of  viewModel.allItems">
-        <div class="card-head">
-          <img [src]="productImage(item)" [alt]="item.name" class="wvf-protect-asset" draggable="false" loading="lazy"
-            (error)="_commonService.onProductImageError($event, item.id)" />
-          <div class="card-info">
-            <div class="title">{{ item.name }}</div>
-            @if (utils.getSelectedVariant(item); as variant) {
-            <div class="muted small">
-              {{ utils.getDisplayUnit(variant) }}
+    <div class="wishlist-grid">
+      @for (item of viewModel.allItems; track $index) {
+        <article class="wish-card">
+          <div class="wish-card__media">
+            <img [src]="productImage(item)" [alt]="item.name" class="duha-protect-asset" draggable="false"
+              loading="lazy" (error)="commonService.onProductImageError($event, item.id)" />
+          </div>
+          <div class="wish-card__body">
+            <h2 class="wish-card__title">{{ item.name }}</h2>
+            <p class="wish-card__price">
+              {{ utils.getPrice(item) | currency:'INR':'symbol':'1.0-0' }}
+              @if (utils.getSelectedVariant(item); as variant) {
+                <span class="wish-card__unit">{{ utils.getDisplayUnit(variant) }}</span>
+              }
+            </p>
+            <div class="wish-card__actions">
+              <button type="button" class="btn btn-primary wish-card__cta" (click)="moveToCart(item)">
+                Add to Bag
+              </button>
+              <button type="button" class="wish-card__icon-btn" title="Share" aria-label="Share"
+                (click)="shareItem(item)">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path fill="none" stroke="currentColor" stroke-width="1.7"
+                    d="M15 8a3 3 0 10-2.83-4H12a3 3 0 000 6h.17M9 16a3 3 0 102.83 4H12a3 3 0 000-6h-.17M8.5 9.5l7 5"/>
+                </svg>
+              </button>
+              <button type="button" class="wish-card__icon-btn wish-card__icon-btn--danger" title="Remove"
+                aria-label="Remove from wishlist"
+                (click)="removeFromWishlist(item.id, item.selectedVariantId)">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/>
+                </svg>
+              </button>
             </div>
-            }
           </div>
-        </div>
-        <div class="card-body">
-          <!-- Use utility for variant price -->
-          <div class="price">
-            {{ utils.getPrice(item) | currency : "INR" }}
-            @if (utils.getSelectedVariant(item); as variant) {
-              <small class="text-muted d-block">{{ utils.getDisplayUnit(variant) }}</small>
-            }
-          </div>
-
-        </div>
-        <div class="card-actions">
-          <button class="btn ghost" (click)="moveToCart(item)">
-            Move to cart
-          </button>
-          <button class="btn ghost" (click)="shareItem(item)">Share</button>
-          <button class="btn danger ghost" (click)="removeFromWishlist(item.id, item.selectedVariantId)">
-            Remove
-          </button>
-        </div>
-      </div>
+        </article>
+      }
     </div>
-
-
-  </div>}
-
-
+  }
 </div>

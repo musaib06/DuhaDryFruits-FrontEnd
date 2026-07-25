@@ -1,48 +1,65 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <h2 class="title">Create Account</h2>
-    <form [formGroup]="viewModel.signupForm" (ngSubmit)="onSubmit()">
-
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input id="username" formControlName="username" type="text" placeholder="Enter your username" />
-      </div>
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" formControlName="email" type="email" placeholder="Enter your email" />
-      </div>
-
-      <div class="form-group password-group">
-        <label for="password">Password</label>
-        <div class="password-wrapper">
-          <input id="password" formControlName="password" [type]="viewModel.showPassword ? 'text' : 'password'" autocomplete="" placeholder="Enter password" />
-          <i class="bi" [ngClass]="viewModel.showPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePassword('password')"></i>
-        </div>
-      </div>
-
-      <div class="form-group password-group">
-        <label for="confirmPassword">Confirm Password</label>
-        <div class="password-wrapper">
-          <input id="confirmPassword" formControlName="confirmPassword" [type]="viewModel.showConfirmPassword ? 'text' : 'password'" autocomplete="Confirm password" />
-          <i class="bi" [ngClass]="viewModel.showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePassword('confirm')"></i>
-        </div>
-      </div>
-
-  
-      <div class="form-group">
-        <label for="role">Role</label>
-        <select id="role" formControlName="role">
-          <option value="" disabled>Select Role</option>
-          <option value="Admin">Admin</option>
-          <option value="endUser">End User</option>
-        </select>
-      </div>
-
-      <button type="submit" class="auth-btn" [disabled]="viewModel.signupForm.invalid" >Sign Up</button>
-    </form>
-        <div class="link">
-        <p><a (click)="redirectToLogin()">Back to login</a></p>
+<div class="auth-shell">
+  <aside class="auth-brand">
+    <div class="auth-brand__inner">
+      <span class="auth-brand__logo">Duha<span class="auth-brand__accent">Dryfruits</span></span>
+      <span class="auth-brand__tag">Premium Dry Fruits &amp; Nuts</span>
+      <h2 class="auth-brand__headline">Join the Duha<br />family today.</h2>
+      <ul class="auth-brand__points">
+        <li><i class="bi bi-stars"></i> Curated, handpicked selections</li>
+        <li><i class="bi bi-truck"></i> Fresh delivery to your door</li>
+        <li><i class="bi bi-heart"></i> Save favourites for later</li>
+      </ul>
     </div>
-  </div>
+  </aside>
+
+  <main class="auth-form-side">
+    <div class="auth-container">
+      <div class="auth-card">
+        <h2 class="title">Create account</h2>
+        <p class="subtitle">Start your Duha journey in seconds</p>
+        <form [formGroup]="viewModel.signupForm" (ngSubmit)="onSubmit()">
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" formControlName="username" type="text" placeholder="Enter your username" />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" formControlName="email" type="email" placeholder="Enter your email" />
+          </div>
+
+          <div class="form-group password-group">
+            <label for="password">Password</label>
+            <div class="password-wrapper">
+              <input id="password" formControlName="password" [type]="viewModel.showPassword ? 'text' : 'password'" autocomplete="" placeholder="Enter password" />
+              <i class="bi" [ngClass]="viewModel.showPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePassword('password')"></i>
+            </div>
+          </div>
+
+          <div class="form-group password-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="password-wrapper">
+              <input id="confirmPassword" formControlName="confirmPassword" [type]="viewModel.showConfirmPassword ? 'text' : 'password'" autocomplete="Confirm password" placeholder="Re-enter password" />
+              <i class="bi" [ngClass]="viewModel.showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePassword('confirm')"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="role">Role</label>
+            <select id="role" formControlName="role">
+              <option value="" disabled>Select Role</option>
+              <option value="Admin">Admin</option>
+              <option value="endUser">End User</option>
+            </select>
+          </div>
+
+          <button type="submit" class="auth-btn" [disabled]="viewModel.signupForm.invalid">Sign Up</button>
+        </form>
+        <div class="link">
+          <p><a (click)="redirectToLogin()">Back to login</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
 </div>

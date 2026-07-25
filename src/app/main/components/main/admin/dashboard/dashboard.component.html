@@ -93,6 +93,30 @@
 
     <!-- KPI Cards Section -->
     <div class="kpi-section mb-4">
+
+    <!-- Bulk Orders Summary Card -->
+    @if (viewModel.bulkOrderSummary) {
+      <div class="row mb-3">
+        <div class="col-12">
+          <a routerLink="/admin/bulk-orders/dashboard" class="bulk-summary-card text-decoration-none d-block">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div>
+                <h5 class="mb-1"><i class="bi bi-boxes me-2"></i>Bulk Orders</h5>
+                <small class="text-muted">Wholesale &amp; business requests — separate from retail orders</small>
+              </div>
+              <div class="d-flex flex-wrap gap-4">
+                <div><strong>{{ viewModel.bulkOrderSummary.todayRequests }}</strong><br><small>Today's Requests</small></div>
+                <div><strong>{{ viewModel.bulkOrderSummary.pending }}</strong><br><small>Pending</small></div>
+                <div><strong>₹{{ viewModel.bulkOrderSummary.revenue | number:'1.0-0' }}</strong><br><small>Revenue</small></div>
+                <div><strong>{{ viewModel.bulkOrderSummary.growth }}%</strong><br><small>Growth</small></div>
+              </div>
+              <span class="btn btn-sm btn-outline-primary">Open Bulk Dashboard →</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    }
+
       <div class="row g-3 g-md-4">
 
         <!-- Today's Sales -->

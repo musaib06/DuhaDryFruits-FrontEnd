@@ -77,7 +77,9 @@ export abstract class BaseAjaxClient {
 
       const methodUpper = String(reqMethod).toUpperCase();
       const allowRetry = methodUpper === 'GET' || methodUpper === 'HEAD';
-      const maxAttempts = allowRetry ? 2 : 1;
+      // SSR must not retry slow APIs — Vite aborts the whole page at 30s.
+      const isServer = typeof window === 'undefined';
+      const maxAttempts = allowRetry && !isServer ? 2 : 1;
       let lastErr: unknown;
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
@@ -96,11 +98,14 @@ export abstract class BaseAjaxClient {
   };
 
   private GetAxiosConfig = (): AxiosRequestConfig => {
+    // timeout: 0 hangs forever and trips Angular Vite SSR (30s AbortSignal).
+    const isServer = typeof window === 'undefined';
     return {
       url: '',
       method: 'get',
       apiBaseUrl: '',
-      timeout: 0,
+      // Keep SSR short; browser needs more headroom for cold/remote APIs.
+      timeout: isServer ? 6_000 : 20_000,
       withCredentials: false,
       responseType: 'json',
       maxContentLength: Infinity,

@@ -1,18 +1,30 @@
-<section class="features py-4">
-    <div class="container-fluid">
-        <div class="row g-3">
-            <!-- Feature Item -->
-            <div class="col-6 col-sm-6 col-lg-4" *ngFor="let feature of features">
-                <div class="feature-box h-100 d-flex align-items-center p-3">
-                    <div class="icon-wrap me-3">
-                        <i [class]="feature.icon"></i>
-                    </div>
-                    <div class="text-wrap">
-                        <h6 class="title mb-1">{{ feature.title }}</h6>
-                        <p class="desc mb-0">{{ feature.desc }}</p>
-                    </div>
-                </div>
-            </div>
+<section class="highlight-strip" aria-label="Why shop with Duha">
+  <div class="container">
+    <!-- Mobile: compact trust chips — products stay above the fold -->
+    <div class="highlight-chips" role="list">
+      @for (feature of features; track feature.title) {
+        <div class="highlight-chip" role="listitem">
+          <span class="highlight-chip__icon" aria-hidden="true">
+            <i [class]="feature.icon"></i>
+          </span>
+          <span class="highlight-chip__title">{{ feature.title }}</span>
         </div>
+      }
     </div>
+
+    <!-- Tablet/Desktop: fuller cards -->
+    <div class="highlight-grid">
+      @for (feature of features; track feature.title) {
+        <article class="highlight-card">
+          <div class="highlight-card__icon" aria-hidden="true">
+            <i [class]="feature.icon"></i>
+          </div>
+          <div class="highlight-card__copy">
+            <h3 class="highlight-card__title">{{ feature.title }}</h3>
+            <p class="highlight-card__desc">{{ feature.desc }}</p>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
 </section>

@@ -17,7 +17,7 @@
 # FROM nginx:stable-alpine
 
 # # Copy built Angular files
-# COPY --from=build /app/dist/wild-valley-food/browser /usr/share/nginx/html
+# COPY --from=build /app/dist/duha-dryfruits/browser /usr/share/nginx/html
 
 # # Copy custom nginx config
 # Use Node 22
@@ -48,4 +48,4 @@ EXPOSE 8080
 
 # Same as `npm run serve:ssr` but explicit argv so server.ts can detect the entry script.
 # Must match the path under /app after build (see angular.json outputPath / project name).
-CMD ["node", "dist/wild-valley-food/server/server.mjs"]
+CMD ["node", "dist/duha-dryfruits/server/server.mjs"]

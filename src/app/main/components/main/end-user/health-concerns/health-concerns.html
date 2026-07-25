@@ -2,12 +2,12 @@
   <div class="health-concerns-inner">
     <header class="health-hero">
       <div class="hero-icon">
-        <i class="bi bi-heart-pulse-fill"></i>
+        <i class="ri ri-heart-pulse-fill"></i>
       </div>
       <span class="health-hero__eyebrow">Wellness Library</span>
       <h1 class="health-hero__title">Health & Wellness Insights</h1>
       <p class="health-hero__lead">
-        Discover natural wellness tips through our curated video collection. Learn about traditional Kashmiri remedies and modern health practices.
+        Discover natural wellness tips through our curated video collection — nutrition, lifestyle, and everyday healthy habits.
       </p>
     </header>
 
@@ -23,22 +23,22 @@
                 draggable="false" />
               <div class="play-overlay">
                 <div class="play-button">
-                  <i class="bi bi-play-fill"></i>
+                  <i class="ri ri-play-fill"></i>
                 </div>
               </div>
               @if (video.featured) {
                 <div class="featured-badge">
-                  <i class="bi bi-star-fill me-1"></i>Featured
+                  <i class="ri ri-star-fill me-1"></i>Featured
                 </div>
               }
               <div class="video-duration">
-                <i class="bi bi-clock me-1"></i>{{ getVideoDuration(video.youtubeUrl) || '2-3 min' }}
+                <i class="ri ri-time-line me-1"></i>{{ getVideoDuration(video.youtubeUrl) || '2-3 min' }}
               </div>
             </div>
             
             <div class="video-content">
               <div class="video-category">
-                <i class="bi bi-bookmark-star me-1"></i>{{ getCategoryName(video.category) || 'Wellness' }}
+                <i class="ri ri-bookmark-3-line me-1"></i>{{ getCategoryName(video.category) || 'Wellness' }}
               </div>
               <h3 class="video-title">{{ video.title }}</h3>
               <p class="video-description">
@@ -50,14 +50,14 @@
                   type="button"
                   class="btn btn-primary"
                   (click)="openVideoModal(video)">
-                  <i class="bi bi-play-circle me-1"></i> Watch Now
+                  <i class="ri ri-play-circle-line me-1"></i> Watch Now
                 </button>
                 @if (video.productId != null) {
                   <button
                     type="button"
                     class="btn btn-outline-primary"
                     (click)="openProduct(video.productId)">
-                    <i class="bi bi-basket me-1"></i> Related Product
+                    <i class="ri ri-shopping-basket-2-line me-1"></i> Related Product
                   </button>
                 }
               </div>
@@ -70,7 +70,7 @@
         <ul class="pagination justify-content-center flex-wrap align-items-center gap-2">
           <li class="page-item" [class.disabled]="currentPage === 1">
             <a class="page-link" (click)="goToPage(currentPage - 1)" role="button">
-              <i class="bi bi-chevron-left"></i> Prev
+              <i class="ri ri-arrow-left-s-line"></i> Prev
             </a>
           </li>
 
@@ -91,14 +91,14 @@
 
           <li class="page-item" [class.disabled]="currentPage >= totalPages">
             <a class="page-link" (click)="goToPage(currentPage + 1)" role="button">
-              Next <i class="bi bi-chevron-right"></i>
+              Next <i class="ri ri-arrow-right-s-line"></i>
             </a>
           </li>
         </ul>
       </nav>
     } @else {
       <div class="empty-state text-center py-5">
-        <i class="bi bi-youtube fs-1 text-muted d-block mb-3"></i>
+        <i class="ri ri-youtube-line fs-1 text-muted d-block mb-3"></i>
         <p class="text-muted mb-0">No health concern videos available right now.</p>
       </div>
     }

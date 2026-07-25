@@ -1,4 +1,4 @@
-import { WildValleyFoodsServiceModelBase } from '../../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../../base/DuhaDryFruits-service-model-base';
 import { BlogCategorySM } from './blog-category-s-m';
 import { BlogTagSM } from './blog-tag-s-m';
 import { BlogMediaSM } from './blog-media-s-m';
@@ -17,7 +17,7 @@ export enum BlogStatus {
  * Blog Service Model
  * Represents a blog post in the system
  */
-export class BlogSM extends WildValleyFoodsServiceModelBase<number> {
+export class BlogSM extends DuhaDryFruitsServiceModelBase<number> {
   title!: string;
   subtitle?: string;
   slug!: string;
@@ -78,7 +78,8 @@ export class BlogSM extends WildValleyFoodsServiceModelBase<number> {
     return new Date(this.publishDate).toLocaleDateString('en-IN', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
+      timeZone: 'Asia/Kolkata'
     });
   }
 

@@ -34,7 +34,7 @@ export class PaymentFailureComponent implements OnInit {
     }
 
     // Update meta tags
-    this.title.setTitle('Payment Failed - Wild Valley Foods');
+    this.title.setTitle('Payment Failed - Duha Dryfruits');
     this.meta.updateTag({ name: 'description', content: 'Your payment could not be processed. Please try again or contact support.' });
   }
 
@@ -43,15 +43,15 @@ export class PaymentFailureComponent implements OnInit {
     if (this.orderId) {
       this.router.navigate(['/checkout'], { state: { orderId: this.orderId } });
     } else {
-      this.router.navigate(['/cart']);
+      this.router.navigate(['/shopping-cart']);
     }
   }
 
   goToCart(): void {
-    this.router.navigate(['/cart']);
+    this.router.navigate(['/shopping-cart']);
   }
 
   contactSupport(): void {
-    this.router.navigate(['/contact-us']);
+    this.router.navigate(['/contact']);
   }
 }

@@ -1,25 +1,41 @@
 @use "../../../../../../variable" as *;
 
-/* Mobile category FAB — right edge, vertically centered (thumb-friendly one-handed) */
+/* Mobile category menu — labelled pill on the right edge (thumb-friendly one-handed) */
 .mobile-category-fab {
   position: fixed;
   right: calc(#{$spacing-md} + env(safe-area-inset-right, 0px));
   top: 50%;
   transform: translateY(-50%);
   z-index: 1040;
-  width: 56px;
-  height: 56px;
-  border: none;
-  border-radius: 50%;
-  display: flex;
+  height: 46px;
+  padding: 0 18px;
+  border: 1px solid rgba($color-gold, 0.4);
+  border-radius: $border-radius-full;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
   background: linear-gradient(135deg, $color-primary, $color-primary-dark);
-  color: $color-text-on-primary;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  font-size: 1.35rem;
+  color: $color-cream;
+  box-shadow: 0 8px 24px rgba($color-primary-dark, 0.35);
+  font-size: 1.1rem;
   cursor: pointer;
   transition: transform $transition-base, box-shadow $transition-base;
+
+  &__label {
+    font-family: $font-family-primary;
+    font-size: 0.9rem;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.02em;
+  }
+
+  i {
+    font-size: 1.05rem;
+    color: $color-gold-light;
+  }
+
+  &--open i {
+    color: $color-cream;
+  }
 
   &:active {
     transform: translateY(-50%) scale(0.96);
@@ -104,5 +120,9 @@ app-header {
   position: sticky;
   top: 0;
   z-index: $z-index-fixed;
-  background: $color-bg-primary;
+  background: #fff;
+  display: block;
+  /* Keep marquee + navbar as one sticky unit so the menu does not jump down on scroll */
+  isolation: isolate;
+  box-shadow: 0 1px 0 $color-border-light;
 }

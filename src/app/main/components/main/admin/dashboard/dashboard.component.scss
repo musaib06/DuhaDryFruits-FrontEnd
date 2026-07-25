@@ -6,6 +6,23 @@
   background: linear-gradient(135deg, $gray-50 0%, $gray-200 100%);
   min-height: calc(100vh - 3.5rem);
 
+  .bulk-summary-card {
+    background: #fff;
+    border: 1px solid rgba($color-primary, 0.15);
+    border-left: 4px solid $color-secondary;
+    border-radius: $border-radius-lg;
+    padding: $spacing-lg;
+    color: inherit;
+    transition: box-shadow 0.2s, transform 0.2s;
+
+    &:hover {
+      box-shadow: $shadow-md;
+      transform: translateY(-2px);
+    }
+
+    h5 { color: $color-primary; margin: 0; }
+  }
+
   // Dashboard Header
   .dashboard-header {
     display: flex;

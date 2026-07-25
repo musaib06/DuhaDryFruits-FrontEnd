@@ -1,6 +1,6 @@
-import { WildValleyFoodsServiceModelBase } from "../../../base/WildValleyFoods-service-model-base";
+import { DuhaDryFruitsServiceModelBase } from "../../../base/DuhaDryFruits-service-model-base";
 
-export class SignUpSM extends WildValleyFoodsServiceModelBase<number> {
+export class SignUpSM extends DuhaDryFruitsServiceModelBase<number> {
     loginId!: string;
     firstName!: string;
     lastName!: string;

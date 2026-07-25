@@ -1,81 +1,552 @@
 @use "../../../../../../variable" as *;
+@use "sass:color";
 
 .container-fluid {
   width: 100%;
 }
 
-/* Skeleton loading animations */
-@keyframes skeleton-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+/* ============================================================
+   Shared section scaffolding
+   ============================================================ */
+.home {
+  display: flex;
+  flex-direction: column;
 }
 
-.skeleton-pulse {
-  animation: skeleton-pulse 1.5s ease-in-out infinite;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-}
+.collection-section,
+.story-section,
+.wellness-section,
+.testimonial-section,
+.trust-strip {
+  padding: clamp(1.35rem, 4vw, 4.5rem) 0;
 
-.banner-skeleton {
-  width: 100%;
-  height: clamp(220px, 24vw, 480px);
-  background: linear-gradient(90deg, #f5f5f5 25%, #ececec 50%, #f5f5f5 75%);
-  background-size: 200% 100%;
-  border-radius: $border-radius-md;
-}
-
-.product-skeleton-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  padding: 0 1rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  @media (min-width: 992px) {
-    grid-template-columns: repeat(4, 1fr);
+  @media (min-width: $breakpoint-md) {
+    padding: clamp(2.5rem, 5vw, 4.5rem) 0;
   }
 }
 
-.product-skeleton-card {
-  background: #fff;
-  border-radius: $border-radius-md;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+.section-head {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto clamp(1rem, 2.5vw, 2.75rem);
 
-  .skeleton-img {
-    width: 100%;
-    aspect-ratio: 1;
-    background: #e9ecef;
+  &--left {
+    text-align: left;
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 720px;
   }
-  .skeleton-text {
-    padding: 0.75rem;
-    .skeleton-line {
-      height: 12px;
-      background: #e9ecef;
-      border-radius: 4px;
-      margin-bottom: 8px;
-      &:nth-child(1) { width: 70%; }
-      &:nth-child(2) { width: 40%; }
+
+  &--rail {
+    text-align: left;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+
+    @media (min-width: $breakpoint-sm) {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.15rem;
+    }
+  }
+
+  &__copy {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: $color-gold-dark;
+    margin-bottom: 0.2rem;
+  }
+
+  .section-title {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-semibold;
+    font-size: clamp(1.55rem, 3.4vw, 2.75rem);
+    color: $color-text-primary;
+    margin: 0.15rem 0 0.4rem;
+  }
+
+  .section-lead {
+    color: $color-text-secondary;
+    font-size: $font-size-md;
+    margin: 0;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: 0.88rem;
     }
   }
 }
 
+.section-scroll-note {
+  display: none;
+  margin: 0.55rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: $color-primary;
+  letter-spacing: 0.02em;
+
+  @media (max-width: 991.98px) {
+    display: block;
+  }
+}
+
+.rail-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  flex-shrink: 0;
+
+  @media (min-width: $breakpoint-sm) {
+    justify-content: flex-end;
+  }
+}
+
+.rail-toolbar__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $color-primary;
+  animation: railHintPulse 2.4s ease-in-out infinite;
+
+  @media (min-width: 992px) {
+    display: none;
+  }
+}
+
+@keyframes railHintPulse {
+  0%, 100% { opacity: 0.75; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(3px); }
+}
+
+.rail-toolbar__nav {
+  display: none;
+  gap: 0.4rem;
+
+  @media (min-width: $breakpoint-sm) {
+    display: inline-flex;
+  }
+}
+
+.rail-nav-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba($color-primary, 0.2);
+  border-radius: $border-radius-control;
+  background: #fff;
+  color: $color-primary-dark;
+  font-size: 1.35rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background $transition-fast, border-color $transition-fast;
+
+  &:hover {
+    background: rgba($color-primary, 0.08);
+    border-color: rgba($color-primary, 0.4);
+  }
+}
+
+/* ============================================================
+   Hero
+   ============================================================ */
+.hero-section {
+  width: 100%;
+}
+
+/* ============================================================
+   Trust strip
+   ============================================================ */
+.trust-strip {
+  padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+  background: $color-bg-secondary;
+  border-top: 1px solid $color-border-light;
+  border-bottom: 1px solid $color-border-light;
+
+  .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem 1.5rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+
+    i {
+      font-size: 1.35rem;
+      color: $color-primary;
+      background: #fff;
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $border-radius-control;
+      border: 1px solid $color-border-light;
+      box-shadow: none;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .trust-title {
+      display: block;
+      font-weight: $font-weight-semibold;
+      font-size: $font-size-md-lg;
+      color: $color-text-primary;
+    }
+    .trust-sub {
+      display: block;
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+/* ============================================================
+   Product rail — wide cards + clear horizontal affordance
+   ============================================================ */
+.product-rail-shell {
+  position: relative;
+  margin-inline: -0.15rem;
+}
+
+.product-rail-shell__fade {
+  display: none;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0.85rem;
+  width: 2.75rem;
+  background: linear-gradient(90deg, transparent 0%, rgba($color-cream, 0.95) 70%);
+  z-index: 2;
+
+  @media (max-width: 991.98px) {
+    display: block;
+  }
+
+  .trending-products & {
+    background: linear-gradient(90deg, transparent 0%, rgba($color-bg-primary, 0.97) 70%);
+  }
+}
+
+.product-rail {
+  display: grid;
+  grid-auto-flow: column;
+  /* One dominant card + peek of next — teaches horizontal scroll */
+  grid-auto-columns: minmax(168px, calc(42vw - 1.1rem));
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding: 0.2rem 1.5rem 0.65rem 0.15rem;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0.15rem;
+  -webkit-overflow-scrolling: touch;
+  align-items: start;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba($color-primary, 0.35) transparent;
+
+  &::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba($color-primary, 0.3);
+    border-radius: 99px;
+  }
+
+  &__item {
+    scroll-snap-align: start;
+    display: block;
+    width: 100%;
+    min-width: 0;
+
+    > * {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: $breakpoint-sm) {
+    grid-auto-columns: minmax(180px, 38vw);
+    gap: 0.65rem;
+    padding-right: 1.1rem;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    grid-auto-columns: minmax(190px, 28vw);
+  }
+
+  @media (min-width: 992px) {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-columns: unset;
+    overflow: visible;
+    gap: 1.25rem;
+    padding: 0.5rem 0.25rem 1rem;
+    scroll-snap-type: none;
+  }
+}
+
+.rail-scroll-cue {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.55rem;
+  margin: 0.15rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: $color-text-secondary;
+
+  @media (min-width: 992px) {
+    display: none;
+  }
+
+  &__h {
+    color: $color-primary;
+  }
+
+  &__sep {
+    opacity: 0.45;
+  }
+
+  &__v {
+    color: $color-text-muted;
+  }
+}
+
+/* Mobile shop nudge — keeps commerce intent after hero */
+.home-shop-nudge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.15rem 0 0.35rem;
+  padding: 0.7rem 0.85rem;
+  background:
+    radial-gradient(420px 120px at 100% 0%, rgba($color-gold, 0.14), transparent 55%),
+    linear-gradient(180deg, #fff 0%, $color-cream 100%);
+  border: 1px solid rgba($color-primary, 0.12);
+  border-radius: $border-radius-lg;
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+
+  &__copy {
+    min-width: 0;
+
+    strong {
+      display: block;
+      font-family: $font-family-heading;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: $color-primary-dark;
+      line-height: 1.2;
+    }
+
+    span {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.78rem;
+      color: $color-text-secondary;
+    }
+  }
+
+  .btn {
+    flex-shrink: 0;
+    border-radius: $border-radius-control !important;
+    font-weight: 650;
+    font-size: 0.8rem;
+    padding: 0.5rem 0.85rem;
+    white-space: nowrap;
+  }
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  align-items: start;
+
+  @media (min-width: $breakpoint-sm) {
+    gap: 0.65rem;
+  }
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  &__item {
+    display: block;
+    width: 100%;
+    min-width: 0;
+
+    > * {
+      width: 100%;
+    }
+  }
+}
+
+.best-sellers,
+.trending-products {
+  background: $color-bg-primary;
+}
+
+.fresh-arrivals {
+  background:
+    radial-gradient(900px 320px at 0% 0%, rgba($color-gold, 0.1), transparent 55%),
+    $color-cream;
+}
+
 .products {
   width: 100%;
+  background: $color-bg-primary;
 }
 
 .newarrivals {
   width: 100%;
-  background-color: aliceblue;
   padding-top: $spacing-md;
 }
 
 .btn-view-more {
-  border-radius: 999px;
+  border-radius: $border-radius-control !important;
   font-weight: $font-weight-semibold;
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 2rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: $font-size-sm;
+}
+
+/* ============================================================
+   Brand story
+   ============================================================ */
+.story-section {
+  background: linear-gradient(180deg, $color-bg-secondary, $color-bg-primary);
+}
+
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+  align-items: center;
+
+  @media (min-width: 992px) {
+    grid-template-columns: 1.05fr 1fr;
+  }
+}
+
+.story-media {
+  position: relative;
+  border-radius: $border-radius-xl;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -30px rgba($color-primary-dark, 0.55);
+
+  img {
+    width: 100%;
+    height: clamp(280px, 40vw, 460px);
+    object-fit: cover;
+    display: block;
+    transition: transform $transition-slow;
+  }
+  &:hover img { transform: scale(1.05); }
+
+  .story-badge {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    background: #fff;
+    color: $color-primary-dark;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-sm;
+    padding: 0.45rem 0.85rem;
+    border-radius: $border-radius-control;
+    border: 1px solid $color-border-light;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: $shadow-sm;
+
+    i { color: $color-gold-dark; }
+  }
+}
+
+.story-copy {
+  .section-title {
+    font-family: $font-family-heading;
+    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+    margin: 0.4rem 0 1rem;
+    line-height: 1.15;
+  }
+
+  p {
+    color: $color-text-secondary;
+    line-height: 1.75;
+    font-size: $font-size-md;
+    margin-bottom: 1.25rem;
+  }
+
+  .story-points {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.35rem 0;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+
+      i { color: $color-primary; font-size: 1.2rem; }
+    }
+  }
+
+  .story-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+  }
+}
+
+/* ============================================================
+   Wellness + testimonials
+   ============================================================ */
+.wellness-section {
+  background: $color-bg-secondary;
+}
+
+.testimonial-section {
+  background: $color-bg-primary;
 }
 
 .wellness-socials {
@@ -85,21 +556,27 @@
   align-items: center;
 
   a {
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 999px;
+    border-radius: $border-radius-control;
     background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border: 1px solid $color-border-light;
+    box-shadow: none;
     color: $color-text-primary;
     text-decoration: none;
-    
+    transition: transform $transition-base, box-shadow $transition-base;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 26px -12px rgba($color-primary-dark, 0.5);
+    }
+
     .social-icon-img {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       object-fit: contain;
       border-radius: 4px;
     }
@@ -112,5 +589,280 @@
 
   i {
     cursor: pointer;
+  }
+  .text-warning { color: $color-gold !important; }
+}
+
+/* ============================================================
+   Skeletons
+   ============================================================ */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.skeleton-pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, $color-bg-tertiary 25%, $color-bg-secondary 50%, $color-bg-tertiary 75%);
+  background-size: 200% 100%;
+}
+
+.banner-skeleton {
+  width: 100%;
+  height: clamp(220px, 24vw, 480px);
+  background: linear-gradient(90deg, $color-bg-tertiary 25%, $color-bg-secondary 50%, $color-bg-tertiary 75%);
+  background-size: 200% 100%;
+}
+
+.product-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.product-skeleton-card {
+  background: #fff;
+  border-radius: $border-radius-xl;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba($gray-900, 0.06);
+
+  .skeleton-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: $color-bg-tertiary;
+  }
+  .skeleton-text {
+    padding: 0.75rem;
+    .skeleton-line {
+      height: 12px;
+      background: $color-bg-tertiary;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      &:nth-child(1) { width: 70%; }
+      &:nth-child(2) { width: 40%; }
+    }
+  }
+}
+
+/* ============================================================
+   Promise band — stat counters (static)
+   ============================================================ */
+.promise-band {
+  padding: clamp(2rem, 4vw, 3rem) 0;
+  background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 55%, $color-primary-dark 100%);
+  color: $color-cream;
+
+  .promise-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem 1rem;
+    text-align: center;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .promise-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    position: relative;
+
+    @media (min-width: 768px) {
+      &:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        right: -0.5rem;
+        top: 15%;
+        height: 70%;
+        width: 1px;
+        background: rgba($color-gold, 0.35);
+      }
+    }
+  }
+
+  .promise-num {
+    font-family: $font-family-heading;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-weight: $font-weight-bold;
+    color: $color-gold-light;
+    line-height: 1;
+
+    i {
+      font-size: 0.6em;
+      margin-left: 0.15em;
+      vertical-align: super;
+    }
+  }
+
+  .promise-label {
+    font-size: $font-size-sm;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba($color-cream, 0.85);
+  }
+}
+
+/* ============================================================
+   Bulk order promo band
+   ============================================================ */
+.bulk-promo-band {
+  padding: clamp(2.5rem, 5vw, 4rem) 0;
+  background: linear-gradient(135deg, $color-primary 0%, color.adjust($color-primary, $lightness: -6%) 100%);
+
+  .bulk-promo-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+    color: #fff;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .section-eyebrow {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .bulk-promo-title {
+    font-family: $font-family-heading;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    margin-bottom: 1rem;
+    color: #fff !important;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.92) !important;
+    overflow-wrap: anywhere;
+    max-width: 36rem;
+  }
+
+  .bulk-cta {
+    margin-top: 1.25rem;
+    background: $color-secondary;
+    border-color: $color-secondary;
+    color: #fff;
+    &:hover {
+      background: color.adjust($color-secondary, $lightness: -8%);
+      border-color: color.adjust($color-secondary, $lightness: -8%);
+      color: #fff;
+    }
+  }
+
+  .bulk-promo-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .bulk-benefit-chip {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: $border-radius-md;
+    padding: 1rem;
+    text-align: center;
+    color: #fff;
+    transition: transform 0.25s, background 0.25s;
+
+    &:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    i {
+      font-size: 1.5rem;
+      color: $color-secondary;
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+    span {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #fff;
+    }
+  }
+}
+
+/* ============================================================
+   Gifting band — editorial split promo (static)
+   ============================================================ */
+.gifting-band {
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0;
+
+  .gifting-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    align-items: center;
+    background:
+      radial-gradient(700px 320px at 0% 0%, rgba($color-gold, 0.14), transparent 60%),
+      $color-bg-primary;
+    border: 1px solid rgba($color-primary, 0.1);
+    border-radius: $border-radius-xl;
+    padding: clamp(1.75rem, 4vw, 3rem);
+    box-shadow: $shadow-md;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+  }
+
+  .gifting-title {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-semibold;
+    font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+    color: $color-text-primary;
+    margin: 0.35rem 0 0.75rem;
+  }
+
+  .gifting-copy p {
+    color: $color-text-secondary;
+    margin-bottom: 1.25rem;
+    max-width: 46ch;
+  }
+
+  .gifting-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .gifting-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem;
+  }
+
+  .gifting-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 1rem;
+    background: $color-cream;
+    border: 1px solid rgba($color-primary, 0.08);
+    border-radius: $border-radius-lg;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    transition: transform $transition-base, box-shadow $transition-base;
+
+    i {
+      font-size: 1.4rem;
+      color: $color-gold-dark;
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: $shadow-base;
+    }
   }
 }

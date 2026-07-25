@@ -10,11 +10,11 @@
   <nav aria-label="breadcrumb" class="blog-breadcrumb-bar">
     <div class="container blog-detail__hero-inner px-3 px-md-4">
       <ol class="breadcrumb blog-breadcrumb mb-0">
-        <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
-        <li class="breadcrumb-item"><a routerLink="/blog">Blog</a></li>
+        <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+        <li class="breadcrumb-item"><a routerLink="/journal">Blog</a></li>
         @if (blog.category) {
           <li class="breadcrumb-item">
-            <a [routerLink]="['/blog']" [queryParams]="{ category: blog.category.id }">
+            <a [routerLink]="['/journal']" [queryParams]="{ category: blog.category.id }">
               {{ blog.category.name }}
             </a>
           </li>
@@ -31,7 +31,7 @@
            [alt]="blog.title"
            loading="eager"
            decoding="async"
-           class="wvf-protect-asset"
+           class="duha-protect-asset"
            draggable="false">
     </div>
     <div class="hero-overlay">
@@ -65,9 +65,9 @@
               <span class="blog-meta__sep" aria-hidden="true">·</span>
               <span class="date">{{ blog.formattedPublishDate }}</span>
               <span class="blog-meta__sep" aria-hidden="true">·</span>
-              <span class="read-time"><i class="bi bi-clock" aria-hidden="true"></i> {{ blog.formattedReadTime }}</span>
+              <span class="read-time"><i class="ri ri-time-line" aria-hidden="true"></i> {{ blog.formattedReadTime }}</span>
               <span class="blog-meta__sep" aria-hidden="true">·</span>
-              <span class="views"><i class="bi bi-eye" aria-hidden="true"></i> {{ blog.viewCount }} views</span>
+              <span class="views"><i class="ri ri-eye-line" aria-hidden="true"></i> {{ blog.viewCount }} views</span>
             </div>
           </div>
         </div>
@@ -106,9 +106,9 @@
                         @if (blog.socialVideoYoutubeThumbnailUrl) {
                           <img [src]="blog.socialVideoYoutubeThumbnailUrl" alt="YouTube preview" loading="lazy">
                         } @else {
-                          <div class="blog-social-card__placeholder"><i class="bi bi-youtube"></i></div>
+                          <div class="blog-social-card__placeholder"><i class="ri ri-youtube-line"></i></div>
                         }
-                        <span class="blog-social-card__play"><i class="bi bi-play-fill"></i></span>
+                        <span class="blog-social-card__play"><i class="ri ri-play-fill"></i></span>
                       </div>
                       <span class="blog-social-card__label">YouTube</span>
                     </a>
@@ -119,9 +119,9 @@
                         @if (blog.socialVideoInstagramThumbnailUrl) {
                           <img [src]="blog.socialVideoInstagramThumbnailUrl" alt="Instagram preview" loading="lazy">
                         } @else {
-                          <div class="blog-social-card__placeholder"><i class="bi bi-instagram"></i></div>
+                          <div class="blog-social-card__placeholder"><i class="ri ri-instagram-line"></i></div>
                         }
-                        <span class="blog-social-card__play"><i class="bi bi-play-fill"></i></span>
+                        <span class="blog-social-card__play"><i class="ri ri-play-fill"></i></span>
                       </div>
                       <span class="blog-social-card__label">Instagram</span>
                     </a>
@@ -132,9 +132,9 @@
                         @if (blog.socialVideoFacebookThumbnailUrl) {
                           <img [src]="blog.socialVideoFacebookThumbnailUrl" alt="Facebook preview" loading="lazy">
                         } @else {
-                          <div class="blog-social-card__placeholder"><i class="bi bi-facebook"></i></div>
+                          <div class="blog-social-card__placeholder"><i class="ri ri-facebook-circle-fill"></i></div>
                         }
-                        <span class="blog-social-card__play"><i class="bi bi-play-fill"></i></span>
+                        <span class="blog-social-card__play"><i class="ri ri-play-fill"></i></span>
                       </div>
                       <span class="blog-social-card__label">Facebook</span>
                     </a>
@@ -151,29 +151,29 @@
                   @if (shareUi.facebook) {
                     <a [href]="getShareUrl('facebook')" target="_blank" rel="noopener noreferrer"
                        class="btn btn-share facebook">
-                      <i class="bi bi-facebook" aria-hidden="true"></i><span>Facebook</span>
+                      <i class="ri ri-facebook-circle-fill" aria-hidden="true"></i><span>Facebook</span>
                     </a>
                   }
                   @if (shareUi.twitter) {
                     <a [href]="getShareUrl('twitter')" target="_blank" rel="noopener noreferrer"
                        class="btn btn-share twitter">
-                      <i class="bi bi-twitter-x" aria-hidden="true"></i><span>X</span>
+                      <i class="ri ri-twitter-x" aria-hidden="true"></i><span>X</span>
                     </a>
                   }
                   @if (shareUi.linkedin) {
                     <a [href]="getShareUrl('linkedin')" target="_blank" rel="noopener noreferrer"
                        class="btn btn-share linkedin">
-                      <i class="bi bi-linkedin" aria-hidden="true"></i><span>LinkedIn</span>
+                      <i class="ri ri-linkedin-box-fill" aria-hidden="true"></i><span>LinkedIn</span>
                     </a>
                   }
                   @if (shareUi.whatsapp) {
                     <a [href]="getShareUrl('whatsapp')" target="_blank" rel="noopener noreferrer"
                        class="btn btn-share whatsapp">
-                      <i class="bi bi-whatsapp" aria-hidden="true"></i><span>WhatsApp</span>
+                      <i class="ri ri-whatsapp-line" aria-hidden="true"></i><span>WhatsApp</span>
                     </a>
                   }
                   <button type="button" class="btn btn-share copy" (click)="copyLink()">
-                    <i class="bi bi-link-45deg" aria-hidden="true"></i><span>Copy link</span>
+                    <i class="ri ri-link" aria-hidden="true"></i><span>Copy link</span>
                   </button>
                 </div>
               </div>
@@ -182,7 +182,7 @@
                 <h4 class="share-section__title">Share this article</h4>
                 <div class="share-buttons">
                   <button type="button" class="btn btn-share copy" (click)="copyLink()">
-                    <i class="bi bi-link-45deg" aria-hidden="true"></i><span>Copy link</span>
+                    <i class="ri ri-link" aria-hidden="true"></i><span>Copy link</span>
                   </button>
                 </div>
               </div>
@@ -199,7 +199,7 @@
                   }
                   <div class="author-info">
                     <h5 class="author-info__title">Written by {{ blog.authorName }}</h5>
-                    <p class="author-info__subtitle">Wild Valley Foods</p>
+                    <p class="author-info__subtitle">Duha Dryfruits</p>
                   </div>
                 </div>
               </div>
@@ -230,10 +230,10 @@
             <div class="sidebar-widget related-widget">
               <h5 class="sidebar-widget__title">Related articles</h5>
               @for (related of viewModel.relatedBlogs.slice(0, 4); track related.id) {
-                <article class="related-card" [routerLink]="['/blog', related.slug]">
+                <article class="related-card" [routerLink]="['/journal', related.slug]">
                   <div class="related-image">
                     <img [src]="blogImage(related)"
-                         [alt]="related.title" loading="lazy" class="wvf-protect-asset" draggable="false">
+                         [alt]="related.title" loading="lazy" class="duha-protect-asset" draggable="false">
                   </div>
                   <div class="related-content">
                     <h6>{{ related.title }}</h6>
@@ -248,7 +248,7 @@
           @if (blog.category) {
             <div class="sidebar-widget categories-widget">
               <h5 class="sidebar-widget__title">Category</h5>
-              <a [routerLink]="['/blog']" [queryParams]="{ category: blog.category.id }" 
+              <a [routerLink]="['/journal']" [queryParams]="{ category: blog.category.id }" 
                  class="category-link">
                 <span [style.background-color]="blog.category.color + '20'"
                       [style.color]="blog.category.color">
@@ -282,10 +282,10 @@
   <div class="blog-detail-page blog-detail-page--state">
     <div class="blog-detail-state blog-detail-state--error">
       <div class="blog-detail-state__card">
-        <i class="bi bi-journal-x blog-detail-state__icon" aria-hidden="true"></i>
+        <i class="ri ri-file-forbid-line blog-detail-state__icon" aria-hidden="true"></i>
         <h4 class="blog-detail-state__heading">Article not found</h4>
         <p class="blog-detail-state__msg">{{ viewModel.error }}</p>
-        <a routerLink="/blog" class="btn blog-detail-state__cta">Browse all articles</a>
+        <a routerLink="/journal" class="btn blog-detail-state__cta">Browse all articles</a>
       </div>
     </div>
   </div>

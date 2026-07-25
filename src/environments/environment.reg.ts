@@ -4,9 +4,9 @@ export const environment = {
   apiResponseCacheTimeoutInMinutes: 5,
   enableResponseCacheProcessing: true,
   applicationVersion: '0.0.1',
-  apiBaseUrl: 'https://wild-valley-foods-backend-api.onrender.com',
+  apiBaseUrl: 'https://api.duhadryfruits.com',
   apiDefaultTimeout: 10,
-  indexedDBName: 'WildValleyFoodsDB',
+  indexedDBName: 'DuhaDryFruitsDB',
   indexedDBVersion: 1,
   LoggingInfo: {
     cacheLogs: false,
@@ -27,6 +27,17 @@ export const environment = {
     facebook: true,
     twitter: true,
     linkedin: true,
-    whatsAppNumber: '917738899165',
+    whatsAppNumber: '919796764475',
   },
+
+  firebase: {
+    apiKey: 'AIzaSyCUr9Jdfn3QkAm8KweU0HyEA2E595triQs',
+    authDomain: 'notify-129ad.firebaseapp.com',
+    projectId: 'notify-129ad',
+    storageBucket: 'notify-129ad.firebasestorage.app',
+    messagingSenderId: '526081196460',
+    appId: '1:526081196460:web:cc1789fb6ecf4ecce0ba09',
+    measurementId: 'G-8D1EPRWT5X',
+    vapidKey: 'BFmaTxX79dWjTEbSb7CzhnNY20gm9yAksL_gLjMHu4tO_vP4dbPWjq8nkLYTaF2bUjUC9qlDRTWmkOgdHyrC9y4'
+  }
 };

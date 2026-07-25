@@ -4,8 +4,8 @@
   width: 100%;
   padding: clamp(0.9rem, 2vw, 1.4rem);
   background-image:
-    linear-gradient(135deg, rgba(255, 232, 166, 0.46), rgba(255, 244, 208, 0.32)),
-    url(../../../../../../assets/dryfruits.webp);
+    linear-gradient(135deg, rgba($color-primary-dark, 0.55), rgba($color-primary, 0.35)),
+    url(../../../../../../assets/contact-hero.png);
   background-size: cover;
   background-position: center;
 }
@@ -13,11 +13,11 @@
 .contact-shell {
   max-width: 1120px;
   margin: 0 auto;
-  border-radius: 20px;
+  border-radius: $border-radius-lg;
   padding: clamp(1rem, 2vw, 1.5rem);
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(255, 210, 87, 0.24);
-  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.1);
+  background: rgba($color-cream, 0.94);
+  border: 1px solid $color-border-light;
+  box-shadow: 0 20px 48px -28px rgba($color-primary-dark, 0.55);
 }
 
 .contact-header {
@@ -27,14 +27,16 @@
 
 .contact-header h2 {
   margin: 0 0 8px;
+  font-family: $font-family-heading;
+  font-weight: $font-weight-bold;
   font-size: clamp(1.7rem, 3.4vw, 2.4rem);
-  color: #181818;
+  color: $color-primary-dark;
 }
 
 .contact-header p {
   margin: 0 auto;
   max-width: 780px;
-  color: #3f464d;
+  color: $color-text-secondary;
   line-height: 1.5;
 }
 
@@ -44,15 +46,21 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  border-radius: 999px;
+  border-radius: $border-radius-control;
   text-decoration: none;
-  background: #171717;
-  color: #fff;
+  background: $color-primary-dark;
+  color: $color-cream;
   font-weight: 600;
+  transition: transform $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba($color-primary-dark, 0.35);
+  }
 }
 
 .bulk-call-pill i {
-  color: #ffd257;
+  color: $color-gold-light;
 }
 
 .contact-grid {
@@ -63,14 +71,14 @@
 
 .info-card,
 .form-card {
-  border-radius: 16px;
+  border-radius: $border-radius-lg;
   padding: clamp(0.9rem, 1.7vw, 1.25rem);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
 }
 
 .info-card {
-  background: #20252c;
+  background: linear-gradient(160deg, $color-primary-dark 0%, $gradient-dark-end 100%);
 }
 
 .form-card {
@@ -81,7 +89,7 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  border-radius: 14px;
+  border-radius: $border-radius-md;
   padding: 12px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -94,9 +102,9 @@
 .chip-icon {
   width: 44px;
   height: 44px;
-  border-radius: 999px;
-  background: #fff;
-  color: #20252c;
+  border-radius: $border-radius-control;
+  background: $color-cream;
+  color: $color-primary-dark;
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -105,7 +113,7 @@
 .contact-chip h4 {
   margin: 0 0 4px;
   font-size: 1.05rem;
-  color: #ffd257;
+  color: $color-gold-light;
 }
 
 .contact-chip p {
@@ -118,9 +126,9 @@
   display: inline-block;
   margin-top: 4px;
   padding: 6px 12px;
-  border-radius: 999px;
-  background: #ffd257;
-  color: #111;
+  border-radius: $border-radius-control;
+  background: $color-gold;
+  color: $color-primary-dark;
   text-decoration: none;
   font-weight: 700;
 }
@@ -158,7 +166,9 @@
 
 .form-card h3 {
   margin: 0 0 8px;
-  color: #181818;
+  font-family: $font-family-heading;
+  font-weight: $font-weight-bold;
+  color: $color-primary-dark;
   font-size: clamp(1.2rem, 2vw, 1.5rem);
 }
 
@@ -194,13 +204,19 @@
   transition: all 0.2s ease;
 }
 
+.input-box input:focus,
+.input-box textarea:focus {
+  border-color: $color-primary;
+  box-shadow: 0 0 0 3px rgba($color-primary, 0.12);
+}
+
 .input-box input:focus ~ span,
 .input-box input.ng-dirty ~ span,
 .input-box textarea:focus ~ span,
 .input-box textarea.ng-dirty ~ span {
   top: -8px;
   font-size: 0.75rem;
-  color: #181818;
+  color: $color-primary;
 }
 
 .submit-box {
@@ -209,10 +225,16 @@
 
 .input-box input[type="submit"] {
   border: none;
-  background: #ffd257;
-  color: #171717;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-cream;
   font-weight: 700;
   cursor: pointer;
+  transition: transform $transition-fast, box-shadow $transition-fast;
+}
+
+.input-box input[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba($color-primary, 0.35);
 }
 
 .input-box input[type="submit"]:disabled {

@@ -71,14 +71,21 @@
   }
 
   .product-details-card {
-    border: none;
+    border: 1px solid rgba($color-primary, 0.08);
     border-radius: $border-radius-lg;
     box-shadow: $shadow-base;
     background: $color-bg-primary;
 
+    @media (min-width: 992px) {
+      position: sticky;
+      top: 96px;
+    }
+
     .product-title {
       font-weight: $font-weight-bold;
-      color: #111;
+      color: $color-primary-dark;
+      font-family: $font-family-heading;
+      letter-spacing: -0.01em;
     }
 
     .product-subtitle {
@@ -88,10 +95,13 @@
       font-weight: 500;
     }
 
-    .price {
-      color: $color-warning-yellow;
+    .price,
+    .price.text-success {
+      color: $color-primary-dark !important;
       font-weight: $font-weight-bold;
-      font-size: 1.6rem;
+      font-size: 1.75rem;
+      font-family: $font-family-heading;
+      letter-spacing: -0.01em;
     }
 
     .stock-badge {
@@ -148,24 +158,81 @@
     }
 
     .btn-gradient {
-      background: linear-gradient(90deg, $color-info, #6610f2);
-      color: $color-text-on-primary;
-      border: none;
+      background: $color-primary;
+      color: #fff;
+      border: 1px solid $color-primary;
+      border-radius: $border-radius-control !important;
       transition: $transition-base;
       &:hover {
-        background: linear-gradient(90deg, #6610f2, $color-info);
-        transform: scale(1.03);
+        background: $color-primary-dark;
+        border-color: $color-primary-dark;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px -12px rgba($color-primary, 0.55);
+      }
+    }
+  }
+
+  /* Collapsible section headings (description / specs) */
+  .description-section h5,
+  .specs-section h5,
+  .reviews-section h3,
+  .rich-desc h3,
+  .related-products h2 {
+    font-family: $font-family-heading;
+    color: $color-primary-dark;
+    letter-spacing: -0.01em;
+  }
+
+  .related-products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    align-items: start;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+    }
+    @media (min-width: 992px) {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    &__item {
+      display: block;
+      min-width: 0;
+
+      > * {
+        width: 100%;
+      }
+    }
+  }
+
+  .description-section,
+  .specs-section {
+    border-color: rgba($color-primary, 0.12) !important;
+
+    .btn-outline-secondary {
+      border-color: rgba($color-primary, 0.35);
+      color: $color-primary-dark;
+      &:hover {
+        background: $color-primary;
+        border-color: $color-primary;
+        color: $color-cream;
       }
     }
   }
 
   .rich-desc {
-    background: #f9f9f9;
+    background:
+      radial-gradient(600px 200px at 0% 0%, rgba($color-gold, 0.1), transparent 60%),
+      $color-cream;
     padding: $spacing-lg;
-    border-radius: 10px;
+    border-radius: $border-radius-lg;
+    border: 1px solid rgba($color-primary, 0.1);
     p {
       line-height: $line-height-loose;
-      color: $gray-600;
+      color: $color-text-secondary;
       white-space: pre-wrap;
       word-wrap: break-word;
     }
@@ -193,8 +260,10 @@
 }
 
 .bi-star-fill,
-.bi-star-half {
-  color: #ffc107 !important;
+.bi-star-half,
+.ri-star-fill,
+.ri-star-half-s-fill {
+  color: $color-gold !important;
 }
 
 .star-rating i:hover {
@@ -272,7 +341,7 @@
       .variant-price {
         font-weight: $font-weight-bold;
         font-size: $font-size-base;
-        color: $color-warning-yellow;
+        color: $color-gold-dark;
       }
 
       .variant-stock {
@@ -281,37 +350,41 @@
 
       &:hover:not(:disabled) {
         border-color: $color-primary;
-        background: rgba($color-primary, 0.15);
+        background: rgba($color-primary, 0.08);
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba($color-primary, 0.25);
+        box-shadow: 0 6px 16px -8px rgba($color-primary, 0.4);
 
         .variant-size {
-          color: $color-text-primary;
+          color: $color-primary-dark;
         }
 
         .variant-price {
-          color: color.adjust($color-warning-yellow, $lightness: -8%);
+          color: color.adjust($color-gold-dark, $lightness: -6%);
         }
       }
 
       &.variant-active {
-        border-color: $color-primary;
-        background: linear-gradient(135deg, $color-primary 0%, color.adjust($color-primary, $lightness: -8%) 100%);
-        box-shadow: 0 6px 20px rgba($color-primary, 0.5);
+        border-color: $color-primary-dark;
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+        box-shadow: 0 8px 22px -8px rgba($color-primary-dark, 0.6);
         transform: translateY(-2px);
 
         .variant-size {
-          color: #1a1a1a !important;
+          color: $color-cream !important;
           font-weight: $font-weight-bold;
         }
 
         .variant-price {
-          color: #5a4a00 !important;
+          color: $color-gold-light !important;
           font-weight: $font-weight-bold;
         }
 
         .variant-stock {
-          color: rgba(0,0,0, 0.7) !important;
+          color: rgba($color-cream, 0.8) !important;
+        }
+
+        .variant-img-dot {
+          background: $color-gold-light;
         }
       }
 
@@ -363,6 +436,9 @@
 .product-faqs {
   h2 {
     font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+    font-family: $font-family-heading;
+    color: $color-primary-dark;
+    letter-spacing: -0.01em;
   }
 
   .faq-accordion {
@@ -380,8 +456,11 @@
     transition: box-shadow 0.2s ease, border-color 0.2s ease;
 
     &.open {
-      border-color: rgba(0, 0, 0, 0.14);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      border-color: rgba($color-primary, 0.35);
+      box-shadow: 0 6px 18px -8px rgba($color-primary-dark, 0.3);
+
+      .faq-question { color: $color-primary-dark; }
+      .faq-icon { color: $color-gold-dark; }
     }
   }
 

@@ -37,9 +37,9 @@
   aspect-ratio: 1920 / 400;
   height: clamp(250px, 24vw, 480px);
   overflow: hidden;
-  border-radius: $border-radius-md;
-  box-shadow: $shadow-md;
-  background: #f8f9fa;
+  border-radius: 0;
+  box-shadow: none;
+  background: $color-bg-secondary;
 }
 
 /* Critical: keep the Bootstrap carousel height chain intact for absolute media */
@@ -101,7 +101,7 @@
 @media (max-width: 768px) {
   .hero-carousel {
     aspect-ratio: auto;
-    height: clamp(220px, 60vw, 360px);
+    height: clamp(200px, 52vw, 300px);
     background: #1b1207;
   }
 
@@ -115,82 +115,78 @@
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: transparent;
+  background:
+    linear-gradient(90deg, rgba(20, 24, 15, 0.72) 0%, rgba(20, 24, 15, 0.4) 42%, rgba(20, 24, 15, 0) 72%),
+    linear-gradient(0deg, rgba(20, 24, 15, 0.45) 0%, rgba(20, 24, 15, 0) 55%);
 }
 
 .hero-content {
   position: absolute;
-  left: 50%;
-  top: 80%;
-  transform: translate(-50%, -50%);
+  left: clamp(1.5rem, 6vw, 6rem);
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 2;
-  width: min(760px, 90%);
-  max-width: 90%;
+  width: min(620px, 62%);
+  max-width: 62%;
   color: #fff;
-  text-align: center;
-  text-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+  text-align: left;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .hero-title {
-  margin: 0 0 12px 0;
-  font-weight: 500;
-  line-height: 1.06;
-  font-size: 48px;
+  margin: 0;
+  font-family: $font-family-heading;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  font-size: clamp(28px, 4vw, 60px);
   text-transform: none;
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.34);
-  text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.5),
-    0 12px 28px rgba(0, 0, 0, 0.45);
-}
-
-@media (min-width: 1200px) {
-  .hero-overlay {
-    background: transparent;
-  }
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
 }
 
 .hero-subtitle {
-  margin: 0 auto 10px auto;
+  margin: 0;
   font-family: $font-family-primary;
   font-weight: 600;
-  font-size: clamp(12px, 1vw, 16px);
-  line-height: 1.35;
-  letter-spacing: 1px;
+  font-size: clamp(11px, 1vw, 15px);
+  line-height: 1.4;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.95);
+  color: $color-gold-light;
   max-width: 62ch;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.45);
-  display: inline-block;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .hero-cta {
-  background: $color-primary;
-  border: 1px solid rgba(255,255,255,0.16);
-  color: #1b1207;
+  background: $color-gold;
+  border: 1px solid $color-gold-dark;
+  color: #1c1b18;
   font-family: $font-family-primary !important;
-  font-weight: 800;
-  padding: 10px 18px;
-  border-radius: 999px;
-  box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: $border-radius-control;
+  box-shadow: none;
+  transition: transform $transition-base, background $transition-base, color $transition-base;
 }
 
 .hero-cta:hover {
-  filter: brightness(1.03);
+  transform: translateY(-1px);
+  background: $color-gold-dark;
+  color: #fff;
+  box-shadow: 0 10px 22px -12px rgba(0, 0, 0, 0.55);
 }
 
 /* Premium arrows */
 .hero-nav {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   top: 50%;
   transform: translateY(-50%);
   opacity: 1;
@@ -199,14 +195,13 @@
 .hero-nav .hero-nav-icon {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  background: rgba(20, 14, 8, 0.35);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.18);
+  width: 40px;
+  height: 40px;
+  border-radius: $border-radius-control;
+  background: rgba(20, 24, 15, 0.55);
+  border: 1px solid rgba(255,255,255,0.22);
   color: #fff;
-  font-size: 28px;
+  font-size: 24px;
   line-height: 1;
   user-select: none;
 }
@@ -221,7 +216,7 @@
   display: none;
 }
 
-/* Mobile: center text and reduce overlay intensity slightly */
+/* Mobile: keep title clear of arrows; arrows sit at bottom */
 @media (max-width: 576px) {
   .banner-carousel {
     width: 100%;
@@ -237,54 +232,88 @@
     box-shadow: none;
     max-height: none;
     margin: 0;
+    height: clamp(200px, 52vw, 280px);
   }
 
   .hero-overlay {
-    background: transparent;
+    background:
+      linear-gradient(180deg, rgba(20, 24, 15, 0.15) 0%, rgba(20, 24, 15, 0.55) 55%, rgba(20, 24, 15, 0.72) 100%),
+      linear-gradient(90deg, rgba(20, 24, 15, 0.55) 0%, rgba(20, 24, 15, 0.2) 55%, transparent 100%);
   }
 
   .hero-content {
-    width: 92%;
-    max-width: 92%;
-    top: 85%;
+    left: 1rem;
+    right: 1rem;
+    top: auto;
+    bottom: 2.75rem;
+    transform: none;
+    width: auto;
+    max-width: none;
     gap: 4px;
-    padding-bottom: 8px;
+    text-align: left;
+    align-items: flex-start;
+    padding-right: 0;
   }
 
   .hero-title {
-    font-size: 28px;
-    line-height: 1.1;
-    margin-bottom: 4px;
-    padding: 4px 10px;
+    font-size: clamp(1.35rem, 6.2vw, 1.75rem);
+    line-height: 1.15;
+    margin: 0;
+    max-width: 85%;
   }
 
   .hero-subtitle {
-    font-size: clamp(9px, 2.5vw, 11px);
-    letter-spacing: 0.5px;
-    padding: 4px 8px;
-    margin-bottom: 2px;
+    font-size: clamp(0.65rem, 2.4vw, 0.75rem);
+    letter-spacing: 1.2px;
+    margin: 0;
+    max-width: 90%;
   }
 
   .hero-cta {
     display: none;
   }
 
-  /* Larger tap targets on mobile */
+  /* Bottom-edge nav — never overlaps title */
   .hero-nav {
-    width: 48px;
-    height: 60px;
-    top: 50%;
-    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    top: auto;
+    bottom: 0.65rem;
+    transform: none;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
+    opacity: 0.95;
+  }
+
+  .carousel-control-prev.hero-nav {
+    left: 0.65rem;
+  }
+
+  .carousel-control-next.hero-nav {
+    right: 0.65rem;
   }
 
   .hero-nav .hero-nav-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 22px;
+    background: rgba(20, 14, 8, 0.55);
+  }
+}
+
+/* Phones in landscape / slightly larger phones */
+@media (min-width: 577px) and (max-width: 768px) {
+  .hero-content {
+    width: min(70%, 420px);
+    max-width: calc(100% - 6.5rem);
+    left: 1.25rem;
+    padding-right: 0.5rem;
+  }
+
+  .hero-nav {
     width: 40px;
     height: 40px;
-    font-size: 26px;
-    background: rgba(20, 14, 8, 0.5);
   }
 }

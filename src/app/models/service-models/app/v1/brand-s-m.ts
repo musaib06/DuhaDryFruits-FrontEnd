@@ -1,6 +1,6 @@
-import { WildValleyFoodsServiceModelBase } from '../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../base/DuhaDryFruits-service-model-base';
 
-export class BrandSM extends WildValleyFoodsServiceModelBase<number> {
+export class BrandSM extends DuhaDryFruitsServiceModelBase<number> {
   name!: string;
   imagePath!: string;
   productCount!: number;

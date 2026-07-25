@@ -5,24 +5,27 @@
   line-height: $line-height-relaxed;
 
   .refund-title {
+    font-family: $font-family-heading;
     font-size: $font-size-h2;
     font-weight: $font-weight-bold;
-    color: $color-warning-yellow;
+    color: $color-primary-dark;
     text-align: center;
   }
 
   .refund-section {
     background: $color-bg-primary;
     padding: $spacing-lg;
-    border-radius: $border-radius-md;
+    border-radius: $border-radius-lg;
     box-shadow: $shadow-sm;
+    border: 1px solid rgba($color-primary, 0.08);
 
     h3 {
+      font-family: $font-family-heading;
       font-size: $font-size-h4;
       font-weight: $font-weight-semibold;
       margin-bottom: $spacing-sm;
-      color: $color-text-secondary;
-      border-left: 4px solid $color-warning-yellow;
+      color: $color-primary;
+      border-left: 4px solid $color-gold;
       padding-left: $spacing-sm;
     }
 

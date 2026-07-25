@@ -16,7 +16,7 @@ import { ProductCardComponent } from '../../../internal/End-user/product/product
 import { ProductSM } from '../../../../../models/service-models/app/v1/product-s-m';
 import { CartService } from '../../../../../services/cart.service';
 import { WishlistService } from '../../../../../services/wishlist.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../../../services/product.service';
 import { CategoryService } from '../../../../../services/category.service';
 import { CategorySM } from '../../../../../models/service-models/app/v1/categories-s-m';
@@ -29,7 +29,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shop',
-  imports: [CommonModule, FormsModule, ProductCardComponent],
+  imports: [CommonModule, FormsModule, ProductCardComponent, RouterLink],
   templateUrl: './shop.html',
   styleUrl: './shop.scss',
   standalone: true,
@@ -48,6 +48,16 @@ export class Shop extends BaseComponent<AdminProductsViewModel> implements OnIni
   currentPage = 1;
   totalPages = 1;
   selectedSort = 'price_asc';
+
+  /** Friendlier shop heading (maps legacy titles). */
+  get displayPageTitle(): string {
+    const title = (this.viewModel?.PageTitle || '').trim();
+    if (!title || title === 'All Products') return 'The Collection';
+    if (title.startsWith('Search Results for ')) {
+      return title.replace('Search Results for ', 'Matches for ');
+    }
+    return title;
+  }
 
   // local caches
   cartItems: ProductSM[] = [];
@@ -152,13 +162,13 @@ export class Shop extends BaseComponent<AdminProductsViewModel> implements OnIni
             this.viewModel.userProductViewModel.categoryId = categoryId;
             this.viewModel.PageTitle = categoryName;
           } else {
-            this.viewModel.PageTitle = 'All Products';
+            this.viewModel.PageTitle = 'The Collection';
             this.viewModel.userProductViewModel.categoryId = 0;
           }
 
           if (search) {
             this.viewModel.searchstring = search;
-            this.viewModel.PageTitle = `Search Results for "${search}"`;
+            this.viewModel.PageTitle = `Matches for "${search}"`;
             void this.loadProductsPageDataBysearchString();
             return;
           }
@@ -203,7 +213,7 @@ export class Shop extends BaseComponent<AdminProductsViewModel> implements OnIni
   /** Navigation */
   openProduct(product: ProductSM) {
     const productSlug = generateProductSlug(product.name, product.id);
-    this.router.navigate(['/product', productSlug]);
+    this.router.navigate(['/dry-fruits', productSlug]);
   }
 
   /** Wishlist */

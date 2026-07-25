@@ -136,7 +136,7 @@ export class InvoiceListComponent extends BaseComponent<InvoiceViewModel> implem
   formatDate(date: Date | string | undefined): string {
     if (!date) return 'N/A';
     const d = new Date(date);
-    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' });
   }
 
   formatCurrency(amount: string | number | undefined): string {
@@ -181,7 +181,7 @@ export class InvoiceListComponent extends BaseComponent<InvoiceViewModel> implem
     const data = this.viewModel.invoices.map(invoice => ({
       invoiceNumber: invoice.invoiceNumber || 'N/A',
       orderNumber: invoice.orderNumber || 'N/A',
-      invoiceDate: invoice.invoiceDate ? new Date(invoice.invoiceDate).toLocaleDateString('en-IN') : 'N/A',
+      invoiceDate: invoice.invoiceDate ? new Date(invoice.invoiceDate).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'N/A',
       customerName: invoice.customerName || 'N/A',
       customerEmail: invoice.customerEmail || 'N/A',
       amount: invoice.amount || 0,

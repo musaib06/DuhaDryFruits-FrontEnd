@@ -176,7 +176,7 @@ export class HealthConcerns
     this._commonService.stripBootstrapModalArtifacts();
     setTimeout(() => {
       this._commonService.stripBootstrapModalArtifacts();
-      void this.router.navigate(['/product', productId]);
+      void this.router.navigate(['/dry-fruits', productId]);
     }, 0);
   }
 
@@ -274,7 +274,7 @@ export class HealthConcerns
       'remedies': 'Natural Remedies',
       'nutrition': 'Nutrition',
       'lifestyle': 'Lifestyle',
-      'kashmir': 'Kashmiri Traditions'
+      'kashmir': 'Heritage Wellness'
     };
     
     return categoryMap[category.toLowerCase()] || category;

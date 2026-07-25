@@ -23,7 +23,7 @@
 
                 <img
                   [src]="bannerImageSrc(banner)"
-                  class="hero-media wvf-protect-asset"
+                  class="hero-media duha-protect-asset"
                   draggable="false"
                   [attr.alt]="banner.title || 'Banner'"
                   [attr.loading]="i === 0 ? 'eager' : 'lazy'"
@@ -37,19 +37,20 @@
 
                 <!-- content -->
                 <div class="hero-content" (click)="onBannerClick(banner, $event)">
-                  @if (banner.title) {
-                    <h2 class="hero-title font-bilal">
-                      {{ banner.title }}
-                    </h2>
-                  }
                   @if (showBannerSubtitle(banner)) {
                     <p class="hero-subtitle">
                       {{ banner.description }}
                     </p>
                   }
+                  @if (banner.title) {
+                    <h2 class="hero-title">
+                      {{ banner.title }}
+                    </h2>
+                  }
                   @if (banner.ctaText && banner.link) {
-                    <button type="button" (click)="onBannerClick(banner, $event)" class="btn mb-3 hero-cta font-bilal">
+                    <button type="button" (click)="onBannerClick(banner, $event)" class="btn mb-3 hero-cta">
                       {{ banner.ctaText }}
+                      <i class="ri ri-arrow-right-line ms-1"></i>
                     </button>
                   }
                 </div>

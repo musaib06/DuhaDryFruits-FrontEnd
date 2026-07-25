@@ -7,10 +7,12 @@
 
 /* Testimonial Card */
 .testimonial-card {
-  background: $color-bg-primary;
-  border-radius: $spacing-lg;
+  background: #fff;
+  border: 1px solid $color-border-light;
+  border-top: 3px solid $color-gold;
+  border-radius: $border-radius-xl;
   padding: $spacing-xl;
-  box-shadow: $shadow-md;
+  box-shadow: 0 12px 30px -20px rgba($color-primary-dark, 0.4);
   transition: transform $transition-base, box-shadow $transition-base;
   position: relative;
   height: 100%;
@@ -18,8 +20,8 @@
   flex-direction: column;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: $shadow-lg;
+    transform: translateY(-6px);
+    box-shadow: 0 28px 48px -26px rgba($color-primary-dark, 0.5);
   }
 }
 
@@ -29,10 +31,10 @@
   top: $spacing-md;
   right: $spacing-lg;
   font-size: $font-size-display;
-  color: $gray-200;
+  color: rgba($color-gold, 0.4);
   line-height: 1;
 
-  .bi-quote {
+  .ri-double-quotes-l {
     transform: rotate(180deg);
     display: inline-block;
   }

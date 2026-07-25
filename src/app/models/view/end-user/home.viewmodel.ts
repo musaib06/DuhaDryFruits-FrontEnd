@@ -11,4 +11,5 @@ export class HomeViewModel extends BaseViewModel {
   productsViewModel: AdminProductsViewModel = new AdminProductsViewModel();
   categoryViewModel: AdminCategoriesViewModel = new AdminCategoriesViewModel();
   newArrivals: ProductSM[] = [];
+  freshArrivals: ProductSM[] = [];
 }

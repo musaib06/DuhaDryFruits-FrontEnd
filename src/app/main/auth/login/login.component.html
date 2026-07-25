@@ -1,23 +1,46 @@
-<div class="login-container">
-  <div class="login-card">
-    <h2 class="title">Login to Dashboard</h2>
-    <form [formGroup]="viewModel.loginForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input id="username" type="text" formControlName="username" placeholder="Enter your username" autocomplete="username" />
-      </div>
-
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input id="password" type="password" formControlName="password" placeholder="Enter your password" autocomplete="password" />
-      </div>
-
-      <button type="submit" class="login-btn" [disabled]="viewModel.loginForm.invalid">Login</button>
-      
-    </form>
-    <div class="link">
-
-        <p><a (click)="redirectToSignUp()">Create new Account</a></p> <p><a (click)="redirctToForgotPassword()">Forgot password </a></p>
+<div class="auth-shell">
+  <aside class="auth-brand">
+    <div class="auth-brand__inner">
+      <span class="auth-brand__logo">Duha<span class="auth-brand__accent">Dryfruits</span></span>
+      <span class="auth-brand__tag">Premium Dry Fruits &amp; Nuts</span>
+      <h2 class="auth-brand__headline">Welcome back to<br />pure indulgence.</h2>
+      <ul class="auth-brand__points">
+        <li><i class="bi bi-bag-heart"></i> Track your orders &amp; wishlist</li>
+        <li><i class="bi bi-lightning-charge"></i> Faster, seamless checkout</li>
+        <li><i class="bi bi-gift"></i> Members-only offers &amp; hampers</li>
+      </ul>
     </div>
-  </div>
+  </aside>
+
+  <main class="auth-form-side">
+    <div class="login-container">
+      <div class="login-card">
+        <h2 class="title">Sign in</h2>
+        <p class="subtitle">Enter your details to continue</p>
+        <form [formGroup]="viewModel.loginForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <div class="input-shell">
+              <i class="bi bi-person input-icon"></i>
+              <input id="username" type="text" formControlName="username" placeholder="Enter your username" autocomplete="username" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-shell">
+              <i class="bi bi-lock input-icon"></i>
+              <input id="password" type="password" formControlName="password" placeholder="Enter your password" autocomplete="password" />
+            </div>
+          </div>
+
+          <button type="submit" class="login-btn" [disabled]="viewModel.loginForm.invalid">Sign in</button>
+        </form>
+        <div class="link">
+          <p><a (click)="redirectToSignUp()">Create new Account</a></p>
+          <p><a (click)="redirctToForgotPassword()">Forgot password</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
 </div>

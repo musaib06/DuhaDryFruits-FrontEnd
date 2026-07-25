@@ -432,7 +432,7 @@ export class MyOrders extends BaseComponent<MyOrdersViewModel> implements OnInit
       // Company/Store Header
       doc.setFontSize(20);
       doc.setTextColor(0, 0, 0);
-      doc.text('Wild Valley Foods', 14, 20);
+      doc.text('Duha Dryfruits', 14, 20);
       
       doc.setFontSize(12);
       doc.setTextColor(100, 100, 100);
@@ -583,7 +583,7 @@ export class MyOrders extends BaseComponent<MyOrdersViewModel> implements OnInit
       doc.setFontSize(8);
       doc.setTextColor(150, 150, 150);
       doc.text('Thank you for your business!', 14, pageHeight - 20, { align: 'center' });
-      doc.text(`Generated on: ${new Date().toLocaleString('en-IN')}`, 14, pageHeight - 15, { align: 'center' });
+      doc.text(`Generated on: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`, 14, pageHeight - 15, { align: 'center' });
       
       // Save PDF
       const fileName = `Invoice_${order.id}_${order.razorpayOrderId || 'ORD'}_${new Date().getTime()}.pdf`;
@@ -618,7 +618,7 @@ export class MyOrders extends BaseComponent<MyOrdersViewModel> implements OnInit
       // Company/Store Header
       doc.setFontSize(20);
       doc.setTextColor(0, 0, 0);
-      doc.text('Wild Valley Foods', 14, 20);
+      doc.text('Duha Dryfruits', 14, 20);
       
       doc.setFontSize(12);
       doc.setTextColor(100, 100, 100);
@@ -637,7 +637,7 @@ export class MyOrders extends BaseComponent<MyOrdersViewModel> implements OnInit
       
       doc.setFontSize(10);
       doc.text(`Total Orders: ${orders.length}`, 14, 54);
-      doc.text(`Generated on: ${new Date().toLocaleString('en-IN')}`, 14, 61);
+      doc.text(`Generated on: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`, 14, 61);
       
       let startY = 70;
       
@@ -766,7 +766,7 @@ export class MyOrders extends BaseComponent<MyOrdersViewModel> implements OnInit
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(150, 150, 150);
       doc.text('Thank you for your business!', 14, pageHeight - 20, { align: 'center' });
-      doc.text(`Generated on: ${new Date().toLocaleString('en-IN')}`, 14, pageHeight - 15, { align: 'center' });
+      doc.text(`Generated on: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`, 14, pageHeight - 15, { align: 'center' });
       
       // Save PDF
       const fileName = `All_Orders_${this.viewModel.customerEmail.replace('@', '_at_')}_${new Date().getTime()}.pdf`;
@@ -798,7 +798,7 @@ export class MyOrders extends BaseComponent<MyOrdersViewModel> implements OnInit
   formatDate(date: Date | string | undefined): string {
     if (!date) return 'N/A';
     const d = new Date(date);
-    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' });
   }
 
   getProductImage(product: any): string {

@@ -34,15 +34,15 @@ export class PaymentSuccessComponent implements OnInit {
     }
 
     // Update meta tags
-    this.title.setTitle('Payment Successful - Wild Valley Foods');
-    this.meta.updateTag({ name: 'description', content: 'Your payment has been successfully processed. Thank you for shopping with Wild Valley Foods!' });
+    this.title.setTitle('Payment Successful - Duha Dryfruits');
+    this.meta.updateTag({ name: 'description', content: 'Your payment has been successfully processed. Thank you for shopping with Duha Dryfruits!' });
   }
 
   continueShopping(): void {
-    this.router.navigate(['/shop']);
+    this.router.navigate(['/buy-dry-fruits']);
   }
 
   viewOrders(): void {
-    this.router.navigate(['/my-orders']);
+    this.router.navigate(['/order-history']);
   }
 }

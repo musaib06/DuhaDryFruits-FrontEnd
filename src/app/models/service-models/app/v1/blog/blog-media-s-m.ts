@@ -1,4 +1,4 @@
-import { WildValleyFoodsServiceModelBase } from '../../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../../base/DuhaDryFruits-service-model-base';
 
 export enum BlogMediaType {
   IMAGE = 'image',
@@ -19,7 +19,7 @@ export enum EmbedPlatform {
  * Blog Media Service Model
  * Represents media attached to a blog post
  */
-export class BlogMediaSM extends WildValleyFoodsServiceModelBase<number> {
+export class BlogMediaSM extends DuhaDryFruitsServiceModelBase<number> {
   blogId!: number;
   type: BlogMediaType = BlogMediaType.IMAGE;
   filePath?: string;

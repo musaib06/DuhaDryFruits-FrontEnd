@@ -1,15 +1,26 @@
-<div class="checkout-grid">
+<div class="checkout-shell">
+  <header class="checkout-toolbar">
+    <div class="checkout-toolbar__inner">
+      <div>
+        <span class="checkout-toolbar__eyebrow">Secure checkout</span>
+        <h1 class="checkout-toolbar__title">Complete Your Order</h1>
+        <p class="checkout-toolbar__meta">Confirm delivery details, then place your order securely.</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="checkout-grid">
   <!-- Customer Details Form -->
   <div class="form-panel" [class.hidden]="currentCard === 'order'">
     <div class="panel-card">
       <div class="panel-header">
         <div class="header-content">
-          <div class="header-icon">
-            <!-- Customer Icon SVG -->
+          <div class="header-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 12a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0"/></svg>
           </div>
           <div>
-            <h2 class="panel-title">Customer & Delivery Information</h2>
-            <p class="panel-subtitle">Enter your details for order delivery</p>
+            <h2 class="panel-title">Delivery Details</h2>
+            <p class="panel-subtitle">Where should we send your order?</p>
           </div>
         </div>
       </div>
@@ -38,10 +49,10 @@
             <div class="address-tags">
               @for (cust of savedCustomers; track cust.id) {
                 <div class="address-tag">
-                  <span class="tag-icon">📍</span>
+                  <span class="tag-icon"><i class="ri ri-map-pin-2-fill"></i></span>
                   <span class="tag-name">{{ cust.firstName }} {{ cust.lastName }}</span>
-                  <button type="button" class="tag-delete" (click)="deleteCustomer(cust.id, $event)">
-                    ×
+                  <button type="button" class="tag-delete" aria-label="Remove address" (click)="deleteCustomer(cust.id, $event)">
+                    <i class="ri ri-close-line"></i>
                   </button>
                 </div>
               }
@@ -188,12 +199,12 @@
     <div class="panel-card sticky">
       <div class="panel-header">
         <div class="header-content">
-          <div class="header-icon">
-            <!-- Cart Icon SVG -->
+          <div class="header-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M6 8h12l-1 12H7L6 8zm3-3a3 3 0 016 0"/></svg>
           </div>
           <div>
             <h2 class="panel-title">Order Summary</h2>
-            <p class="panel-subtitle">Review your cart items</p>
+            <p class="panel-subtitle">Review items before payment</p>
           </div>
         </div>
         @if (currentCard === 'order') {
@@ -222,7 +233,7 @@
               @for (item of viewModel.cartItems; track $index) {
                 <div class="cart-item">
                   <div class="item-image">
-                    <img [src]="imageOf(item)" [alt]="item.name" class="wvf-protect-asset" draggable="false"
+                    <img [src]="imageOf(item)" [alt]="item.name" class="duha-protect-asset" draggable="false"
                       (error)="onProductImageError($event, item.id)" />
                   </div>
                   <div class="item-details">
@@ -284,4 +295,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>

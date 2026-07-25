@@ -32,6 +32,8 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
   @Input() currency = '₹';
   @Input() placeholder = 'assets/logo.png';
   @Input() showActions = true;
+  /** Prefer eager for above-the-fold rail cards so hero products appear sooner. */
+  @Input() imageLoading: 'lazy' | 'eager' = 'lazy';
 
   @Output() addToCart = new EventEmitter<ProductSM>();
   @Output() view = new EventEmitter<ProductSM>();
@@ -117,21 +119,30 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
   onVariantChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const variantId = Number(select.value);
-    
-    if (isNaN(variantId)) return;
-    
-    this.product.selectedVariantId = variantId;
+    this.onVariantSelect(variantId);
+  }
+
+  onVariantSelect(variantId: number): void {
+    if (variantId == null || isNaN(Number(variantId))) return;
+    this.product.selectedVariantId = Number(variantId);
     (this.product as any).__userSelectedVariant = true;
     this.product.cartQuantity = 1;
     this.cdr.detectChanges();
   }
 
-  onVariantButtonClick(variantId: number): void {
-    if (isNaN(variantId)) return;
-    this.product.selectedVariantId = variantId;
-    (this.product as any).__userSelectedVariant = true;
-    this.product.cartQuantity = 1;
-    this.cdr.detectChanges();
+  getVariantOptionLabel(variant: any): string {
+    const size =
+      ProductUtils.getVariantUnitSize(variant) ||
+      ProductUtils.getVariantQuantityWithUnit(variant) ||
+      ProductUtils.getVariantQuantityLabel(variant) ||
+      'Size';
+    const price = Number(variant?.price);
+    const priceText = Number.isFinite(price)
+      ? ` — ${this.currency}${Math.round(price).toLocaleString('en-IN')}`
+      : '';
+    const oos =
+      variant?.stock <= 0 || variant?.isActive === false ? ' (Out of Stock)' : '';
+    return `${size}${priceText}${oos}`;
   }
 
   onAddToCart(): void {

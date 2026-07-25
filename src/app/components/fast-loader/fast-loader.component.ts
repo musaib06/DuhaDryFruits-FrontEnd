@@ -40,7 +40,7 @@ import { Subscription } from 'rxjs';
 
     .progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%);
+      background: linear-gradient(90deg, #6b8452 0%, #c6a15b 50%, #435a34 100%);
       background-size: 200% 100%;
       animation: shimmer 1s ease-in-out infinite, progress 0.3s ease-out;
       transition: width 0.2s ease-out;

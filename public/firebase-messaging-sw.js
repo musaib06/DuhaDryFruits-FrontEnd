@@ -14,13 +14,13 @@ importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-comp
 // Initialize Firebase with config from environment
 // These will be replaced during build process
 const firebaseConfig = {
-  apiKey: "AIzaSyATpeXmdGLK4y40ljotQ9ZVyqkB0tblQLM",
-  authDomain: "wild-valley-4c7a5.firebaseapp.com",
-  projectId: "wild-valley-4c7a5",
-  storageBucket: "wild-valley-4c7a5.firebasestorage.app",
-  messagingSenderId: "943411759123",
-  appId: "1:943411759123:web:41437dac8a4cb540bf97e6",
-  measurementId: "G-PCPQVPF9K3"
+  apiKey: "AIzaSyCUr9Jdfn3QkAm8KweU0HyEA2E595triQs",
+  authDomain: "notify-129ad.firebaseapp.com",
+  projectId: "notify-129ad",
+  storageBucket: "notify-129ad.firebasestorage.app",
+  messagingSenderId: "526081196460",
+  appId: "1:526081196460:web:cc1789fb6ecf4ecce0ba09",
+  measurementId: "G-8D1EPRWT5X"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -33,11 +33,10 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message:', payload);
 
-  const notificationTitle = payload.notification?.title || 'Wild Valley Foods';
+  const notificationTitle = payload.notification?.title || 'Duha Dryfruits';
   const notificationOptions = {
     body: payload.notification?.body || '',
-    icon: '/assets/icons/icon-192x192.png',
-    badge: '/assets/icons/badge-72x72.png',
+    icon: '/icons/icon-192x192.png',
     tag: payload.data?.tag || 'default',
     requireInteraction: true,
     actions: [
@@ -80,7 +79,7 @@ self.addEventListener('notificationclick', (event) => {
   } else if (data.click_action) {
     url = data.click_action;
   } else if (data.productId) {
-    url = `/product/${data.productId}`;
+    url = `/dry-fruits/${data.productId}`;
   } else if (data.orderId) {
     url = `/orders/${data.orderId}`;
   }
@@ -125,11 +124,10 @@ self.addEventListener('push', (event) => {
   if (event.data) {
     const data = event.data.json();
 
-    const title = data.title || 'Wild Valley Foods';
+    const title = data.title || 'Duha Dryfruits';
     const options = {
       body: data.body || '',
-      icon: '/assets/icons/icon-192x192.png',
-      badge: '/assets/icons/badge-72x72.png',
+      icon: '/icons/icon-192x192.png',
       tag: data.tag || 'default',
       data: data
     };

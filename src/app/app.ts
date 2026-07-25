@@ -15,10 +15,13 @@ import {
 import { filter } from 'rxjs/operators';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { IndexedDBStorageService } from './services/indexdb.service';
+import { AppConstants } from '../app-constants';
+import { CustomerDetailSM } from './models/service-models/app/v1/customer-detail-s-m';
 import { NgxUiLoaderModule, NgxUiLoaderService } from 'ngx-ui-loader';
 import { FastLoaderComponent } from './components/fast-loader/fast-loader.component';
 import { InitialLoadService } from './services/initial-load.service';
 import { PushNotificationService } from './notification/services/push-notification.service';
+import { CommonService } from './services/common.service';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +30,7 @@ import { PushNotificationService } from './notification/services/push-notificati
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('wild-valley-food');
+  protected readonly title = signal('duha-dryfruits');
   isBrowser: boolean;
   indexDBStorageService: IndexedDBStorageService | undefined;
   /**
@@ -97,8 +100,11 @@ export class App {
    */
   private setupPushNotifications(): void {
     const pushService = this.injector.get(PushNotificationService);
+    const commonService = this.injector.get(CommonService);
+    let permissionInFlight = false;
+    let modalShown = false;
+    const dismissKey = 'duha_notif_prompt_dismissed';
 
-    // Navigate when the FCM service worker reports a notification click.
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', (event: MessageEvent) => {
         const data = event.data;
@@ -108,41 +114,123 @@ export class App {
       });
     }
 
-    // Show foreground messages as a notification so clicking them routes the
-    // same way as background notifications (unified via the service worker).
     pushService.foregroundMessage$.subscribe((payload) => {
       this.handleForegroundMessage(pushService, payload);
     });
 
-    // Request notification permission on the first user interaction. Browsers
-    // (especially on mobile) suppress permission prompts that aren't triggered
-    // by a user gesture, so a bare timer often never shows the prompt. We only
-    // do this once and only when permission hasn't been decided yet.
-    const askForPermission = () => {
-      pushService.requestPermissionAndRegister().catch(() => {
-        /* permission denied or unsupported - non-fatal */
-      });
-    };
-
-    if (pushService.isPermissionGranted()) {
-      // Already granted before: just (re)register the token silently.
-      askForPermission();
+    if (!pushService.isSupported()) {
       return;
     }
 
-    if (pushService.isPermissionDenied()) {
-      return; // Can't re-prompt once denied; user must reset it in the browser.
+    const isDismissedThisSession = (): boolean => {
+      try {
+        return sessionStorage.getItem(dismissKey) === '1';
+      } catch {
+        return false;
+      }
+    };
+
+    const markDismissedThisSession = (): void => {
+      try {
+        sessionStorage.setItem(dismissKey, '1');
+      } catch {
+        /* ignore */
+      }
+    };
+
+    const registerIfGranted = async (): Promise<void> => {
+      if (!pushService.isPermissionGranted()) return;
+      const customerId = await this.getSavedCustomerId();
+      await pushService.requestPermissionAndRegister(customerId ?? undefined).catch(() => {});
+    };
+
+    const showEnableModal = async (): Promise<void> => {
+      if (permissionInFlight || modalShown || !pushService.needsPermissionPrompt()) return;
+      if (isDismissedThisSession()) return;
+
+      modalShown = true;
+      const result = await commonService.showSweetAlertConfirmation({
+        title: 'Enable notifications?',
+        html:
+          'Stay updated on <strong>offers</strong>, <strong>new arrivals</strong>, and your <strong>orders</strong>.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Allow notifications',
+        cancelButtonText: 'Not now',
+        reverseButtons: true,
+        allowOutsideClick: false,
+      });
+
+      if (!result.isConfirmed) {
+        markDismissedThisSession();
+        return;
+      }
+
+      permissionInFlight = true;
+      try {
+        const customerId = await this.getSavedCustomerId();
+        const token = await pushService.requestPermissionAndRegister(customerId ?? undefined);
+        if (token) {
+          await commonService.showSweetAlertToast({
+            title: 'Notifications enabled',
+            text: "You'll receive updates and offers.",
+            icon: 'success',
+          });
+          removeInteractionListeners();
+        } else if (pushService.isPermissionDenied()) {
+          await commonService.showSweetAlert({
+            title: 'Notifications blocked',
+            text: 'You can enable them later in your browser or device settings.',
+            icon: 'info',
+            confirmButtonText: 'OK',
+          });
+          removeInteractionListeners();
+        }
+      } finally {
+        permissionInFlight = false;
+      }
+    };
+
+    const promptIfNeeded = async (): Promise<void> => {
+      if (pushService.isPermissionGranted()) {
+        await registerIfGranted();
+        removeInteractionListeners();
+        return;
+      }
+      if (pushService.isPermissionDenied()) {
+        removeInteractionListeners();
+        return;
+      }
+      await showEnableModal();
+    };
+
+    const onUserInteraction = (): void => {
+      void promptIfNeeded();
+    };
+
+    const removeInteractionListeners = (): void => {
+      window.removeEventListener('pointerdown', onUserInteraction);
+      window.removeEventListener('keydown', onUserInteraction);
+      window.removeEventListener('touchstart', onUserInteraction);
+      window.removeEventListener('scroll', onUserInteraction);
+    };
+
+    void registerIfGranted();
+
+    if (pushService.isPermissionGranted() || pushService.isPermissionDenied()) {
+      return;
     }
 
-    const onFirstInteraction = () => {
-      window.removeEventListener('pointerdown', onFirstInteraction);
-      window.removeEventListener('keydown', onFirstInteraction);
-      window.removeEventListener('touchstart', onFirstInteraction);
-      askForPermission();
-    };
-    window.addEventListener('pointerdown', onFirstInteraction, { once: true });
-    window.addEventListener('keydown', onFirstInteraction, { once: true });
-    window.addEventListener('touchstart', onFirstInteraction, { once: true });
+    // Ask on all devices shortly after the page loads.
+    setTimeout(() => {
+      void promptIfNeeded();
+    }, 2500);
+
+    // Mobile/tablet: browsers require a user gesture — keep listening until decided.
+    window.addEventListener('pointerdown', onUserInteraction, { passive: true });
+    window.addEventListener('keydown', onUserInteraction);
+    window.addEventListener('touchstart', onUserInteraction, { passive: true });
+    window.addEventListener('scroll', onUserInteraction, { passive: true });
   }
 
   private handleForegroundMessage(
@@ -150,7 +238,7 @@ export class App {
     payload: any,
   ): void {
     try {
-      const title = payload?.notification?.title || payload?.data?.title || 'Wild Valley Foods';
+      const title = payload?.notification?.title || payload?.data?.title || 'Duha Dryfruits';
       const body = payload?.notification?.body || payload?.data?.body || '';
       const data = payload?.data || {};
 
@@ -158,8 +246,11 @@ export class App {
         navigator.serviceWorker.ready.then((registration) => {
           registration.showNotification(title, {
             body,
-            icon: '/assets/icons/icon-192x192.png',
-            data,
+            icon: '/icons/icon-192x192.png',
+            data: {
+              ...data,
+              url: data.url || data.click_action || '/',
+            },
           } as NotificationOptions);
         });
       }
@@ -224,5 +315,19 @@ export class App {
       return;
     }
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }
+
+  private async getSavedCustomerId(): Promise<number | null> {
+    if (!this.isBrowser || !this.indexDBStorageService) return null;
+    try {
+      const saved: CustomerDetailSM[] =
+        (await this.indexDBStorageService.getFromStorage(
+          AppConstants.DbKeys.SAVED_CUSTOMER_DETAILS
+        )) || [];
+      const latest = saved[saved.length - 1];
+      return latest?.id != null ? Number(latest.id) : null;
+    } catch {
+      return null;
+    }
   }
 }

@@ -121,7 +121,7 @@ export class OrderDetailComponent extends BaseComponent<any> implements OnInit {
   formatDate(date: Date | string | undefined): string {
     if (!date) return 'N/A';
     const d = new Date(date);
-    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' });
   }
 
   formatCurrency(amount: number | undefined): string {

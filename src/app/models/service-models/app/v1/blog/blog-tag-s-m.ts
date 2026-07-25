@@ -1,10 +1,10 @@
-import { WildValleyFoodsServiceModelBase } from '../../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../../base/DuhaDryFruits-service-model-base';
 
 /**
  * Blog Tag Service Model
  * Represents a blog tag in the system
  */
-export class BlogTagSM extends WildValleyFoodsServiceModelBase<number> {
+export class BlogTagSM extends DuhaDryFruitsServiceModelBase<number> {
   name!: string;
   slug!: string;
   color: string = '#667eea';

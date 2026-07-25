@@ -10,10 +10,10 @@
     background: linear-gradient(
       128deg,
       #fff8ef 0%,
-      #f5ebe0 42%,
-      #eef4f8 100%
+      #f5ebe0 55%,
+      #eef1e6 100%
     );
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    border-bottom: 1px solid rgba($color-primary, 0.1);
     overflow: hidden;
 
     &::before {
@@ -43,16 +43,16 @@
       margin: 0 0 0.4rem;
       font-size: clamp(0.68rem, 1.8vw, 0.78rem);
       font-weight: 700;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: color.adjust($color-primary-dark, $lightness: -12%);
+      color: $color-gold-dark;
     }
 
     .hero-title {
-      font-family: $font-family-primary;
-      font-size: clamp(1.45rem, 4vw + 0.35rem, 2.1rem);
+      font-family: $font-family-heading;
+      font-size: clamp(1.6rem, 4vw + 0.35rem, 2.4rem);
       font-weight: 700;
-      color: $gray-900;
+      color: $color-primary-dark;
       margin: 0 0 0.5rem;
       line-height: 1.2;
       letter-spacing: -0.02em;
@@ -76,9 +76,11 @@
     background: #fff;
 
     .section-title {
-      font-size: 1.75rem;
+      font-family: $font-family-heading;
+      font-size: 1.9rem;
       font-weight: 600;
-      color: #2d3748;
+      color: $color-primary-dark;
+      letter-spacing: -0.01em;
     }
 
     .featured-card {
@@ -138,9 +140,10 @@
         min-width: 0;
 
         .card-title {
-          font-size: 1.25rem;
+          font-family: $font-family-heading;
+          font-size: 1.3rem;
           font-weight: 600;
-          color: #2d3748;
+          color: $color-primary-dark;
           margin-bottom: 12px;
           line-height: 1.4;
           display: -webkit-box;
@@ -192,7 +195,7 @@
 
   // Blog Grid
   .blog-grid {
-    background: #f8fafc;
+    background: $color-cream;
     padding: 40px 0 80px;
 
     // Filters Bar
@@ -208,11 +211,11 @@
         input {
           padding-right: 50px;
           border-radius: 8px;
-          border: 1px solid #e2e8f0;
+          border: 1px solid $color-border-base;
 
           &:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: $color-primary;
+            box-shadow: 0 0 0 3px rgba($color-primary, 0.12);
           }
         }
 
@@ -223,11 +226,11 @@
           transform: translateY(-50%);
           background: none;
           border: none;
-          color: #667eea;
+          color: $color-primary;
           padding: 8px;
 
           &:hover {
-            color: #5a67d8;
+            color: $color-primary-dark;
           }
         }
       }
@@ -243,9 +246,9 @@
             padding: 8px 12px;
 
             &.active {
-              background: #667eea;
-              border-color: #667eea;
-              color: #fff;
+              background: $color-primary;
+              border-color: $color-primary;
+              color: $color-cream;
             }
           }
         }
@@ -304,7 +307,7 @@
           position: absolute;
           top: 12px;
           right: 12px;
-          background: #f5a623;
+          background: linear-gradient(135deg, $color-gold 0%, $color-gold-dark 100%);
           color: #fff;
           padding: 6px 12px;
           border-radius: 20px;
@@ -337,9 +340,10 @@
         }
 
         .card-title {
-          font-size: 1.1rem;
+          font-family: $font-family-heading;
+          font-size: 1.15rem;
           font-weight: 600;
-          color: #2d3748;
+          color: $color-primary-dark;
           margin-bottom: 10px;
           line-height: 1.4;
           display: -webkit-box;
@@ -437,8 +441,8 @@
         }
 
         .page-item.active .page-link {
-          background: #667eea;
-          color: #fff;
+          background: $color-primary;
+          color: $color-cream;
         }
 
         .page-item.disabled .page-link {

@@ -1,10 +1,10 @@
-import { WildValleyFoodsServiceModelBase } from '../../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../../base/DuhaDryFruits-service-model-base';
 
 /**
  * Blog Category Service Model
  * Represents a blog category in the system
  */
-export class BlogCategorySM extends WildValleyFoodsServiceModelBase<number> {
+export class BlogCategorySM extends DuhaDryFruitsServiceModelBase<number> {
   name!: string;
   slug!: string;
   description?: string;

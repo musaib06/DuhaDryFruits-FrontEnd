@@ -1,6 +1,6 @@
 <div class="categories" *ngIf="categories?.length; else empty">
   <div class="category-item" *ngFor="let c of categories; trackBy: trackById">
-    <div [routerLink]="['/shop', c.name, c.id]">
+    <div [routerLink]="['/buy-dry-fruits', c.name, c.id]">
       <div class="img-wrap">
         <img [src]="categoryIconSrc(c)" [alt]="c.name" loading="lazy" (error)="$any($event.target).src='assets/logo.png'" />
       </div>

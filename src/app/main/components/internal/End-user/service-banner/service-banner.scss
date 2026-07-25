@@ -1,38 +1,143 @@
 @use "../../../../../../variable" as *;
 
-.features {
-  background: $color-bg-primary;
+.highlight-strip {
+  padding: 0.65rem 0 0.75rem;
+  background:
+    radial-gradient(700px 180px at 10% 0%, rgba($color-gold, 0.1), transparent 55%),
+    $color-bg-primary;
+  border-bottom: 1px solid $color-border-light;
 
-  .feature-box {
-    background: $gray-100;
-    border-radius: $border-radius-md;
-    transition: all $transition-fast;
-    cursor: default;
-    padding: $spacing-xl $spacing-md !important;
+  @media (min-width: $breakpoint-md) {
+    padding: clamp(1.1rem, 2.5vw, 1.75rem) 0;
+  }
+}
 
-    &:hover {
-      background: $color-bg-primary;
-      box-shadow: $shadow-md;
-      transform: translateY(-4px);
+/* —— Mobile: horizontal trust chips (low height) —— */
+.highlight-chips {
+  display: flex;
+  gap: 0.55rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0.15rem 0 0.25rem;
+  scroll-snap-type: x mandatory;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+.highlight-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.75rem 0.45rem 0.5rem;
+  background:
+    linear-gradient(145deg, #fff 0%, rgba($color-cream, 0.95) 100%);
+  border: 1px solid rgba($color-primary, 0.12);
+  border-radius: $border-radius-control;
+  scroll-snap-align: start;
+  max-width: 11.5rem;
+
+  &__icon {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    background: rgba($color-primary, 0.08);
+    color: $color-primary;
+
+    i {
+      font-size: 1rem;
+      line-height: 1;
+      font-family: "remixicon" !important;
     }
+  }
 
-    .icon-wrap {
-      font-size: $font-size-h2;
-      color: $color-primary;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  &__title {
+    font-size: 0.78rem;
+    font-weight: 650;
+    color: $color-text-primary;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+}
 
-    .title {
-      font-weight: $font-weight-semibold;
-      font-size: $font-size-base;
-      color: $color-text-primary;
-    }
+/* —— Tablet+: card grid —— */
+.highlight-grid {
+  display: none;
 
-    .desc {
-      font-size: $font-size-sm;
-      color: $color-text-secondary;
+  @media (min-width: $breakpoint-md) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+}
+
+.highlight-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem 1.1rem;
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba($color-primary, 0.06), transparent 55%),
+    linear-gradient(165deg, #fff 0%, $color-cream 100%);
+  border: 1px solid rgba($color-primary, 0.1);
+  border-radius: $border-radius-lg;
+  min-height: 100%;
+  transition: transform $transition-fast, border-color $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba($color-primary, 0.28);
+    box-shadow: 0 16px 28px -24px rgba($gray-900, 0.45);
+  }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius-control;
+    background: rgba($color-primary, 0.08);
+    border: 1px solid rgba($color-primary, 0.14);
+    color: $color-primary;
+
+    i {
+      font-size: 1.35rem;
+      line-height: 1;
+      font-family: "remixicon" !important;
     }
+  }
+
+  &__title {
+    margin: 0 0 0.25rem;
+    font-family: $font-family-heading;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: $color-text-primary;
+    line-height: 1.2;
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: $color-text-secondary;
   }
 }

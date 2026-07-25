@@ -19,12 +19,12 @@
   aria-modal="true"
   aria-label="Shop categories">
   <div class="category-sheet__header">
-    <span class="category-sheet__title">Categories</span>
+    <span class="category-sheet__title">Browse</span>
     <button type="button" class="btn-close" aria-label="Close" (click)="closeCategorySheet()"></button>
   </div>
   <div class="category-sheet__body">
     <button type="button" class="category-sheet__row category-sheet__row--all" (click)="goAllProducts()">
-      <i class="bi bi-grid-fill me-2"></i> All products
+      <i class="ri ri-grid-fill me-2"></i> Full pantry
     </button>
     @for (cat of categories; track cat.id) {
       <button type="button" class="category-sheet__row" (click)="openCategory(cat)">
@@ -40,13 +40,16 @@
 <button
   type="button"
   class="mobile-category-fab d-lg-none"
+  [class.mobile-category-fab--open]="categorySheetOpen"
   [attr.aria-expanded]="categorySheetOpen"
   aria-controls="mobile-category-sheet"
   (click)="categorySheetOpen = !categorySheetOpen"
   aria-label="Browse shop categories">
   @if (categorySheetOpen) {
-    <i class="bi bi-x-lg"></i>
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
+    <span class="mobile-category-fab__label">Close</span>
   } @else {
-    <i class="bi bi-grid-3x3-gap-fill"></i>
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>
+    <span class="mobile-category-fab__label">Menu</span>
   }
 </button>

@@ -1,4 +1,4 @@
-import { WildValleyFoodsServiceModelBase } from '../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../base/DuhaDryFruits-service-model-base';
 import { ProductVariantSM } from './variants-s-m';
 import { CategorySM } from './categories-s-m';
 
@@ -23,7 +23,7 @@ const LOW_STOCK_THRESHOLD = 5;
  * All pricing and stock logic must use selectedVariant
  * Product is a container, Variant is the sellable entity
  */
-export class ProductSM extends WildValleyFoodsServiceModelBase<number> {
+export class ProductSM extends DuhaDryFruitsServiceModelBase<number> {
   name!: string;
   subtitle?: string;
   description!: string;

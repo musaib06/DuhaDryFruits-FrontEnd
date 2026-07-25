@@ -163,7 +163,7 @@ export class CustomerListComponent extends BaseComponent<CustomerViewModel> impl
   formatDate(date: Date | string | undefined): string {
     if (!date) return 'N/A';
     const d = new Date(date);
-    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' });
   }
 
   getFullName(customer: CustomerDetailSM): string {

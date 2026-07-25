@@ -1,0 +1,89 @@
+<div>
+  <a routerLink="/admin/bulk-orders/requests" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back</a>
+
+  @if (isLoading) { <div class="spinner-border"></div> }
+  @else if (order) {
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <div>
+        <h2>{{ order.orderNumber }}</h2>
+        <span class="badge bg-primary">{{ order.status }}</span>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <div class="card mb-3"><div class="card-header">Customer &amp; Business</div><div class="card-body">
+          <p><strong>{{ order.companyName }}</strong> · {{ order.businessType }}</p>
+          <p>{{ order.contactPerson }} · {{ order.phone }} · {{ order.email }}</p>
+          <p>GST: {{ order.gstNumber || 'N/A' }}</p>
+          <p>Ship: {{ order.shippingAddress }}, {{ order.city }}, {{ order.state }} {{ order.pinCode }}</p>
+        </div></div>
+
+        <div class="card mb-3"><div class="card-header">Products</div><div class="card-body p-0">
+          <table class="table mb-0"><thead><tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+            <tbody>
+              @for (i of order.items; track i.id) {
+                <tr><td>{{ i.productName }}</td><td>{{ i.requestedQuantity }}</td><td>{{ i.unitPrice }}</td><td>{{ i.lineTotal }}</td></tr>
+              }
+              @for (c of order.customRequests || []; track c.id) {
+                <tr><td>{{ c.productName }} <span class="badge bg-info">Custom</span></td><td>{{ c.requiredQuantity }}</td><td>—</td><td>—</td></tr>
+              }
+            </tbody>
+          </table>
+        </div></div>
+
+        @if (order.activityLogs?.length) {
+          <div class="card mb-3"><div class="card-header">Activity Log</div><div class="card-body">
+            @for (log of order.activityLogs; track $index) {
+              <div class="small border-bottom py-1">{{ log.description || log.action }} · {{ log.createdOnUTC | date:'short' }}</div>
+            }
+          </div></div>
+        }
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card mb-3"><div class="card-header">Pricing</div><div class="card-body">
+          <div class="mb-2"><label>Discount (₹)</label><input type="number" class="form-control" [(ngModel)]="discount" /></div>
+          <div class="mb-2"><label>Freight (₹)</label><input type="number" class="form-control" [(ngModel)]="freight" /></div>
+          <div class="mb-2"><label>Tax (₹)</label><input type="number" class="form-control" [(ngModel)]="tax" /></div>
+          <div class="mb-2"><label>Remarks</label><textarea class="form-control" rows="2" [(ngModel)]="remarks"></textarea></div>
+          <p><strong>Subtotal:</strong> ₹{{ order.subtotal | number:'1.0-0' }}</p>
+          <p><strong>Final:</strong> ₹{{ order.finalAmount | number:'1.0-0' }}</p>
+        </div></div>
+
+        <div class="card mb-3"><div class="card-header">Actions</div><div class="card-body d-grid gap-2">
+          @if (order.status === 'pending_approval' || order.status === 'changes_requested') {
+            <button type="button" class="btn btn-success" (click)="approve()">Approve</button>
+            <button type="button" class="btn btn-danger" (click)="reject()">Reject</button>
+          }
+          @if (order.status === 'approved') {
+            <button type="button" class="btn btn-warning" (click)="generatePayment()">Generate Payment Link</button>
+          }
+          @if (order.status === 'paid') {
+            <button type="button" class="btn btn-info" (click)="startProcessing()">Start Processing</button>
+          }
+          @if (order.status === 'paid' || order.status === 'processing') {
+            <input class="form-control form-control-sm" placeholder="Courier" [(ngModel)]="shipData.courier" />
+            <input class="form-control form-control-sm" placeholder="Tracking #" [(ngModel)]="shipData.trackingNumber" />
+            <button type="button" class="btn btn-primary" (click)="ship()">Mark Shipped</button>
+          }
+          @if (order.status === 'shipped') {
+            <button type="button" class="btn btn-success" (click)="markDelivered()">Mark Delivered</button>
+          }
+        </div></div>
+
+        @if (order.payments?.length) {
+          <div class="card"><div class="card-header">Payments</div><div class="card-body">
+            @for (p of order.payments; track p.id) {
+              <div class="mb-2">
+                <span class="badge" [class.bg-success]="p.paymentStatus === 'paid'">{{ p.paymentStatus }}</span>
+                ₹{{ p.amount }}
+                @if (p.paymentLink) { <a [href]="p.paymentLink" target="_blank" class="d-block small">Payment Link</a> }
+              </div>
+            }
+          </div></div>
+        }
+      </div>
+    </div>
+  }
+</div>

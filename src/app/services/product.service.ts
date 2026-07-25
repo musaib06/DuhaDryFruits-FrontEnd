@@ -390,6 +390,34 @@ export class ProductService extends BaseService {
     );
   }
 
+  /** Newest active products for home “Fresh Arrivals”. */
+  async getNewArrivals(): Promise<ApiResponse<ProductSM[]>> {
+    const cacheKey = `new-arrivals`;
+    const cached = this.getCached<ApiResponse<ProductSM[]>>(cacheKey);
+    if (cached) return cached;
+
+    return this.ssrTransfer.hydrateOrFetch(
+      SSR_TRANSFER_KEYS.NEW_ARRIVALS,
+      async () => {
+        const response = await this.productClient.GetNewArrivals();
+        if (!response.isError && response.successData) {
+          response.successData = response.successData.map((p) => this.normalizeProductData(p));
+          const shouldCache =
+            response.successData?.some(
+              (p) => Array.isArray((p as any).images) && (p as any).images.length > 0,
+            ) ?? false;
+          if (shouldCache) this.setCached(cacheKey, response);
+        }
+        return response;
+      },
+      (response) => {
+        if (!response.isError) {
+          this.setCached(cacheKey, response);
+        }
+      },
+    );
+  }
+
   /** Full id+name list for nav (not paginated). */
   async getAllProductNamesOnly(): Promise<ApiResponse<ProductNameIdSM[]>> {
     const cacheKey = `product-names-only`;

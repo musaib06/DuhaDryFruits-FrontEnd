@@ -4,9 +4,9 @@ export const environment = {
   apiResponseCacheTimeoutInMinutes: 5,
   enableResponseCacheProcessing: true,
   applicationVersion: '0.0.1',
-  apiBaseUrl: 'https://api.wildvalleyfoods.in',
+  apiBaseUrl: 'https://api.duhadryfruits.com',
   apiDefaultTimeout: 10,
-  indexedDBName: 'WildValleyFoodsDB',
+  indexedDBName: 'DuhaDryFruitsDB',
   indexedDBVersion: 1,
   LoggingInfo: {
     cacheLogs: false,
@@ -27,20 +27,20 @@ export const environment = {
     facebook: true,
     twitter: true,
     linkedin: true,
-    whatsAppNumber: '917738899165',
+    whatsAppNumber: '919796764475',
   },
 
   firebase: {
-    apiKey: 'AIzaSyATpeXmdGLK4y40ljotQ9ZVyqkB0tblQLM',
-    authDomain: 'wild-valley-4c7a5.firebaseapp.com',
-    projectId: 'wild-valley-4c7a5',
-    storageBucket: 'wild-valley-4c7a5.firebasestorage.app',
-    messagingSenderId: '943411759123',
-    appId: '1:943411759123:web:41437dac8a4cb540bf97e6',
-    measurementId: 'G-PCPQVPF9K3',
+    apiKey: 'AIzaSyCUr9Jdfn3QkAm8KweU0HyEA2E595triQs',
+    authDomain: 'notify-129ad.firebaseapp.com',
+    projectId: 'notify-129ad',
+    storageBucket: 'notify-129ad.firebasestorage.app',
+    messagingSenderId: '526081196460',
+    appId: '1:526081196460:web:cc1789fb6ecf4ecce0ba09',
+    measurementId: 'G-8D1EPRWT5X',
     // Web Push certificate public key (VAPID). Copy it from
     // Firebase Console → Project Settings → Cloud Messaging →
     // "Web Push certificates". Required for the browser to obtain an FCM token.
-    vapidKey: 'BNDFH1Acv96ywyjBbT36rv_TmIbByD7tRM_B1FWKGtuUqzHgBiowcg_9DAf8VpmKmy4h37odnsfTNtoLfbV_zgo'
+    vapidKey: 'BFmaTxX79dWjTEbSb7CzhnNY20gm9yAksL_gLjMHu4tO_vP4dbPWjq8nkLYTaF2bUjUC9qlDRTWmkOgdHyrC9y4'
   }
 };

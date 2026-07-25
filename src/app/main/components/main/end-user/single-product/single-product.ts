@@ -72,7 +72,7 @@ export class SingleProduct
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         if (this.isBrowser) {
-          if (/\/product\//.test(event.urlAfterRedirects)) {
+          if (/\/dry-fruits\//.test(event.urlAfterRedirects)) {
             this._commonService.stripBootstrapModalArtifacts();
           }
           // Scroll-to-top is handled centrally in the root App component
@@ -180,16 +180,16 @@ export class SingleProduct
     params.set('t', String(Date.now()));
     const baseImage = product.id
       ? productShareImageUrl(product.id, { variantId: shareSelectedVariant?.id })
-      : 'https://wildvalleyfoods.in/assets/logo.png';
+      : 'https://duhadryfruits.com/assets/logo.png';
     const productImage = product.id
       ? `${baseImage}${baseImage.includes('?') ? '&' : '?'}${params.toString()}`
       : baseImage;
 
     const productSlug = generateProductSlug(product.name || '', product.id);
-    const productUrl = `https://wildvalleyfoods.in/product/${productSlug}`;
+    const productUrl = `https://duhadryfruits.com/dry-fruits/${productSlug}`;
 
     // Build rich description with all variant rates — strip HTML tags from Quill content
-    const rawDesc = product.subtitle || product.description || 'Premium farm produce from Kashmir';
+    const rawDesc = product.subtitle || product.description || 'Premium dry fruits and nuts from Duha Dryfruits';
     let richDescription = rawDesc.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 
     // Add variant pricing information
@@ -225,10 +225,10 @@ export class SingleProduct
       || product.variants?.[0];
     const mainPrice = selectedVariant?.price || product.price || 0;
 
-    this.title.setTitle(`${productName} - Wild Valley Foods`);
+    this.title.setTitle(`${productName} - Duha Dryfruits`);
 
     // Open Graph tags
-    this.meta.updateTag({ property: 'og:title', content: `${productName} - ₹${mainPrice} - Wild Valley Foods` });
+    this.meta.updateTag({ property: 'og:title', content: `${productName} - ₹${mainPrice} - Duha Dryfruits` });
     this.meta.updateTag({ property: 'og:description', content: richDescription });
     this.meta.updateTag({ property: 'og:image', content: productImage });
     this.meta.updateTag({ property: 'og:image:secure_url', content: productImage });
@@ -240,7 +240,7 @@ export class SingleProduct
 
     // Twitter Card tags
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'twitter:title', content: `${productName} - ₹${mainPrice} - Wild Valley Foods` });
+    this.meta.updateTag({ name: 'twitter:title', content: `${productName} - ₹${mainPrice} - Duha Dryfruits` });
     this.meta.updateTag({ name: 'twitter:description', content: richDescription });
     this.meta.updateTag({ name: 'twitter:image', content: productImage });
 
@@ -821,7 +821,7 @@ export class SingleProduct
     // Scroll-to-top is handled centrally in the root App component on
     // NavigationEnd, so we don't scroll here to avoid competing animations.
     const productSlug = generateProductSlug(product.name, product.id);
-    this.router.navigate(['/product', productSlug]);
+    this.router.navigate(['/dry-fruits', productSlug]);
   }
 
   /**
@@ -834,7 +834,7 @@ export class SingleProduct
 
     const productSlug = generateProductSlug(this.viewModel.product.name, this.viewModel.product.id);
     let shareUrl =
-      window.location.origin + `/product/${productSlug}`;
+      window.location.origin + `/dry-fruits/${productSlug}`;
     if (this.viewModel.product.selectedVariantId) {
       shareUrl += `?variant=${this.viewModel.product.selectedVariantId}`;
     }

@@ -1,0 +1,38 @@
+<div class="p-0">
+  <h2 class="mb-3">Bulk Order Requests</h2>
+  <div class="card mb-3">
+    <div class="card-body row g-3">
+      <div class="col-md-4"><input class="form-control" placeholder="Search..." [(ngModel)]="search" (keyup.enter)="load()" /></div>
+      <div class="col-md-3">
+        <select class="form-select" [(ngModel)]="status" (change)="load()">
+          <option value="">All Statuses</option>
+          @for (s of statuses; track s) { @if (s) { <option [value]="s">{{ s }}</option> } }
+        </select>
+      </div>
+      <div class="col-md-2"><button type="button" class="btn btn-primary w-100" (click)="load()">Filter</button></div>
+    </div>
+  </div>
+
+  @if (isLoading) { <div class="text-center py-4"><div class="spinner-border"></div></div> }
+  @else {
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead><tr><th>#</th><th>Company</th><th>Contact</th><th>Status</th><th>Amount</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+          @for (o of orders; track o.id) {
+            <tr>
+              <td>{{ o.orderNumber }}</td>
+              <td>{{ o.companyName }}</td>
+              <td>{{ o.contactPerson }}<br><small>{{ o.email }}</small></td>
+              <td><span class="badge bg-secondary">{{ o.status }}</span></td>
+              <td>₹{{ o.finalAmount | number:'1.0-0' }}</td>
+              <td>{{ o.createdOnUTC | date:'short' }}</td>
+              <td><a [routerLink]="['/admin/bulk-orders/requests', o.id]" class="btn btn-sm btn-outline-primary">View</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="text-muted">Total: {{ totalCount }}</p>
+  }
+</div>

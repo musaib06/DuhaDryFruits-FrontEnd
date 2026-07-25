@@ -1,8 +1,8 @@
-import { WildValleyFoodsServiceModelBase } from "../base/WildValleyFoods-service-model-base";
+import { DuhaDryFruitsServiceModelBase } from "../base/DuhaDryFruits-service-model-base";
 import { CategoryLevelSM } from "./category-level-s-m-enum";
 
 
-export class ProductCategorySM extends WildValleyFoodsServiceModelBase<number> {
+export class ProductCategorySM extends DuhaDryFruitsServiceModelBase<number> {
     name!: string;
     levelId!: number;
     level!: CategoryLevelSM;

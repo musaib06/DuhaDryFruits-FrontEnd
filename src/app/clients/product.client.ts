@@ -261,6 +261,19 @@ SetIsBestSellingProduct = async (
     );
   };
 
+  /** Newest active products (fresh arrivals) — GET /product/new-arrivals */
+  GetNewArrivals = async (): Promise<ApiResponse<ProductSM[]>> => {
+    const details = new AdditionalRequestDetails<ProductSM[]>(false, Authentication.false);
+    details.useCacheIfPossible = false; // Fresh stock data
+    details.forceGetResponseFromApi = true;
+    return await this.GetResponseAsync<null, ProductSM[]>(
+      `${AppConstants.ApiUrls.BASE}/product/new-arrivals`,
+      'GET',
+      null,
+      details
+    );
+  };
+
   /** All product id + name (no pagination; shop dropdown / navigation) */
   GetAllProductNamesOnly = async (): Promise<ApiResponse<ProductNameIdSM[]>> => {
     return await this.GetResponseAsync<null, ProductNameIdSM[]>(

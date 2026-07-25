@@ -263,7 +263,7 @@ export class OrderListComponent extends BaseComponent<OrderViewModel> implements
   formatDate(date: Date | string | undefined): string {
     if (!date) return 'N/A';
     const d = new Date(date);
-    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' });
   }
 
   formatCurrency(amount: number | undefined): string {
@@ -307,7 +307,7 @@ export class OrderListComponent extends BaseComponent<OrderViewModel> implements
     const data = this.viewModel.orders.map(order => ({
       ...order,
       amount: order.amount || 0,
-      createdOnUTC: order.createdOnUTC ? new Date(order.createdOnUTC).toLocaleDateString('en-IN') : 'N/A'
+      createdOnUTC: order.createdOnUTC ? new Date(order.createdOnUTC).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'N/A'
     }));
 
     this.exportService.exportToExcel(data, columns, 'orders');

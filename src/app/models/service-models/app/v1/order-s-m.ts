@@ -1,4 +1,4 @@
-import { WildValleyFoodsServiceModelBase } from '../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../base/DuhaDryFruits-service-model-base';
 import { OrderRecordSM } from './order-record-s-m';
 import { CustomerDetailSM } from './customer-detail-s-m';
 import { PaymentSM } from './payment-s-m';
@@ -19,7 +19,7 @@ export enum OrderStatus {
 /**
  * Order Service Model
  */
-export class OrderSM extends WildValleyFoodsServiceModelBase<number> {
+export class OrderSM extends DuhaDryFruitsServiceModelBase<number> {
   order_id?: number;
   razorpayOrderId!: string;
   customerId!: number;

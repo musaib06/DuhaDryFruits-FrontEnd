@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 const DEFAULT_PRODUCT_IMAGE = 'assets/logo.png';
 const DEFAULT_BLOG_IMAGE = 'assets/placeholder-blog.jpg';
 
-/** Absolute API origin, e.g. https://api.wildvalleyfoods.in */
+/** Absolute API origin, e.g. https://api.duhadryfruits.com */
 export function apiOrigin(): string {
   return (environment.apiBaseUrl || '').replace(/\/$/, '');
 }

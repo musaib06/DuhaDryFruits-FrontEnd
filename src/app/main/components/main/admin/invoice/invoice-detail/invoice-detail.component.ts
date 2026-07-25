@@ -187,7 +187,7 @@ export class InvoiceDetailComponent extends BaseComponent<any> implements OnInit
   formatDate(date: Date | string | undefined): string {
     if (!date) return 'N/A';
     const d = new Date(date);
-    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+    return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Kolkata' });
   }
 
   formatCurrency(amount: string | number | undefined): string {

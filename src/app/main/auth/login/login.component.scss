@@ -1,29 +1,141 @@
 @use "../../../../variable" as *;
 
-.login-container {
+/* ============================================================
+   Premium split-screen auth
+   ============================================================ */
+.auth-shell {
   min-height: 100vh;
-  background-color: $color-bg-primary;
+  display: grid;
+  grid-template-columns: 1fr;
+  font-family: $font-family-base;
+
+  @media (min-width: 992px) {
+    grid-template-columns: 1.05fr 1fr;
+  }
+}
+
+.auth-brand {
+  display: none;
+  position: relative;
+  overflow: hidden;
+  color: $color-cream;
+  background:
+    radial-gradient(900px 500px at 15% 15%, rgba($color-gold, 0.22), transparent 60%),
+    linear-gradient(155deg, $color-primary 0%, $color-primary-dark 60%, #23301c 100%);
+
+  @media (min-width: 992px) {
+    display: flex;
+    align-items: center;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: -120px;
+    bottom: -120px;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    border: 2px solid rgba($color-gold, 0.35);
+    opacity: 0.5;
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+    padding: clamp(2.5rem, 5vw, 5rem);
+  }
+
+  &__logo {
+    font-family: $font-family-heading;
+    font-size: 2.9rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    color: $color-cream;
+  }
+
+  &__accent {
+    color: $color-gold-light;
+    margin-left: 0.28em;
+    font-weight: 600;
+  }
+
+  &__tag {
+    display: block;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    color: $color-gold-light;
+    margin: 0.5rem 0 2.5rem;
+  }
+
+  &__headline {
+    font-family: $font-family-heading;
+    font-size: clamp(1.9rem, 3vw, 2.75rem);
+    font-weight: $font-weight-semibold;
+    line-height: 1.15;
+    margin-bottom: 2rem;
+  }
+
+  &__points {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.55rem 0;
+      color: rgba($color-cream, 0.9);
+      font-size: $font-size-md;
+
+      i {
+        color: $color-gold-light;
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+.auth-form-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-primary;
+}
+
+.login-container {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: $spacing-lg;
-  font-family: $font-family-base;
 }
 
 .login-card {
-  background-color: $color-bg-primary;
-  padding: $spacing-xl;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-lg;
+  background: #fff;
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  border-radius: $border-radius-xl;
+  box-shadow: 0 30px 60px -35px rgba($color-primary-dark, 0.4);
+  border: 1px solid $color-border-light;
   width: 100%;
-  max-width: 400px;
+  max-width: 430px;
 }
 
 .title {
-  font-size: $font-size-xl;
+  font-family: $font-family-heading;
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-xs;
+  color: $color-text-primary;
+}
+
+.subtitle {
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
   margin-bottom: $spacing-lg;
-  text-align: center;
-  color: $color-primary;
 }
 
 .form-group {
@@ -35,44 +147,68 @@
 label {
   margin-bottom: $spacing-xs;
   font-size: $font-size-sm;
-  color: $color-text-primary;
-  font-weight: $font-weight-semibold;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.input-shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .input-icon {
+    position: absolute;
+    left: 0.95rem;
+    color: $color-text-tertiary;
+    font-size: 1.05rem;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.6rem;
+  }
 }
 
 input, select {
-  padding: $spacing-sm;
-  border: 1px solid $gray-300;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid $color-border-base;
   border-radius: $border-radius-md;
-  font-size: $font-size-base;
-  background-color: $color-bg-primary;
-  transition: border-color $transition-base;
+  font-size: $font-size-md;
+  background-color: #fff;
+  color: $color-text-primary;
+  transition: border-color $transition-base, box-shadow $transition-base;
 }
 
 input:focus, select:focus {
   border-color: $color-primary;
+  box-shadow: 0 0 0 0.2rem rgba($color-primary, 0.16);
   outline: none;
 }
 
 .login-btn {
   width: 100%;
-  padding: $spacing-sm;
-  background-color: $color-primary;
-  color: $color-text-on-primary;
-  font-size: $font-size-base;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, $color-primary-light 0%, $color-primary 55%, $color-primary-dark 100%);
+  color: $color-cream;
+  font-size: $font-size-md;
   font-weight: $font-weight-semibold;
+  letter-spacing: 0.02em;
   border: none;
-  border-radius: $border-radius-md;
+  border-radius: $border-radius-full;
   cursor: pointer;
   margin-top: $spacing-sm;
-  transition: background-color $transition-base;
+  box-shadow: 0 12px 26px -12px rgba($color-primary-dark, 0.7);
+  transition: transform $transition-base, box-shadow $transition-base, opacity $transition-base;
 }
 
-.login-btn:hover {
-  background-color: $color-primary-light;
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px -14px rgba($color-primary-dark, 0.75);
 }
 
 .login-btn:disabled {
-  background-color: $gray-400;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -81,8 +217,15 @@ input:focus, select:focus {
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  color: $color-primary;
   font-size: $font-size-sm;
-  margin-top: $spacing-md;
-  cursor: pointer;
+  margin-top: $spacing-lg;
+
+  a {
+    color: $color-primary;
+    cursor: pointer;
+    font-weight: $font-weight-medium;
+    transition: color $transition-fast;
+
+    &:hover { color: $color-primary-dark; text-decoration: underline; }
+  }
 }

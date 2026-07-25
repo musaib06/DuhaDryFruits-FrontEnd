@@ -15,21 +15,21 @@ The Angular application supports multiple environments for different stages of d
 
 ### 2. Local QA (`environment.localqa.ts`)
 - **Purpose**: Local QA testing
-- **API URL**: `https://local-api.wildvalleyfoods.in`
+- **API URL**: `https://local-api.duhadryfruits.com`
 - **Production Mode**: `true`
 - **Optimization**: Disabled (for debugging)
 - **Source Maps**: Enabled
 
 ### 3. Regression (`environment.reg.ts`)
 - **Purpose**: Regression testing
-- **API URL**: `https://reg-api.wildvalleyfoods.in`
+- **API URL**: `https://reg-api.duhadryfruits.com`
 - **Production Mode**: `true`
 - **Optimization**: Enabled
 - **Source Maps**: Enabled (for debugging)
 
 ### 4. Production (`environment.prod.ts`)
 - **Purpose**: Production deployment
-- **API URL**: `https://api.wildvalleyfoods.in`
+- **API URL**: `https://api.duhadryfruits.com`
 - **Production Mode**: `true`
 - **Optimization**: Enabled
 - **Source Maps**: Disabled

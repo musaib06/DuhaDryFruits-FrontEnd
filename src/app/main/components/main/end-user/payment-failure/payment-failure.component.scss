@@ -1,20 +1,24 @@
+@use "../../../../../../variable" as *;
+
 .payment-failure-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  background: linear-gradient(135deg, $color-cream 0%, #fbecea 100%);
 }
 
 .failure-card {
   background: white;
-  border-radius: 16px;
-  padding: 40px;
-  max-width: 500px;
+  border-radius: $border-radius-xl;
+  padding: 44px 40px;
+  max-width: 520px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 24px 60px rgba($color-primary-dark, 0.15);
+  border: 1px solid rgba($color-danger, 0.12);
+  border-top: 4px solid $color-danger;
   animation: slideUp 0.5s ease-out;
 }
 
@@ -44,9 +48,10 @@
 }
 
 .failure-title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #EF4444;
+  font-family: $font-family-heading;
+  font-size: 34px;
+  font-weight: $font-weight-bold;
+  color: $color-danger-dark;
   margin-bottom: 16px;
   animation: fadeIn 0.5s ease-out 0.4s both;
 }
@@ -112,9 +117,9 @@
 .btn {
   flex: 1;
   padding: 14px 24px;
-  border-radius: 8px;
+  border-radius: $border-radius-full;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;

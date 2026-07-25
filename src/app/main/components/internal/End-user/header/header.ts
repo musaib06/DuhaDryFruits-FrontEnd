@@ -11,13 +11,13 @@ import {
   PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../../../../services/cart.service';
 import { ProductSM } from '../../../../../models/service-models/app/v1/product-s-m';
 import { ProductNameIdSM } from '../../../../../models/service-models/app/v1/product-name-id-s-m';
 import { Subscription, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 import { WishlistService } from '../../../../../services/wishlist.service';
 import { HeaderViewModel } from '../../../../../models/view/end-user/header.viewmodel';
 import { BaseComponent } from '../../../../../base.component';
@@ -32,7 +32,6 @@ import { VideoService } from '../../../../../services/video.service';
 import { VideoSM } from '../../../../../models/service-models/app/v1/website-resource/video-s-m';
 import { BlogService } from '../../../../../services/blog.service';
 import { QueryFilter } from '../../../../../models/service-models/foundation/api-contracts/query-filter';
-import { PushNotificationService } from '../../../../../notification/services/push-notification.service';
 
 @Component({
   selector: 'app-header',
@@ -49,6 +48,7 @@ export class Header
   private cartSub: Subscription | null = null;
   private wishlistSub: Subscription | null = null;
   private searchSub: Subscription | null = null;
+  private routerSub: Subscription | null = null;
   private searchSubject = new Subject<string>();
 
   // Search state
@@ -57,7 +57,10 @@ export class Header
   searchResults: ProductSM[] = [];
   isSearching: boolean = false;
 
-  /** All products (id + name) for Shop dropdown — from GET /product/names */
+  /** Angular-controlled cart bag (avoids Bootstrap modal backdrop lock) */
+  isCartOpen = false;
+
+  /** All products (id + name) for Shop dropdown — from product names API */
   shopDropdownProducts: ProductNameIdSM[] = [];
 
   /** Health concern video titles for nav dropdown */
@@ -89,52 +92,11 @@ export class Header
     private router: Router,
     private videoService: VideoService,
     private blogService: BlogService,
-    private pushService: PushNotificationService,
     @Inject(PLATFORM_ID) platformId: object,
   ) {
     super(commonService, logHandlerService);
     this.viewModel = new HeaderViewModel();
     this.isBrowser = isPlatformBrowser(platformId);
-  }
-
-  /** true once the visitor has allowed notifications (hides the bell). */
-  get notificationsEnabled(): boolean {
-    return this.pushService.isPermissionGranted();
-  }
-
-  /** Show the bell only when notifications are supported and not yet granted. */
-  get showNotificationBell(): boolean {
-    return this.isBrowser && this.pushService.isSupported() && !this.pushService.isPermissionGranted();
-  }
-
-  /**
-   * Explicitly ask for notification permission from a user tap. This is the
-   * most reliable way to surface the browser prompt (auto prompts are often
-   * suppressed). Registers the device token with the backend on success.
-   */
-  async enableNotifications(): Promise<void> {
-    try {
-      const token = await this.pushService.requestPermissionAndRegister();
-      if (token) {
-        this._commonService?.showSweetAlertToast?.({
-          title: 'Notifications enabled',
-          text: "You'll now receive updates and offers.",
-          icon: 'success',
-          confirmButtonText: 'OK',
-        });
-      } else if (this.pushService.isPermissionDenied()) {
-        this._commonService?.showSweetAlertToast?.({
-          title: 'Notifications blocked',
-          text: 'Please allow notifications in your browser settings to subscribe.',
-          icon: 'info',
-          confirmButtonText: 'OK',
-        });
-      }
-    } catch {
-      /* non-fatal */
-    } finally {
-      this.cdr.detectChanges();
-    }
   }
 
   ngOnInit(): void {
@@ -163,10 +125,19 @@ export class Header
         this.performSearch(query);
       });
 
-    this.loadPageData();
-    this.loadShopDropdownProducts();
-    this.loadHealthConcernNavVideos();
-    void this.refreshBlogNavVisibility();
+    // Categories help SSR nav links; defer heavy dropdown/video/blog fetches off the critical path.
+    void this.loadPageData();
+    if (this.isBrowser) {
+      this._commonService.stripBootstrapModalArtifacts();
+      this.scheduleSecondaryNavLoads();
+    }
+
+    this.routerSub = this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => {
+        this.closeCartBag();
+        this._commonService.stripBootstrapModalArtifacts();
+      });
   }
   toggleCategories() {
     this.isOpenOffCanvasCategories = !this.isOpenOffCanvasCategories;
@@ -268,23 +239,43 @@ onDesktopMenuClick(event: MouseEvent): void {
       let resp = await this.categoryService.getStorefrontCategories(200);
       if (resp.isError) {
         await this._exceptionHandler.logObject(resp.errorData);
-        this._commonService.showSweetAlertToast({
-          title: 'Error',
-          text: resp.errorData.displayMessage,
-          icon: 'error',
-          confirmButtonText: 'OK',
-        });
+        const msg = String(resp.errorData?.displayMessage || '');
+        const isNetwork =
+          msg === 'Please check network and try again.' ||
+          /network|timeout|timed out|econnaborted|etimedout/i.test(msg);
+        // Don't block the whole storefront with a modal on a flaky category call.
+        if (!isNetwork) {
+          this._commonService.showSweetAlertToast({
+            title: 'Error',
+            text: resp.errorData.displayMessage,
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+        }
       } else {
         this.viewModel.categoriesViewModel.categories = this.sortCategoriesBySequence(resp.successData || []);
         this.cdr.detectChanges();
       }
     } catch (error) {
-      this._commonService.showSweetAlertToast({
-        title: 'Error',
-        text: 'An error occurred',
-        icon: 'error',
-        confirmButtonText: 'OK',
-      });
+      // Silent — nav still works via hard-coded shop links.
+      console.warn('[Header] Category load failed', error);
+    }
+  }
+
+  /** Shop names / videos / blog are not needed for first paint — wait for idle. */
+  private scheduleSecondaryNavLoads(): void {
+    const run = () => {
+      void this.loadShopDropdownProducts();
+      void this.loadHealthConcernNavVideos();
+      void this.refreshBlogNavVisibility();
+    };
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+    };
+    if (typeof w.requestIdleCallback === 'function') {
+      w.requestIdleCallback(run, { timeout: 2500 });
+    } else {
+      setTimeout(run, 1200);
     }
   }
 
@@ -304,6 +295,41 @@ onDesktopMenuClick(event: MouseEvent): void {
     this.cartSub?.unsubscribe();
     this.wishlistSub?.unsubscribe();
     this.searchSub?.unsubscribe();
+    this.routerSub?.unsubscribe();
+    this.closeCartBag();
+  }
+
+  openCartBag(event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    // Clear any leftover Bootstrap blur lock first
+    this._commonService.stripBootstrapModalArtifacts();
+    this.isCartOpen = true;
+    if (this.isBrowser) {
+      document.body.style.overflow = 'hidden';
+    }
+    this.cdr.detectChanges();
+  }
+
+  closeCartBag(): void {
+    if (!this.isCartOpen && this.isBrowser) {
+      this._commonService.stripBootstrapModalArtifacts();
+      return;
+    }
+    this.isCartOpen = false;
+    if (this.isBrowser) {
+      document.body.style.removeProperty('overflow');
+      this._commonService.stripBootstrapModalArtifacts();
+    }
+    this.cdr.markForCheck();
+  }
+
+  /** Open wishlist reliably (avoids blank outlet when DI fails mid-routerLink). */
+  goToWishlist(event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.closeCartBag();
+    void this.router.navigateByUrl('/saved-items');
   }
 
   // Search functionality
@@ -401,7 +427,7 @@ onDesktopMenuClick(event: MouseEvent): void {
 
   navigateToShop(): void {
     if (this.searchQuery && this.searchQuery.trim().length >= 2) {
-      this.router.navigate(['/shop'], {
+      this.router.navigate(['/buy-dry-fruits'], {
         queryParams: { search: this.searchQuery.trim() },
       });
       this.closeSearch();
@@ -412,7 +438,7 @@ onDesktopMenuClick(event: MouseEvent): void {
   navigateToProduct(product: ProductNameIdSM): void;
   navigateToProduct(product: ProductSM | ProductNameIdSM): void {
     const productSlug = generateProductSlug(product.name, product.id);
-    this.router.navigate(['/product', productSlug]);
+    this.router.navigate(['/dry-fruits', productSlug]);
     this.closeSearch();
   }
 
@@ -440,7 +466,7 @@ onDesktopMenuClick(event: MouseEvent): void {
         !!target.closest('.mobile-search-dropdown') ||
         !!target.closest('.mobile-icon-btn') ||
         (!!target.closest('button') &&
-          !!target.closest('button')?.querySelector('.bi-search') &&
+          !!target.closest('button')?.querySelector('.ri-search-2-line') &&
           !!target.closest('.d-lg-none'));
 
       // Don't close if clicking on overlay (it will close via overlay click handler)
@@ -452,9 +478,13 @@ onDesktopMenuClick(event: MouseEvent): void {
     }
   }
 
-  // Close search on ESC key
+  // Close cart / search on ESC
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
+    if (this.isCartOpen) {
+      this.closeCartBag();
+      return;
+    }
     if (this.showSearchDropdown) {
       this.closeSearch();
     }

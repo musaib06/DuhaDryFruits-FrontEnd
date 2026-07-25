@@ -1,20 +1,24 @@
+@use "../../../../../../variable" as *;
+
 .payment-success-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, $color-cream 0%, $color-cream-deep 100%);
 }
 
 .success-card {
-  background: white;
-  border-radius: 16px;
-  padding: 40px;
-  max-width: 500px;
+  background: #fff;
+  border-radius: $border-radius-xl;
+  padding: 44px 40px;
+  max-width: 520px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 24px 60px rgba($color-primary-dark, 0.18);
+  border: 1px solid rgba($color-primary, 0.08);
+  border-top: 4px solid $color-primary;
   animation: slideUp 0.5s ease-out;
 }
 
@@ -44,18 +48,19 @@
 }
 
 .success-title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #10B981;
+  font-family: $font-family-heading;
+  font-size: 34px;
+  font-weight: $font-weight-bold;
+  color: $color-primary-dark;
   margin-bottom: 16px;
   animation: fadeIn 0.5s ease-out 0.4s both;
 }
 
 .success-message {
   font-size: 16px;
-  color: #6B7280;
+  color: $color-text-secondary;
   margin-bottom: 32px;
-  line-height: 1.5;
+  line-height: 1.6;
   animation: fadeIn 0.5s ease-out 0.6s both;
 }
 
@@ -69,16 +74,17 @@
 }
 
 .order-details {
-  background: #F9FAFB;
-  border-radius: 12px;
+  background: $color-cream;
+  border: 1px solid rgba($color-primary, 0.12);
+  border-radius: $border-radius-lg;
   padding: 20px;
   margin-bottom: 32px;
   animation: fadeIn 0.5s ease-out 0.8s both;
 }
 
 .order-id, .order-amount {
-  font-size: 14px;
-  color: #374151;
+  font-size: 15px;
+  color: $color-text-primary;
   margin: 8px 0;
 }
 
@@ -95,7 +101,7 @@
   margin-bottom: 16px;
   text-align: left;
   font-size: 14px;
-  color: #6B7280;
+  color: $color-text-secondary;
 }
 
 .info-item svg {
@@ -112,9 +118,9 @@
 .btn {
   flex: 1;
   padding: 14px 24px;
-  border-radius: 8px;
+  border-radius: $border-radius-full;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;
@@ -124,65 +130,65 @@
 }
 
 .btn-primary {
-  background: #10B981;
-  color: white;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-cream;
 }
 
 .btn-primary:hover {
-  background: #059669;
+  background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 20px rgba($color-primary, 0.35);
 }
 
 .btn-outline {
-  background: white;
-  color: #6B7280;
-  border: 2px solid #E5E7EB;
+  background: #fff;
+  color: $color-primary;
+  border: 2px solid rgba($color-primary, 0.3);
 }
 
 .btn-outline:hover {
-  border-color: #10B981;
-  color: #10B981;
+  border-color: $color-primary;
+  background: rgba($color-primary, 0.06);
   transform: translateY(-2px);
 }
 
 .help-section {
   padding-top: 24px;
-  border-top: 1px solid #E5E7EB;
+  border-top: 1px solid $color-border-light;
   animation: fadeIn 0.5s ease-out 1.4s both;
 }
 
 .help-section p {
   font-size: 14px;
-  color: #6B7280;
+  color: $color-text-secondary;
   margin: 0;
 }
 
 .help-link {
-  color: #10B981;
+  color: $color-primary;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
 }
 
 .help-link:hover {
+  color: $color-gold-dark;
   text-decoration: underline;
 }
 
-// Responsive design
 @media (max-width: 640px) {
   .success-card {
-    padding: 24px;
+    padding: 28px 22px;
     margin: 10px;
   }
-  
+
   .success-title {
-    font-size: 24px;
+    font-size: 26px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }
-  
+
   .btn {
     width: 100%;
   }

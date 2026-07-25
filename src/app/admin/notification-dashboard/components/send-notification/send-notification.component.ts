@@ -7,6 +7,7 @@ import { ProductNameIdSM } from '../../../../models/service-models/app/v1/produc
 import { CustomerService } from '../../../../services/customer.service';
 import { CustomerViewModel } from '../../../../models/view/Admin/customer.viewmodel';
 import { CustomerDetailSM } from '../../../../models/service-models/app/v1/customer-detail-s-m';
+import { CommonService } from '../../../../services/common.service';
 
 interface SelectedCustomer {
   id: number;
@@ -25,23 +26,21 @@ export class SendNotificationComponent implements OnInit {
   form: FormGroup;
   isSending = false;
   products: ProductNameIdSM[] = [];
-  result: { type: 'success' | 'error'; text: string } | null = null;
+  result: { type: 'success' | 'error' | 'warning'; text: string } | null = null;
 
-  // Audience targeting
   audience: PushAudience = 'all';
 
-  // Customer picker (only used when audience === 'selected')
   customerSearch = '';
-  customerResults: CustomerDetailSM[] = [];
+  allCustomers: CustomerDetailSM[] = [];
+  customersLoading = false;
   selectedCustomers: SelectedCustomer[] = [];
-  isSearchingCustomers = false;
-  private searchTimeout: any;
 
   constructor(
     private fb: FormBuilder,
     private adminService: AdminNotificationService,
     private productService: ProductService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private commonService: CommonService
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
@@ -53,7 +52,8 @@ export class SendNotificationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadProducts();
+    void this.loadProducts();
+    void this.loadAllCustomers();
   }
 
   private async loadProducts(): Promise<void> {
@@ -63,8 +63,43 @@ export class SendNotificationComponent implements OnInit {
         this.products = response.successData;
       }
     } catch (error) {
-      console.error('Failed to load products for notification form:', error);
+      console.error('[SendNotification] Failed to load products:', error);
     }
+  }
+
+  /** Load the full customer list once; filter client-side in the picker. */
+  private async loadAllCustomers(): Promise<void> {
+    this.customersLoading = true;
+    try {
+      const vm = new CustomerViewModel();
+      vm.pagination.PageNo = 1;
+      vm.pagination.PageSize = 5000;
+      const response = await this.customerService.getAllPaginatedCustomer(vm);
+      if (!response.isError && response.successData) {
+        const data = response.successData as any;
+        this.allCustomers = Array.isArray(data) ? data : (data.data || []);
+      } else {
+        this.allCustomers = [];
+      }
+    } catch (error) {
+      console.error('[SendNotification] Failed to load customers:', error);
+      this.allCustomers = [];
+    } finally {
+      this.customersLoading = false;
+    }
+  }
+
+  get filteredCustomers(): CustomerDetailSM[] {
+    const selectedIds = new Set(this.selectedCustomers.map((c) => c.id));
+    const term = this.customerSearch.trim().toLowerCase();
+    return this.allCustomers.filter((c) => {
+      if (c.id == null || selectedIds.has(c.id as number)) return false;
+      if (!term) return true;
+      const name = `${c.firstName || ''} ${c.lastName || ''}`.toLowerCase();
+      const email = (c.email || '').toLowerCase();
+      const phone = (c.contact || '').toLowerCase();
+      return name.includes(term) || email.includes(term) || phone.includes(term);
+    });
   }
 
   setAudience(value: PushAudience): void {
@@ -72,53 +107,9 @@ export class SendNotificationComponent implements OnInit {
     this.onAudienceChange();
   }
 
-  /**
-   * Reset the customer picker whenever the audience moves away from
-   * "selected". Bound to the radio group's ngModelChange.
-   */
   onAudienceChange(): void {
     if (this.audience !== 'selected') {
-      this.customerResults = [];
       this.customerSearch = '';
-    }
-  }
-
-  onCustomerSearchChange(): void {
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
-    const term = this.customerSearch?.trim();
-    if (!term) {
-      this.customerResults = [];
-      this.isSearchingCustomers = false;
-      return;
-    }
-    this.isSearchingCustomers = true;
-    this.searchTimeout = setTimeout(() => this.searchCustomers(term), 350);
-  }
-
-  private async searchCustomers(term: string): Promise<void> {
-    try {
-      const vm = new CustomerViewModel();
-      vm.pagination.PageNo = 1;
-      vm.pagination.PageSize = 10;
-      vm.filters = { search: term };
-
-      const response = await this.customerService.getAllPaginatedCustomer(vm);
-      if (!response.isError && response.successData) {
-        const data = response.successData as any;
-        const list: CustomerDetailSM[] = Array.isArray(data) ? data : (data.data || []);
-        // Hide customers already selected.
-        const selectedIds = new Set(this.selectedCustomers.map((c) => c.id));
-        this.customerResults = list.filter((c) => c.id != null && !selectedIds.has(c.id as number));
-      } else {
-        this.customerResults = [];
-      }
-    } catch (error) {
-      console.error('Customer search failed:', error);
-      this.customerResults = [];
-    } finally {
-      this.isSearchingCustomers = false;
     }
   }
 
@@ -128,22 +119,29 @@ export class SendNotificationComponent implements OnInit {
     if (this.selectedCustomers.some((c) => c.id === id)) return;
     const name = `${customer.firstName || ''} ${customer.lastName || ''}`.trim() || customer.email || `#${id}`;
     this.selectedCustomers.push({ id, name, email: customer.email });
-    this.customerResults = this.customerResults.filter((c) => c.id !== id);
   }
 
   removeCustomer(id: number): void {
     this.selectedCustomers = this.selectedCustomers.filter((c) => c.id !== id);
   }
 
+  selectAllShownCustomers(): void {
+    for (const customer of this.filteredCustomers) {
+      this.addCustomer(customer);
+    }
+  }
+
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.result = { type: 'error', text: 'Please enter both a title and a message.' };
+      void this.showAlert('Validation error', this.result.text, 'error');
       return;
     }
 
     if (this.audience === 'selected' && this.selectedCustomers.length === 0) {
       this.result = { type: 'error', text: 'Please select at least one customer, or change the audience.' };
+      void this.showAlert('Audience required', this.result.text, 'error');
       return;
     }
 
@@ -161,30 +159,72 @@ export class SendNotificationComponent implements OnInit {
       customerIds: this.audience === 'selected' ? this.selectedCustomers.map((c) => c.id) : null
     };
 
+    console.log('[SendNotification] Sending push:', request);
+
     this.adminService.sendPush(request).subscribe({
       next: (response) => {
         this.isSending = false;
+        console.log('[SendNotification] Response:', response);
+
         if (response.success) {
-          this.result = {
-            type: 'success',
-            text: response.message || 'Notification sent successfully.'
-          };
+          const total = response.data?.totalTokens ?? 0;
+          const delivered = response.data?.successCount ?? 0;
+
+          if (total === 0) {
+            const warningText =
+              'No devices are subscribed yet. Visitors must allow notifications in the browser first.';
+            this.result = { type: 'warning', text: warningText };
+            void this.showAlert('No subscribers', warningText, 'warning');
+            return;
+          }
+
+          const successText = `Dispatched to ${total} device(s). ${delivered} delivered successfully.`;
+          this.result = { type: 'success', text: successText };
+          void this.showAlert('Notification sent', successText, 'success');
+
           this.form.reset({ title: '', message: '', productId: null, url: '', imageUrl: '' });
           this.selectedCustomers = [];
           this.customerSearch = '';
-          this.customerResults = [];
           this.audience = 'all';
         } else {
-          this.result = { type: 'error', text: response.error || 'Failed to send notification.' };
+          const errorText = response.error || 'Failed to send notification.';
+          this.result = { type: 'error', text: errorText };
+          void this.showAlert('Send failed', errorText, 'error');
         }
       },
       error: (error) => {
         this.isSending = false;
-        this.result = {
-          type: 'error',
-          text: error?.error?.error || 'Failed to send notification. Please try again.'
-        };
+        console.error('[SendNotification] HTTP error:', error);
+
+        const status = error?.status;
+        let errorText = 'Failed to send notification. Please try again.';
+
+        if (status === 401 || status === 403) {
+          errorText = 'Session expired or insufficient permissions. Please log in again as admin.';
+        } else if (status === 0) {
+          errorText = 'Network error or CORS issue. Check API connectivity and try again.';
+        } else if (error?.error?.error) {
+          errorText = `${error.error.error}${error.error.code ? ` (${error.error.code})` : ''}`;
+        } else if (error?.error?.errors?.length) {
+          errorText = error.error.errors.map((e: any) => e.msg).join(', ');
+        }
+
+        this.result = { type: 'error', text: errorText };
+        void this.showAlert('Send failed', errorText, 'error');
       }
+    });
+  }
+
+  private async showAlert(
+    title: string,
+    text: string,
+    icon: 'success' | 'error' | 'warning' | 'info'
+  ): Promise<void> {
+    await this.commonService.showSweetAlert({
+      title,
+      text,
+      icon,
+      confirmButtonText: 'OK'
     });
   }
 

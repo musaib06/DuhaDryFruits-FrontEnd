@@ -1,5 +1,46 @@
 @use "variable" as *;
+@use "sass:color";
 @use "./styles-asset-protection";
+
+/* ============================================================
+   DUHA DRYFRUITS — GLOBAL BRAND LAYER
+   Rebrands Bootstrap tokens + premium component styling.
+   ============================================================ */
+
+/* ---- Rebrand Bootstrap's CSS variables to the Duha palette ---- */
+:root {
+  --bs-primary: #{$color-primary};
+  --bs-primary-rgb: 58, 79, 46;
+  --bs-primary-text-emphasis: #{$color-primary-dark};
+  --bs-primary-bg-subtle: #{$color-cream-deep};
+  --bs-primary-border-subtle: #{$color-border-base};
+
+  --bs-secondary: #{$color-gold};
+  --bs-secondary-rgb: 184, 149, 74;
+
+  --bs-warning: #{$color-gold};
+  --bs-warning-rgb: 184, 149, 74;
+  --bs-warning-text-emphasis: #{$color-gold-dark};
+
+  --bs-info: #{$color-primary-light};
+  --bs-info-rgb: 90, 115, 72;
+
+  --bs-body-bg: #{$color-bg-primary};
+  --bs-body-color: #{$color-text-primary};
+  --bs-body-font-family: #{$font-family-primary};
+  --bs-body-font-size: #{$font-size-base};
+
+  --bs-link-color: #{$color-primary};
+  --bs-link-color-rgb: 58, 79, 46;
+  --bs-link-hover-color: #{$color-primary-dark};
+  --bs-link-hover-color-rgb: 36, 51, 29;
+
+  --bs-border-color: #{$color-border-light};
+  --bs-border-radius: #{$border-radius-md};
+  --bs-border-radius-lg: #{$border-radius-lg};
+  --bs-border-radius-sm: #{$border-radius-sm};
+  --bs-btn-border-radius: #{$border-radius-control};
+}
 
 /* ---------------- Base Reset ---------------- */
 * {
@@ -16,12 +57,370 @@ html {
   height: 100%;
   margin: 0;
   overflow-x: hidden !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 a,
 i {
   cursor: pointer;
   text-decoration: none;
+}
+
+a {
+  color: $color-primary;
+  transition: color $transition-fast;
+}
+a:hover { color: $color-primary-dark; }
+
+::selection {
+  background: rgba($color-primary, 0.85);
+  color: $color-cream;
+}
+
+/* ---------------- Premium Typography ---------------- */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: $font-family-heading;
+  color: $color-text-primary;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.font-heading { font-family: $font-family-heading !important; }
+.text-gold { color: $color-gold !important; }
+.text-plum { color: $color-plum !important; }
+.text-brand { color: $color-primary !important; }
+
+/* Remix Icons — crisp storefront glyph language */
+@font-face {
+  font-family: "remixicon";
+  src:
+    url("/assets/remixicon/remixicon.woff2") format("woff2"),
+    url("/assets/remixicon/remixicon.woff") format("woff");
+  font-display: swap;
+}
+
+.ri,
+[class^="ri-"],
+[class*=" ri-"] {
+  font-family: "remixicon" !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1;
+  vertical-align: -0.125em;
+  speak: never;
+}
+
+.navbar .ri,
+.mobile-icon-btn .ri,
+.offcanvas .ri,
+.product-card__icon-btn .ri {
+  font-size: 1.15rem;
+}
+
+.section-eyebrow {
+  display: inline-block;
+  font-family: $font-family-primary;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: $color-gold-dark;
+  margin-bottom: $spacing-sm;
+}
+
+/* ---------------- Premium Buttons — sharp, solid, crisp ---------------- */
+.btn {
+  font-family: $font-family-primary;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: $border-radius-control !important;
+  padding: 0.65rem 1.35rem;
+  line-height: 1.25;
+  transition: transform $transition-fast, box-shadow $transition-fast,
+    background-color $transition-fast, color $transition-fast, border-color $transition-fast;
+}
+.btn-sm {
+  padding: 0.4rem 0.9rem;
+  font-size: $font-size-sm;
+  border-radius: $border-radius-base !important;
+}
+.btn-lg {
+  padding: 0.8rem 1.7rem;
+  font-size: $font-size-md-lg;
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 0.18rem rgba($color-primary, 0.25);
+}
+
+.btn-primary {
+  background: $color-primary !important;
+  background-color: $color-primary !important;
+  border: 1px solid $color-primary !important;
+  color: #fff !important;
+  box-shadow: none;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  background: $color-primary-dark !important;
+  border-color: $color-primary-dark !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -10px rgba($color-primary-dark, 0.75);
+}
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled,
+.btn-primary.disabled { opacity: 0.5; transform: none; box-shadow: none; }
+
+.btn-outline-primary {
+  border: 1.5px solid $color-primary !important;
+  color: $color-primary !important;
+  background: transparent !important;
+}
+.btn-outline-primary:hover {
+  background: $color-primary !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+
+.btn-secondary,
+.btn-warning {
+  background: $color-gold !important;
+  border: 1px solid $color-gold !important;
+  color: #1c1b18 !important;
+  box-shadow: none;
+}
+.btn-secondary:hover,
+.btn-warning:hover {
+  background: $color-gold-dark !important;
+  border-color: $color-gold-dark !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+
+.btn-outline-warning,
+.btn-outline-secondary {
+  border: 1.5px solid $color-gold-dark !important;
+  color: $color-gold-dark !important;
+  background: transparent !important;
+}
+.btn-outline-warning:hover,
+.btn-outline-secondary:hover {
+  background: $color-gold !important;
+  border-color: $color-gold !important;
+  color: #1c1b18 !important;
+  transform: translateY(-1px);
+}
+
+.btn-danger,
+.btn-outline-danger {
+  border-radius: $border-radius-control !important;
+}
+
+.btn-view-more {
+  padding: 0.7rem 1.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  border-radius: $border-radius-control !important;
+}
+
+/* Shared gold CTA used across bulk + promo surfaces */
+.btn-gold {
+  background: $color-gold !important;
+  border: 1px solid $color-gold !important;
+  color: #1c1b18 !important;
+  border-radius: $border-radius-control !important;
+  font-weight: 600;
+}
+.btn-gold:hover:not(:disabled) {
+  background: $color-gold-dark !important;
+  border-color: $color-gold-dark !important;
+  color: #fff !important;
+}
+
+/* ---------------- Badges ---------------- */
+.badge {
+  border-radius: $border-radius-base !important;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.badge-primary,
+.badge.badge-primary {
+  background: $color-primary !important;
+  color: #fff !important;
+}
+.badge.bg-primary { background-color: $color-primary !important; }
+.badge.bg-warning { background-color: $color-gold !important; color: #1c1b18 !important; }
+
+/* ---------------- Forms ---------------- */
+.form-control,
+.form-select {
+  border: 1px solid $color-border-base;
+  border-radius: $border-radius-control !important;
+  background-color: #fff;
+  color: $color-text-primary;
+  font-size: $font-size-base;
+  min-height: 2.6rem;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+}
+.form-control::placeholder { color: $color-text-tertiary; }
+.form-control:focus,
+.form-select:focus {
+  border-color: $color-primary;
+  box-shadow: 0 0 0 0.18rem rgba($color-primary, 0.14);
+  background-color: #fff;
+}
+.form-label {
+  font-weight: 600;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  letter-spacing: 0.01em;
+}
+.input-group-text {
+  background-color: $color-bg-secondary;
+  border: 1px solid $color-border-base;
+  color: $color-text-secondary;
+  border-radius: $border-radius-control !important;
+}
+.form-check-input:checked {
+  background-color: $color-primary;
+  border-color: $color-primary;
+}
+.form-check-input:focus {
+  border-color: $color-primary;
+  box-shadow: 0 0 0 0.18rem rgba($color-primary, 0.14);
+}
+
+/* ---------------- Cards ---------------- */
+.card {
+  border: 1px solid $color-border-light;
+  border-radius: $border-radius-lg !important;
+  background: #fff;
+  box-shadow: none;
+  transition: transform $transition-fast, box-shadow $transition-fast, border-color $transition-fast;
+}
+.card.card-hover:hover,
+.card.hover-lift:hover {
+  transform: translateY(-3px);
+  border-color: rgba($color-primary, 0.25);
+  box-shadow: 0 16px 32px -20px rgba($gray-900, 0.35);
+}
+
+/* ---------------- Modals & Offcanvas ---------------- */
+.modal-content {
+  border: 1px solid $color-border-light;
+  border-radius: $border-radius-lg !important;
+  overflow: hidden;
+  box-shadow: $shadow-2xl;
+}
+.modal-header {
+  border-bottom: 1px solid $color-border-light;
+  background: #fff;
+}
+.modal-header .modal-title { font-family: $font-family-heading; }
+.modal-footer { border-top: 1px solid $color-border-light; }
+.offcanvas {
+  background: #fff;
+  color: $color-text-primary;
+}
+.offcanvas-header {
+  border-bottom: 1px solid $color-border-light;
+}
+
+/* ---------------- Utility surfaces ---------------- */
+.bg-cream { background: $color-cream !important; }
+.bg-brand { background: $color-primary !important; color: #fff !important; }
+.bg-gold { background: $color-gold !important; }
+.surface-glass {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid $color-border-light;
+}
+
+/* ---------------- Custom scrollbar ---------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $color-border-dark transparent;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: $color-border-dark;
+  border-radius: $border-radius-full;
+  border: 2px solid $color-bg-primary;
+}
+::-webkit-scrollbar-thumb:hover { background: $color-primary-light; }
+
+/* ---------------- Motion utilities ---------------- */
+@keyframes duhaFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes duhaFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes duhaFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes duhaShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.anim-fade-up { animation: duhaFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-fade-in { animation: duhaFadeIn 0.8s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------------- SweetAlert2 brand theming ---------------- */
+.swal2-popup {
+  border-radius: $border-radius-xl !important;
+  font-family: $font-family-primary !important;
+}
+.swal2-title { font-family: $font-family-heading !important; color: $color-text-primary !important; }
+.swal2-styled.swal2-confirm {
+  background: $color-primary !important;
+  border-radius: $border-radius-control !important;
+  box-shadow: none !important;
+}
+.swal2-styled.swal2-cancel {
+  background: $color-gold !important;
+  color: #1c1b18 !important;
+  border-radius: $border-radius-control !important;
+}
+
+/* Kill soft pill buttons site-wide — keep sharp control radius */
+.btn.rounded-pill,
+a.btn.rounded-pill,
+button.rounded-pill.btn,
+.btn-gradient {
+  border-radius: $border-radius-control !important;
+}
+
+.btn-gradient {
+  background: $color-primary !important;
+  border: 1px solid $color-primary !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+.btn-gradient:hover {
+  background: $color-primary-dark !important;
+  border-color: $color-primary-dark !important;
+  color: #fff !important;
 }
 
 /* ---------------- Brand font (Bilal) — global ---------------- */
@@ -59,12 +458,6 @@ main {
   flex: 1; // takes remaining space
 }
 
-.btn-primary {
-  background-color: $color-primary !important;
-  border: none;
-  color: $color-text-on-primary;
-}
-
 /* Blog reading — whole words only. Lines wrap at spaces and never split a real
    word across lines (`word-break: normal` disables the mid-word chopping that
    `break-all` caused). `overflow-wrap: break-word` is kept so that a genuinely
@@ -93,7 +486,7 @@ main {
 }
 
 /* On blog detail, move category FAB to bottom so it does not narrow the text column */
-body.wvf-blog-reading .mobile-category-fab {
+body.duha-blog-reading .mobile-category-fab {
   top: auto;
   bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
   transform: none;

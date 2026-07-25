@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "wild-valley-food": {
+    "duha-dryfruits": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/wild-valley-food",
+            "outputPath": "dist/duha-dryfruits",
             "browser": "src/main.ts",
             "server": "src/main.server.ts",
             "ssr": {
@@ -34,11 +34,17 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "*.{woff,woff2,ttf,eot,svg}",
+                "input": "node_modules/remixicon/fonts",
+                "output": "/assets/remixicon"
               }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+              "node_modules/remixicon/fonts/remixicon.css",
               "node_modules/quill/dist/quill.core.css",
               "node_modules/quill/dist/quill.snow.css",
               "src/styles.scss",
@@ -51,10 +57,10 @@
               "allowedHosts": [
                 "localhost",
                 "127.0.0.1",
-                "wildvalleyfoods.in",
-                "www.wildvalleyfoods.in",
-                "dev.wildvalleyfoods.in",
-                "*.wildvalleyfoods.in"
+                "duhadryfruits.com",
+                "www.duhadryfruits.com",
+                "dev.duhadryfruits.com",
+                "*.duhadryfruits.com"
               ]
             }
           },
@@ -143,16 +149,16 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "wild-valley-food:build:production"
+              "buildTarget": "duha-dryfruits:build:production"
             },
             "development": {
-              "buildTarget": "wild-valley-food:build:development"
+              "buildTarget": "duha-dryfruits:build:development"
             },
             "localqa": {
-              "buildTarget": "wild-valley-food:build:localqa"
+              "buildTarget": "duha-dryfruits:build:localqa"
             },
             "reg": {
-              "buildTarget": "wild-valley-food:build:reg"
+              "buildTarget": "duha-dryfruits:build:reg"
             }
           },
           "defaultConfiguration": "development"

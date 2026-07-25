@@ -4,10 +4,10 @@
   <section class="blog-hero" aria-labelledby="blog-list-title">
     <div class="container">
       <div class="blog-hero__inner text-center">
-        <p class="blog-hero__eyebrow">Stories &amp; insights</p>
-        <h1 id="blog-list-title" class="hero-title">Our Blog</h1>
+        <p class="blog-hero__eyebrow">The Duha Journal</p>
+        <h1 id="blog-list-title" class="hero-title">Stories &amp; Wellness</h1>
         <p class="hero-subtitle">
-          Discover healthy recipes, nutrition tips, and stories from Kashmir&rsquo;s finest farms.
+          Nourishing recipes, nutrition notes and stories from the Duha pantry.
         </p>
       </div>
     </div>
@@ -17,14 +17,14 @@
   @if (viewModel.featuredBlogs.length > 0) {
     <section class="featured-blogs py-5">
       <div class="container">
-        <h2 class="section-title mb-4">Featured Stories</h2>
+        <h2 class="section-title mb-4">Editor&rsquo;s Picks</h2>
         <div class="row g-4">
           @for (blog of viewModel.featuredBlogs.slice(0, 2); track blog.id) {
             <div class="col-md-6">
-              <article class="featured-card" [routerLink]="['/blog', blog.slug]">
+              <article class="featured-card" [routerLink]="['/journal', blog.slug]">
                 <div class="card-image">
                   <img [src]="blogImage(blog)" 
-                       [alt]="blog.title" loading="lazy" class="wvf-protect-asset" draggable="false">
+                       [alt]="blog.title" loading="lazy" class="duha-protect-asset" draggable="false">
                   @if (blog.category) {
                     <span class="category-badge" [style.background-color]="blog.category.color">
                       {{ blog.category.name }}
@@ -58,7 +58,7 @@
               <input type="text" class="form-control" placeholder="Search articles..."
                      [(ngModel)]="viewModel.searchQuery" (keyup.enter)="onSearch()">
               <button class="btn btn-search" (click)="onSearch()">
-                <i class="bi bi-search"></i>
+                <i class="ri ri-search-2-line"></i>
               </button>
             </div>
           </div>
@@ -76,11 +76,11 @@
               <div class="view-toggle btn-group">
                 <button class="btn btn-outline-secondary" [class.active]="viewModel.viewMode === 'grid'" 
                         (click)="setViewMode('grid')">
-                  <i class="bi bi-grid"></i>
+                  <i class="ri ri-layout-grid-line"></i>
                 </button>
                 <button class="btn btn-outline-secondary" [class.active]="viewModel.viewMode === 'list'"
                         (click)="setViewMode('list')">
-                  <i class="bi bi-list"></i>
+                  <i class="ri ri-menu-3-line"></i>
                 </button>
               </div>
             </div>
@@ -101,7 +101,7 @@
       <!-- Error State -->
       @if (viewModel.error) {
         <div class="error-state text-center py-5">
-          <i class="bi bi-exclamation-circle fs-1 text-danger"></i>
+          <i class="ri ri-error-warning-line fs-1 text-danger"></i>
           <p class="mt-3">{{ viewModel.error }}</p>
           <button class="btn btn-primary" (click)="loadBlogs()">Try Again</button>
         </div>
@@ -115,12 +115,12 @@
           @for (blog of viewModel.blogs; track blog.id) {
             <div class="col">
               <article class="blog-card" [class.list-view]="viewModel.viewMode === 'list'"
-                       [routerLink]="['/blog', blog.slug]">
+                       [routerLink]="['/journal', blog.slug]">
                 <div class="card-image">
                   <img [src]="blogImage(blog)" 
-                       [alt]="blog.title" loading="lazy" class="wvf-protect-asset" draggable="false">
+                       [alt]="blog.title" loading="lazy" class="duha-protect-asset" draggable="false">
                   @if (blog.isFeatured) {
-                    <span class="featured-badge"><i class="bi bi-star-fill"></i> Featured</span>
+                    <span class="featured-badge"><i class="ri ri-star-fill"></i> Featured</span>
                   }
                 </div>
                 <div class="card-content">
@@ -132,7 +132,7 @@
                   <h3 class="card-title">{{ blog.title }}</h3>
                   <p class="card-excerpt">{{ blog.excerpt || blog.subtitle }}</p>
                   <div class="card-meta">
-                    <span class="read-time"><i class="bi bi-clock"></i> {{ blog.formattedReadTime }}</span>
+                    <span class="read-time"><i class="ri ri-time-line"></i> {{ blog.formattedReadTime }}</span>
                     <span class="date">{{ blog.formattedPublishDate }}</span>
                   </div>
                   @if (blog.tags.length > 0) {
@@ -152,7 +152,7 @@
         <!-- Empty State -->
         @if (viewModel.blogs.length === 0) {
           <div class="empty-state text-center py-5">
-            <i class="bi bi-journal-text fs-1 text-muted"></i>
+            <i class="ri ri-article-line fs-1 text-muted"></i>
             <h4 class="mt-3">No articles found</h4>
             <p class="text-muted">Try adjusting your search or filters</p>
             <button class="btn btn-outline-primary" (click)="clearFilters()">Clear Filters</button>
@@ -165,7 +165,7 @@
             <ul class="pagination justify-content-center">
               <li class="page-item" [class.disabled]="viewModel.currentPage === 1">
                 <button class="page-link" (click)="goToPage(viewModel.currentPage - 1)">
-                  <i class="bi bi-chevron-left"></i>
+                  <i class="ri ri-arrow-left-s-line"></i>
                 </button>
               </li>
               @for (page of getPageNumbers(); track page) {
@@ -175,7 +175,7 @@
               }
               <li class="page-item" [class.disabled]="viewModel.currentPage === viewModel.totalPages">
                 <button class="page-link" (click)="goToPage(viewModel.currentPage + 1)">
-                  <i class="bi bi-chevron-right"></i>
+                  <i class="ri ri-arrow-right-s-line"></i>
                 </button>
               </li>
             </ul>

@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-service-banner',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   templateUrl: './service-banner.html',
   styleUrl: './service-banner.scss',
   standalone: true,
@@ -12,19 +11,24 @@ import { FormsModule } from '@angular/forms';
 export class ServiceBanner {
   features = [
     {
-      icon: 'bi bi-truck',
-      title: 'Shipping',
-      desc: 'Shipping World Wide',
+      icon: 'ri-leaf-line',
+      title: 'Farm Fresh Picks',
+      desc: 'Hand-sorted dry fruits packed at peak flavour.',
     },
     {
-      icon: 'bi bi-clock-history',
-      title: '24 X 7 Service',
-      desc: 'Online Service For 24 X 7',
+      icon: 'ri-truck-line',
+      title: 'Pan-India Delivery',
+      desc: 'Sealed packs shipped fast to your doorstep.',
     },
     {
-      icon: 'bi bi-credit-card',
-      title: 'Online Pay',
-      desc: 'Online Payment Available',
+      icon: 'ri-shield-check-line',
+      title: 'Secure Checkout',
+      desc: 'Encrypted payments with trusted gateways.',
+    },
+    {
+      icon: 'ri-gift-2-line',
+      title: 'Gifting Ready',
+      desc: 'Hampers & bulk boxes for every celebration.',
     },
   ];
 }

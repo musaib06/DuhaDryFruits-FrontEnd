@@ -1,64 +1,111 @@
-<div class="container-fluid container-md my-3 my-md-3 px-2 px-md-3">
-  <div class="row">
-    <!-- PRODUCTS -->
-    <section class="col-12">
-      <!-- Header Section - Responsive -->
-      <div class="shop-header mb-3">
-        <!-- Title & Count -->
-        <div class="shop-title-section mb-3 mb-md-0">
-          <h5 class="mb-1 mb-md-0 shop-title">{{viewModel.PageTitle}}</h5>
-          <div class="small text-muted">{{ viewModel.pagination.totalCount }} items</div>
-        </div>
-
-        <!-- Search & Filter Row -->
-        <div class="shop-controls">
-          <!-- Search -->
-          <div class="shop-search">
-            <input class="form-control form-control-sm" placeholder="🔍 Search products (min 2 chars)..."
-              [(ngModel)]="viewModel.searchstring" (ngModelChange)="onSearchChange($event)"
-              aria-label="Search products" autocomplete="off" />
-          </div>
-
-          <!-- Filter -->
-          <div class="shop-filter">
-            <select class="form-select form-select-sm" [(ngModel)]="selectedSort" (ngModelChange)="onSortChange()"
-              aria-label="Sort products">
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-              <option value="name_asc">Name: A → Z</option>
-              <option value="name_desc">Name: Z → A</option>
-            </select>
-          </div>
-        </div>
+<div class="shop-page">
+  <!-- Toolbar -->
+  <header class="shop-toolbar">
+    <div class="shop-toolbar__inner">
+      <div class="shop-toolbar__intro">
+        <span class="shop-toolbar__eyebrow">Duha Pantry</span>
+        <h1 class="shop-toolbar__title">{{ displayPageTitle }}</h1>
+        <p class="shop-toolbar__meta">{{ viewModel.pagination.totalCount }} products ready to ship</p>
       </div>
 
-      <!-- GRID -->
+      <div class="shop-toolbar__controls">
+        <label class="shop-find">
+          <span class="shop-find__label">Find</span>
+          <span class="shop-find__field">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M16.5 16.5L21 21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <input
+              type="search"
+              placeholder="Search almonds, dates, saffron…"
+              [(ngModel)]="viewModel.searchstring"
+              (ngModelChange)="onSearchChange($event)"
+              aria-label="Search products"
+              autocomplete="off"
+            />
+          </span>
+        </label>
+
+        <label class="shop-sort">
+          <span class="shop-sort__label">Sort</span>
+          <select
+            [(ngModel)]="selectedSort"
+            (ngModelChange)="onSortChange()"
+            aria-label="Sort products"
+          >
+            <option value="price_asc">Price · Low to High</option>
+            <option value="price_desc">Price · High to Low</option>
+            <option value="name_asc">Name · A to Z</option>
+            <option value="name_desc">Name · Z to A</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <div class="shop-layout">
+    <!-- Left rail (desktop) -->
+    <aside class="shop-rail shop-rail--left" aria-label="Why shop Duha">
+      <article class="info-card info-card--mint">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 3c2.5 3.5 7 5.2 7 10a7 7 0 11-14 0c0-4.8 4.5-6.5 7-10z"/></svg>
+        </div>
+        <h3>Farm-Fresh Promise</h3>
+        <p>Hand-sorted dry fruits packed at peak flavour — never stale stock.</p>
+      </article>
+      <article class="info-card info-card--sage">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 3l8 4v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V7l8-4z"/></svg>
+        </div>
+        <h3>Sealed Freshness</h3>
+        <p>Air-tight packs that lock aroma and crunch until they reach you.</p>
+      </article>
+      <article class="info-card info-card--accent">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M4 10h16v10H4zM7 10V7a5 5 0 0110 0v3"/></svg>
+        </div>
+        <h3>Secure Checkout</h3>
+        <p>Encrypted payments with trusted gateways — shop with confidence.</p>
+      </article>
+    </aside>
+
+    <!-- Main product column -->
+    <section class="shop-main">
       <div class="products-grid">
         @if (viewModel.products && viewModel.products.length) {
           @for (p of viewModel.products; track trackByProduct($index, p)) {
             <div class="product-item-wrapper">
-              <app-product class="product-item" [product]="p" (addToCart)="onAddToCart($event)"
-                (view)="openProduct($event)" (wishlist)="onWishlistChanged($event)">
-              </app-product>
+              <app-product
+                class="product-item"
+                [product]="p"
+                (addToCart)="onAddToCart($event)"
+                (view)="openProduct($event)"
+                (wishlist)="onWishlistChanged($event)"
+              ></app-product>
             </div>
           }
         } @else {
-          <div class="no-products text-center py-5">
-            <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
-            <p class="text-muted mb-0">No products match your filters.</p>
+          <div class="no-products">
+            <svg viewBox="0 0 24 24" width="40" height="40" aria-hidden="true">
+              <path fill="none" stroke="currentColor" stroke-width="1.6" d="M4 8h16l-1.2 12H5.2L4 8zm4-3h8"/>
+            </svg>
+            <p>No products match your search.</p>
+            <span>Try another keyword or clear filters.</span>
           </div>
         }
       </div>
 
-      <!-- PAGINATION -->
-      <nav class="pagination-wrapper mt-4" aria-label="Page navigation">
+      <nav class="pagination-wrapper" aria-label="Page navigation">
         <div class="pagination-modern">
           <button
             type="button"
-            class="pager-btn prev-btn"
+            class="pager-btn"
             [disabled]="currentPage === 1"
-            (click)="goToPage(currentPage - 1)">
-            <i class="bi bi-chevron-left"></i> Prev
+            (click)="goToPage(currentPage - 1)"
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M15 6l-6 6 6 6"/></svg>
+            Prev
           </button>
 
           <div class="page-dots" aria-label="Select page">
@@ -68,20 +115,83 @@
                 class="page-dot"
                 [class.active]="$index + 1 === currentPage"
                 [attr.aria-label]="'Go to page ' + ($index + 1)"
-                (click)="goToPage($index + 1)">
-              </button>
+                (click)="goToPage($index + 1)"
+              ></button>
             }
           </div>
 
           <button
             type="button"
-            class="pager-btn next-btn"
+            class="pager-btn"
             [disabled]="currentPage >= totalPages"
-            (click)="goToPage(currentPage + 1)">
-            Next <i class="bi bi-chevron-right"></i>
+            (click)="goToPage(currentPage + 1)"
+          >
+            Next
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M9 6l6 6-6 6"/></svg>
           </button>
         </div>
       </nav>
     </section>
+
+    <!-- Right rail (desktop) -->
+    <aside class="shop-rail shop-rail--right" aria-label="Duha services">
+      <article class="info-card info-card--sand">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M3 8h13l3 4v5H3V8zm13 0V5H8"/><circle cx="7.5" cy="18.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="18.5" r="1.5" fill="currentColor"/></svg>
+        </div>
+        <h3>Pan-India Dispatch</h3>
+        <p>Freshly packed orders move out quickly to homes across India.</p>
+      </article>
+      <article class="info-card info-card--gold">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 4v4m0 0l3-2m-3 2L9 6M5 10h14l-1.2 10H6.2L5 10z"/></svg>
+        </div>
+        <h3>Gifting &amp; Hampers</h3>
+        <p>Curated boxes for festivals, corporates and celebrations.</p>
+      </article>
+      <article class="info-card info-card--accent">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M4 7h16v4H4zm2 4v8h12v-8M9 7V5h6v2"/></svg>
+        </div>
+        <h3>Wholesale Desk</h3>
+        <p>Volume pricing for retailers, hotels and business kitchens.</p>
+        <a routerLink="/wholesale-dry-fruits" class="info-card__link">Request a quote →</a>
+      </article>
+    </aside>
   </div>
+
+  <!-- Side cards for tablet/mobile — below products -->
+  <section class="shop-rails-mobile" aria-label="About Duha">
+    <div class="shop-rails-mobile__grid">
+      <article class="info-card info-card--mint">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 3c2.5 3.5 7 5.2 7 10a7 7 0 11-14 0c0-4.8 4.5-6.5 7-10z"/></svg>
+        </div>
+        <h3>Farm-Fresh Promise</h3>
+        <p>Hand-sorted dry fruits packed at peak flavour.</p>
+      </article>
+      <article class="info-card info-card--sand">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M3 8h13l3 4v5H3V8zm13 0V5H8"/><circle cx="7.5" cy="18.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="18.5" r="1.5" fill="currentColor"/></svg>
+        </div>
+        <h3>Pan-India Dispatch</h3>
+        <p>Sealed packs shipped fresh to your doorstep.</p>
+      </article>
+      <article class="info-card info-card--gold">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M12 4v4m0 0l3-2m-3 2L9 6M5 10h14l-1.2 10H6.2L5 10z"/></svg>
+        </div>
+        <h3>Gifting Ready</h3>
+        <p>Hampers for festivals and corporate celebrations.</p>
+      </article>
+      <article class="info-card info-card--accent">
+        <div class="info-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M4 7h16v4H4zm2 4v8h12v-8M9 7V5h6v2"/></svg>
+        </div>
+        <h3>Wholesale Desk</h3>
+        <p>Better pricing for business quantities.</p>
+        <a routerLink="/wholesale-dry-fruits" class="info-card__link">Request a quote →</a>
+      </article>
+    </div>
+  </section>
 </div>

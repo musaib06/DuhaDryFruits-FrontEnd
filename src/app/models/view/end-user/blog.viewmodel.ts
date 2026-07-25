@@ -39,8 +39,8 @@ export class BlogListViewModel extends BaseViewModel {
   showFilters: boolean = false;
 
   // SEO
-  pageTitle: string = 'Blog - Wild Valley Foods';
-  pageDescription: string = 'Discover healthy recipes, nutrition tips, and stories from Kashmir\'s finest farms.';
+  pageTitle: string = 'Blog - Duha Dryfruits';
+  pageDescription: string = 'Discover healthy recipes, nutrition tips, and dry-fruit wellness ideas from Duha Dryfruits.';
 }
 
 /**

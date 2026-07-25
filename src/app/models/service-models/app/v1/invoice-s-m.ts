@@ -1,4 +1,4 @@
-import { WildValleyFoodsServiceModelBase } from '../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../base/DuhaDryFruits-service-model-base';
 import { CustomerDetailSM } from './customer-detail-s-m';
 import { CustomerAddressDetailSM } from './customer-address-detail-s-m';
 import { OrderRecordSM } from './order-record-s-m';
@@ -48,7 +48,7 @@ export class InvoicePaymentSM {
 /**
  * Invoice Service Model
  */
-export class InvoiceSM extends WildValleyFoodsServiceModelBase<number> {
+export class InvoiceSM extends DuhaDryFruitsServiceModelBase<number> {
   invoiceNumber!: string;
   orderNumber!: string;
   invoiceDate!: Date | string;

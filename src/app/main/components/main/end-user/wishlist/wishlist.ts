@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 import { WishlistService } from '../../../../../services/wishlist.service';
 import { TabResumeService } from '../../../../../services/tab-resume.service';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ProductSM } from '../../../../../models/service-models/app/v1/product-s-m';
 import { BaseComponent } from '../../../../../base.component';
 import { WishListViewModel } from '../../../../../models/view/end-user/wishlist.viewmodel';
@@ -26,12 +27,15 @@ import { resolveProductImage } from '../../../../../utils/image-url.util';
   templateUrl: './wishlist.html',
   styleUrls: ['./wishlist.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
 })
 export class WishlistComponent
   extends BaseComponent<WishListViewModel>
   implements OnInit, OnDestroy
 {
+  /** Template-safe alias (BaseComponent keeps `_commonService` protected). */
+  readonly commonService: CommonService;
+
   // Expose utils to template
   utils = ProductUtils;
   
@@ -50,6 +54,7 @@ export class WishlistComponent
     @Inject(PLATFORM_ID) platformId: object,
   ) {
     super(commonService, loghandlerService);
+    this.commonService = this._commonService;
     this.viewModel = new WishListViewModel();
     this.isBrowser = isPlatformBrowser(platformId);
   }
@@ -117,7 +122,7 @@ export class WishlistComponent
 
     const productSlug = generateProductSlug(item.name, item.id);
     const shareUrl =
-      `${window.location.origin}/product/${productSlug}?variant=${variant.id}`;
+      `${window.location.origin}/dry-fruits/${productSlug}?variant=${variant.id}`;
 
     if ((navigator as any).share) {
       (navigator as any)

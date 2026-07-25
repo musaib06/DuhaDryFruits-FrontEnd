@@ -118,7 +118,7 @@ export class BlogAdminComponent implements OnInit {
     if (typeof window === 'undefined') return;
     const isPublished = blog.status === BlogStatus.PUBLISHED;
     const tree = this.router.createUrlTree(
-      ['/blog', blog.slug],
+      ['/journal', blog.slug],
       isPublished ? {} : { queryParams: { preview: blog.id } }
     );
     window.open(this.router.serializeUrl(tree), '_blank');

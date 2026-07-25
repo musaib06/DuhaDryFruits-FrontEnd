@@ -8,11 +8,11 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const angularDistPath = path.join(__dirname, 'dist/wild-valley-food/browser');
+const angularDistPath = path.join(__dirname, 'dist/duha-dryfruits/browser');
 
 // ✅ Full CORS fix for Angular frontend calling backend
 app.use(cors({
-  origin: 'https://wvf.onrender.com', // your frontend
+  origin: 'https://duhadryfruits.com', // your frontend
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: [
@@ -54,16 +54,21 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Blog SEO - Serve index.html with proper meta tags for crawlers
-// Note: For full SSR, use Angular Universal. This provides SPA routing with client-side SEO.
-app.get('/blog/*', (req, res) => {
+// Blog / journal SEO routes (SPA fallback when not using Angular SSR)
+app.get(['/journal', '/journal/*'], (req, res) => {
   const indexPath = path.join(angularDistPath, 'index.html');
   res.sendFile(indexPath, (err) => {
     if (err) {
-      console.error('Error serving blog page:', err);
+      console.error('Error serving journal page:', err);
       res.status(500).send('Internal Server Error');
     }
   });
+});
+
+// Legacy /blog → /journal (301 for SEO)
+app.get(['/blog', '/blog/*'], (req, res) => {
+  const target = req.originalUrl.replace(/^\/blog/, '/journal');
+  res.redirect(301, target);
 });
 
 // Catch-all handler: serve index.html for all other routes (SPA routing)

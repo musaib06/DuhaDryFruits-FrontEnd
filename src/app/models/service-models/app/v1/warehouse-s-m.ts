@@ -1,7 +1,7 @@
-import { WildValleyFoodsServiceModelBase } from '../base/WildValleyFoods-service-model-base';
+import { DuhaDryFruitsServiceModelBase } from '../base/DuhaDryFruits-service-model-base';
 import { StorageTypeSM } from '../enums/warehouse-storage-type-s-m.enum';
 
-export class WareHouseSM extends WildValleyFoodsServiceModelBase<number> {
+export class WareHouseSM extends DuhaDryFruitsServiceModelBase<number> {
   name!: string;
   description!: string;
   location!: string;

@@ -211,7 +211,7 @@ export class ExportService {
           order.customerName || 'N/A',
           order.amount || 0,
           order.status || 'N/A',
-          order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN') : 'N/A'
+          order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' }) : 'N/A'
         ])
       ];
       const ordersSheet = XLSX.utils.aoa_to_sheet(ordersData);

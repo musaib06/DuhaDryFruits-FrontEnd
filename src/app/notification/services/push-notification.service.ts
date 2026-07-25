@@ -20,7 +20,7 @@ import { AppConstants } from '../../../app-constants';
 import { PushSubscription } from '../models/notification.models';
 
 const FIREBASE_VERSION = '10.7.0';
-const FCM_TOKEN_STORAGE_KEY = 'wvf_fcm_token';
+const FCM_TOKEN_STORAGE_KEY = 'duha_fcm_token';
 
 @Injectable({
   providedIn: 'root'
@@ -260,6 +260,14 @@ export class PushNotificationService {
 
   isPermissionDenied(): boolean {
     return this.isBrowser && 'Notification' in window && Notification.permission === 'denied';
+  }
+
+  isPermissionDefault(): boolean {
+    return this.isBrowser && 'Notification' in window && Notification.permission === 'default';
+  }
+
+  needsPermissionPrompt(): boolean {
+    return this.isSupported() && this.isPermissionDefault();
   }
 
   // ==================== INTERNAL HELPERS ====================

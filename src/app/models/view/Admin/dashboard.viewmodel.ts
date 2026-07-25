@@ -63,5 +63,12 @@ export class AdminDashboardViewModel extends BaseViewModel {
     totalQuantity: number;
     totalRevenue: number;
   }> = [];
+
+  bulkOrderSummary?: {
+    todayRequests: number;
+    pending: number;
+    revenue: number;
+    growth: number;
+  };
 }
 

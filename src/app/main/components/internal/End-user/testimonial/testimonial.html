@@ -11,10 +11,10 @@
 <!-- Error State -->
 @else if (error) {
   <div class="testimonial-error text-center py-5">
-    <i class="bi bi-exclamation-circle text-danger fs-1 d-block mb-2"></i>
+    <i class="ri ri-error-warning-line text-danger fs-1 d-block mb-2"></i>
     <p class="text-muted">{{ error }}</p>
     <button class="btn btn-outline-primary btn-sm" (click)="loadTestimonials()">
-      <i class="bi bi-arrow-clockwise me-1"></i> Try Again
+      <i class="ri ri-refresh-line me-1"></i> Try Again
     </button>
   </div>
 }
@@ -22,7 +22,7 @@
 <!-- Empty State -->
 @else if (testimonials.length === 0) {
   <div class="testimonial-empty text-center py-5">
-    <i class="bi bi-chat-quote text-muted fs-1 d-block mb-2"></i>
+    <i class="ri ri-chat-quote-line text-muted fs-1 d-block mb-2"></i>
     <p class="text-muted">No testimonials yet</p>
   </div>
 }
@@ -40,7 +40,7 @@
                   <div class="testimonial-card">
                     <!-- Quote Icon -->
                     <div class="quote-icon">
-                      <i class="bi bi-quote"></i>
+                      <i class="ri ri-double-quotes-l"></i>
                     </div>
                     
                     <!-- Content -->
@@ -53,9 +53,9 @@
                     <!-- Rating -->
                     <div class="testimonial-rating mb-3">
                       @for (star of getStars(testimonial.rating); track $index) {
-                        <i class="bi"
-                           [class.bi-star-fill]="star.filled"
-                           [class.bi-star]="!star.filled"
+                        <i class="ri"
+                           [class.ri-star-fill]="star.filled"
+                           [class.ri-star]="!star.filled"
                            [class.text-warning]="star.filled"
                            [class.text-muted]="!star.filled">
                         </i>
@@ -90,7 +90,7 @@
           data-bs-slide="prev"
           (click)="onManualNavigation()">
           <span class="carousel-nav-btn">
-            <i class="bi bi-chevron-left"></i>
+            <i class="ri ri-arrow-left-s-line"></i>
           </span>
           <span class="visually-hidden">Previous</span>
         </button>
@@ -103,7 +103,7 @@
           data-bs-slide="next"
           (click)="onManualNavigation()">
           <span class="carousel-nav-btn">
-            <i class="bi bi-chevron-right"></i>
+            <i class="ri ri-arrow-right-s-line"></i>
           </span>
           <span class="visually-hidden">Next</span>
         </button>

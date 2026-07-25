@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
 import { Banner } from '../../../internal/End-user/banner/banner';
 import { ProductCardComponent } from '../../../internal/End-user/product/product';
+import { ServiceBanner } from '../../../internal/End-user/service-banner/service-banner';
 import { ProductSM } from '../../../../../models/service-models/app/v1/product-s-m';
 import { Router, RouterLink } from '@angular/router';
 import { BaseComponent } from '../../../../../base.component';
@@ -11,21 +12,23 @@ import { HomeViewModel } from '../../../../../models/view/end-user/home.viewmode
 import { CommonService } from '../../../../../services/common.service';
 import { LogHandlerService } from '../../../../../services/log-handler.service';
 import { BannerService } from '../../../../../services/banner.service';
-import { Testimonial } from '../../../internal/End-user/testimonial/testimonial';
 import { ProductService } from '../../../../../services/product.service';
 import { WishlistService } from '../../../../../services/wishlist.service';
 import { CartService } from '../../../../../services/cart.service';
-import { Videos } from '../videos/videos';
 import { ReviewService } from '../../../../../services/review.service';
 import { ReviewSM } from '../../../../../models/service-models/app/v1/review-s-m';
 import { generateProductSlug } from '../../../../../utils/slug.utils';
 import { TabResumeService } from '../../../../../services/tab-resume.service';
 import { SsrTransferService } from '../../../../../services/ssr-transfer.service';
 import { SSR_TRANSFER_KEYS } from '../../../../../services/ssr-transfer.keys';
+import { Testimonial } from '../../../internal/End-user/testimonial/testimonial';
+import { Videos } from '../videos/videos';
+import { AppConstants } from '../../../../../../app-constants';
 
 interface HomePageTransfer {
   banners: unknown[];
   newArrivals: ProductSM[];
+  freshArrivals: ProductSM[];
   products: ProductSM[];
 }
 
@@ -37,8 +40,9 @@ interface HomePageTransfer {
     RouterLink,
     Banner,
     ProductCardComponent,
+    ServiceBanner,
     Testimonial,
-    Videos
+    Videos,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -55,6 +59,8 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
 
   /** Avoid error toast spam when refetching after tab sleep (GET retry + silent refetch). */
   private suppressNetworkErrorToasts = false;
+  /** One silent home retry after transient network/timeout failures. */
+  private homeNetworkRetryScheduled = false;
   private tabResumeTeardown: (() => void) | null = null;
   private readonly pendingTasks = inject(PendingTasks);
   private readonly ssrTransfer = inject(SsrTransferService);
@@ -78,21 +84,41 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
   }
 
   async ngOnInit() {
-   this.updateHomeMetaTags();
-   const completePendingTask = this.pendingTasks.add();
-   try {
-     if (!this.hydrateHomeFromTransfer()) {
-       await Promise.all([
-         this.loadBanners(),
-         this.loadBestSellers(),
-         this.loadProducts(),
-       ]);
-       this.persistHomeForTransfer();
-     }
-   } finally {
-     completePendingTask();
-   }
-   this.tabResumeTeardown = this.tabResume.subscribe(() => void this.refreshHomeAfterTabVisible());
+    this.updateHomeMetaTags();
+    const completePendingTask = this.pendingTasks.add();
+    try {
+      if (this.hydrateHomeFromTransfer()) {
+        void this.refreshHomeAfterTabVisible();
+      } else if (this.ssrTransfer.isServer()) {
+        // SSR: paint hero ASAP, then fill rails within a short budget.
+        await this.loadBanners();
+        await Promise.race([
+          Promise.all([
+            this.loadBestSellers(),
+            this.loadFreshArrivals(),
+            this.loadProducts(),
+          ]),
+          new Promise<void>((resolve) => setTimeout(resolve, 5_000)),
+        ]);
+        this.persistHomeForTransfer();
+      } else {
+        // Browser: hero first, then rails, then shelf — avoids 4 slow APIs fighting for bandwidth.
+        void this.loadHomeProgressiveInBrowser();
+      }
+    } finally {
+      completePendingTask();
+    }
+    this.tabResumeTeardown = this.tabResume.subscribe(() => void this.refreshHomeAfterTabVisible());
+  }
+
+  /** Stagger browser fetches so banners/images win the network queue first. */
+  private async loadHomeProgressiveInBrowser(): Promise<void> {
+    await this.loadBanners();
+    void this.loadFreshArrivals();
+    void this.loadBestSellers();
+    // Shelf can wait a tick so rail images start downloading.
+    await new Promise<void>((resolve) => setTimeout(resolve, 50));
+    void this.loadProducts();
   }
 
   /** Apply SSR payload on the browser so skeletons do not flash over rendered HTML. */
@@ -103,9 +129,11 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
     }
     this.viewModel.banners = this.sortBannersBySequence(payload.banners);
     this.viewModel.newArrivals = [...(payload.newArrivals ?? [])];
+    this.viewModel.freshArrivals = [...(payload.freshArrivals ?? [])];
     this.viewModel.productsViewModel.products = [...(payload.products ?? [])];
     this.isLoadingBanners = false;
     this.isLoadingBestSellers = false;
+    this.isLoadingFreshArrivals = false;
     this.isLoadingProducts = false;
     this.cdr.detectChanges();
     return true;
@@ -115,10 +143,19 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
     if (!this.ssrTransfer.isServer()) {
       return;
     }
+    const banners = this.viewModel.banners ?? [];
+    const newArrivals = this.viewModel.newArrivals ?? [];
+    const freshArrivals = this.viewModel.freshArrivals ?? [];
+    const products = this.viewModel.productsViewModel.products ?? [];
+    // Don't stamp an empty payload — browser would skip refetch and show blank home.
+    if (!banners.length && !newArrivals.length && !freshArrivals.length && !products.length) {
+      return;
+    }
     this.ssrTransfer.set<HomePageTransfer>(SSR_TRANSFER_KEYS.HOME_PAGE, {
-      banners: this.viewModel.banners ?? [],
-      newArrivals: this.viewModel.newArrivals ?? [],
-      products: this.viewModel.productsViewModel.products ?? [],
+      banners,
+      newArrivals,
+      freshArrivals,
+      products,
     });
   }
 
@@ -126,10 +163,10 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
    * Update meta tags for homepage social sharing
    */
   private updateHomeMetaTags(): void {
-    const title = 'Wild Valley Foods - Fresh From The Farms of Kashmir';
-    const description = 'Premium farm produce from Kashmir. Dry fruits, saffron, grains, pulses, seeds, and herbs delivered to your doorstep.';
-    const image = 'https://wildvalleyfoods.in/assets/dryfruits.webp';
-    const url = 'https://wildvalleyfoods.in';
+    const title = 'Duha Dryfruits — Premium Dry Fruits & Nuts';
+    const description = 'Hand-picked premium dry fruits, nuts and seeds — sourced with care and delivered fresh to your doorstep.';
+    const image = 'https://duhadryfruits.com/assets/dryfruits.webp';
+    const url = 'https://duhadryfruits.com';
 
     this.title.setTitle(title);
 
@@ -159,8 +196,9 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
   private async refreshHomeAfterTabVisible(): Promise<void> {
     const productsEmpty = !(this.viewModel.productsViewModel.products?.length ?? 0);
     const bestEmpty = !(this.viewModel.newArrivals?.length ?? 0);
+    const freshEmpty = !(this.viewModel.freshArrivals?.length ?? 0);
     const bannersEmpty = !(this.viewModel.banners?.length ?? 0);
-    if (!productsEmpty && !bestEmpty && !bannersEmpty) {
+    if (!productsEmpty && !bestEmpty && !freshEmpty && !bannersEmpty) {
       return;
     }
 
@@ -169,6 +207,7 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
       await Promise.all([
         ...(bannersEmpty ? [this.loadBanners()] : []),
         ...(bestEmpty ? [this.loadBestSellers()] : []),
+        ...(freshEmpty ? [this.loadFreshArrivals()] : []),
         ...(productsEmpty ? [this.loadProducts()] : []),
       ]);
       this.ngZone.run(() => this.cdr.detectChanges());
@@ -187,17 +226,38 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
     if (this.suppressNetworkErrorToasts) {
       return;
     }
+    const text = String(toast.text || '');
+    const isNetwork =
+      text === AppConstants.ErrorPrompts.Network_Error ||
+      /network|timeout|timed out|econnaborted|etimedout/i.test(text);
+    if (isNetwork) {
+      this.scheduleSilentHomeRetry();
+      return;
+    }
     this._commonService.showSweetAlertToast(toast);
+  }
+
+  /** Retry empty home sections once without blocking the UI with alerts. */
+  private scheduleSilentHomeRetry(): void {
+    if (this.homeNetworkRetryScheduled || this.ssrTransfer.isServer()) {
+      return;
+    }
+    this.homeNetworkRetryScheduled = true;
+    setTimeout(() => {
+      void this.refreshHomeAfterTabVisible();
+    }, 800);
   }
 
   isLoadingBanners = !inject(SsrTransferService).has(SSR_TRANSFER_KEYS.HOME_PAGE);
   isLoadingBestSellers = !inject(SsrTransferService).has(SSR_TRANSFER_KEYS.HOME_PAGE);
+  isLoadingFreshArrivals = !inject(SsrTransferService).has(SSR_TRANSFER_KEYS.HOME_PAGE);
   isLoadingProducts = !inject(SsrTransferService).has(SSR_TRANSFER_KEYS.HOME_PAGE);
 
   override async loadPageData() {
     await Promise.all([
       this.loadBanners(),
       this.loadBestSellers(),
+      this.loadFreshArrivals(),
       this.loadProducts(),
     ]);
   }
@@ -218,6 +278,16 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
       await this.getAllIsBestSelling();
     } finally {
       this.isLoadingBestSellers = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  private async loadFreshArrivals(): Promise<void> {
+    this.isLoadingFreshArrivals = true;
+    try {
+      await this.getNewArrivals();
+    } finally {
+      this.isLoadingFreshArrivals = false;
       this.cdr.detectChanges();
     }
   }
@@ -252,7 +322,16 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
 
   openProduct(product: ProductSM) {
     const productSlug = generateProductSlug(product.name, product.id);
-    this.router.navigate(['/product', productSlug]);
+    this.router.navigate(['/dry-fruits', productSlug]);
+  }
+
+  /** Horizontal product rail — swipe affordance + arrow buttons */
+  scrollProductRail(railId: 'fresh' | 'trending', direction: -1 | 1): void {
+    if (typeof document === 'undefined') return;
+    const el = document.getElementById(`product-rail-${railId}`);
+    if (!el) return;
+    const step = Math.max(el.clientWidth * 0.82, 260);
+    el.scrollBy({ left: direction * step, behavior: 'smooth' });
   }
 
   openProductReview(product: ProductSM) {
@@ -311,7 +390,7 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
   }
 
   openHealthConcerns() {
-    this.router.navigate(['/health-concerns']);
+    this.router.navigate(['/dry-fruits-for-health']);
   }
 
   private sortBannersBySequence(banners: any[]): any[] {
@@ -388,6 +467,30 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
         });
       } else {
         this.viewModel.newArrivals = [...(resp.successData ?? [])];
+      }
+    } catch (error) {
+      this.showHomeDataErrorToast({
+        title: 'Error',
+        text: 'An error occurred',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    }
+  }
+
+  async getNewArrivals(): Promise<void> {
+    try {
+      let resp = await this.productService.getNewArrivals();
+      if (resp.isError) {
+        await this._exceptionHandler.logObject(resp.errorData);
+        this.showHomeDataErrorToast({
+          title: 'Error',
+          text: resp.errorData.displayMessage,
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+      } else {
+        this.viewModel.freshArrivals = [...(resp.successData ?? [])];
       }
     } catch (error) {
       this.showHomeDataErrorToast({

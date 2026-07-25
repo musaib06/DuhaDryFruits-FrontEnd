@@ -1,11 +1,12 @@
 <div class="send-notification-container">
   <div class="form-header">
     <h2>Send Push Notification</h2>
-    <p class="subtitle">Send a push notification to all subscribed devices.</p>
+    <p class="subtitle">Broadcast an FCM push to subscribed devices.</p>
   </div>
 
   <div class="alert" *ngIf="result" [class.alert-success]="result.type === 'success'"
-       [class.alert-error]="result.type === 'error'">
+       [class.alert-error]="result.type === 'error'"
+       [class.alert-warning]="result.type === 'warning'">
     {{ result.text }}
   </div>
 
@@ -35,7 +36,7 @@
 
     <div class="form-group">
       <label>Custom URL / Route (optional)</label>
-      <input type="text" formControlName="url" placeholder="/shop or https://wildvalleyfoods.in/offers">
+      <input type="text" formControlName="url" placeholder="/buy-dry-fruits or https://duhadryfruits.com/offers">
       <div class="hint">Used when no product is selected. Leave blank to open the homepage.</div>
     </div>
 
@@ -89,13 +90,20 @@
       </div>
 
       <input type="text" [(ngModel)]="customerSearch" [ngModelOptions]="{ standalone: true }"
-             (ngModelChange)="onCustomerSearchChange()"
-             placeholder="Search customers by name, email or phone…">
+             placeholder="Search by name, email or phone…">
 
-      <div class="customer-results" *ngIf="customerSearch">
-        <div class="customer-loading" *ngIf="isSearchingCustomers">Searching…</div>
-        <div class="customer-empty" *ngIf="!isSearchingCustomers && customerResults.length === 0">No matching customers.</div>
-        <button type="button" class="customer-result" *ngFor="let c of customerResults" (click)="addCustomer(c)">
+      <div class="customer-picker-actions" *ngIf="filteredCustomers.length > 0">
+        <button type="button" class="btn btn-secondary btn-sm" (click)="selectAllShownCustomers()">
+          Select all shown ({{ filteredCustomers.length }})
+        </button>
+      </div>
+
+      <div class="customer-results customer-results-scroll">
+        <div class="customer-loading" *ngIf="customersLoading">Loading customers…</div>
+        <div class="customer-empty" *ngIf="!customersLoading && filteredCustomers.length === 0">
+          {{ customerSearch ? 'No matching customers.' : 'No customers available.' }}
+        </div>
+        <button type="button" class="customer-result" *ngFor="let c of filteredCustomers" (click)="addCustomer(c)">
           <span class="cr-name">{{ (c.firstName || '') + ' ' + (c.lastName || '') | titlecase }}</span>
           <span class="cr-meta">{{ c.email }}<span *ngIf="c.contact"> · {{ c.contact }}</span></span>
         </button>
@@ -105,12 +113,13 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary" [disabled]="isSending">
+      <button type="button" class="btn btn-primary" [disabled]="isSending" (click)="onSubmit()">
         {{ isSending ? 'Sending…' : 'Send Notification' }}
       </button>
       <span class="inline-result" *ngIf="result"
             [class.inline-result-success]="result.type === 'success'"
-            [class.inline-result-error]="result.type === 'error'">
+            [class.inline-result-error]="result.type === 'error'"
+            [class.inline-result-warning]="result.type === 'warning'">
         {{ result.text }}
       </span>
     </div>

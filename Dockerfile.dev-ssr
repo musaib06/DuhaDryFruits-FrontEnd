@@ -1,6 +1,6 @@
 # Development / staging image: same SSR runtime as production, but `development` Angular build (source maps, no prod env).
-# Build:  docker build -f Dockerfile.dev-ssr -t wvf-front-dev .
-# Run:    docker run -p 8080:8080 -e PORT=8080 wvf-front-dev
+# Build:  docker build -f Dockerfile.dev-ssr -t duha-front-dev .
+# Run:    docker run -p 8080:8080 -e PORT=8080 duha-front-dev
 FROM node:22-alpine
 
 WORKDIR /app
@@ -18,4 +18,4 @@ RUN npx ng build --configuration development
 ENV PORT=8080
 EXPOSE 8080
 
-CMD ["node", "dist/wild-valley-food/server/server.mjs"]
+CMD ["node", "dist/duha-dryfruits/server/server.mjs"]

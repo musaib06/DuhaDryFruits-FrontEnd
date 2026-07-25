@@ -1,5 +1,5 @@
 {
-  "name": "wild-valley-food",
+  "name": "duha-dryfruits",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -17,7 +17,7 @@
     "build:reg": "ng build --configuration reg",
     "build:ssr": "ng build --configuration production",
     "build:prod": "npm run build:ssr",
-    "serve:ssr": "node dist/wild-valley-food/server/server.mjs",
+    "serve:ssr": "node dist/duha-dryfruits/server/server.mjs",
     "start:server": "node server.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -67,6 +67,7 @@
     "ngx-quill": "^28.0.1",
     "ngx-ui-loader": "^19.0.0",
     "quill": "^2.0.3",
+    "remixicon": "^4.9.1",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.22.2",
     "tslib": "^2.3.0",
@@ -90,7 +91,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.2",
-    "patch-package": "^8.0.0"
+    "patch-package": "^8.0.0",
+    "typescript": "~5.8.2"
   }
 }

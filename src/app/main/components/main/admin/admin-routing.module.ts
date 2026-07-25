@@ -48,6 +48,11 @@ const routes: Routes = [
         path: 'notifications',
         loadChildren: () => import('../../../../admin/notification-dashboard/notification-dashboard.module')
           .then(m => m.NotificationDashboardModule)
+      },
+      {
+        path: 'bulk-orders',
+        loadChildren: () => import('../../../../admin/bulk-orders-dashboard/bulk-orders-dashboard.module')
+          .then(m => m.BulkOrdersDashboardModule)
       }
     ]
   }

@@ -6,6 +6,7 @@ export const SSR_TRANSFER_KEYS = {
   STOREFRONT_VIDEOS: 'storefront-videos-1-100',
   PRODUCT_NAMES: 'product-names-only',
   BEST_SELLERS: 'best-sellers',
+  NEW_ARRIVALS: 'new-arrivals',
   HOME_PRODUCTS: 'home-products-8',
   STOREFRONT_TESTIMONIALS: 'storefront-testimonials',
   BLOG_NAV_COUNT: 'blog-nav-count',
