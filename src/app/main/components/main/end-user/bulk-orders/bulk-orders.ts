@@ -12,6 +12,8 @@ import { ProductService } from '../../../../../services/product.service';
 import { CategoryService } from '../../../../../services/category.service';
 import { BulkCartService } from '../../../../../services/bulk-cart.service';
 import { BulkOrderService } from '../../../../../services/bulk-order.service';
+import { CustomerService } from '../../../../../services/customer.service';
+import { PushNotificationService } from '../../../../../notification/services/push-notification.service';
 import { AdminProductsViewModel } from '../../../../../models/view/Admin/admin-product.viewmodel';
 import { ProductSM } from '../../../../../models/service-models/app/v1/product-s-m';
 import { CategorySM } from '../../../../../models/service-models/app/v1/categories-s-m';
@@ -67,6 +69,8 @@ export class BulkOrders extends BaseComponent<BulkOrdersViewModel> implements On
     private categoryService: CategoryService,
     public bulkCart: BulkCartService,
     private bulkOrderService: BulkOrderService,
+    private customerService: CustomerService,
+    private pushNotificationService: PushNotificationService,
     private router: Router,
   ) {
     super(commonService, logHandler);
@@ -296,11 +300,42 @@ export class BulkOrders extends BaseComponent<BulkOrdersViewModel> implements On
         icon: 'success',
       });
       this.viewModel.currentStep = 'products';
+
+      // Prompt for notifications so the customer can track bulk order status.
+      void this._ensureBulkOrderPush(c.email, resp.successData?.customerId);
     } catch (e) {
       await this._logHandler.logObject(e);
     } finally {
       this.viewModel.isSubmitting = false;
       this._commonService.dismissLoader();
+    }
+  }
+
+  /**
+   * Best-effort: resolve customerId (from response or email) and ask to
+   * subscribe for bulk order status pushes if not already granted.
+   */
+  private async _ensureBulkOrderPush(
+    email?: string | null,
+    customerId?: number | null
+  ): Promise<void> {
+    try {
+      let id = customerId != null ? Number(customerId) : null;
+      if (id == null && email) {
+        const emailResp = await this.customerService.getCustomerByEmail(
+          String(email).trim().toLowerCase()
+        );
+        if (
+          !emailResp.isError &&
+          emailResp.successData?.exists &&
+          emailResp.successData?.customer?.id
+        ) {
+          id = Number(emailResp.successData.customer.id);
+        }
+      }
+      await this.pushNotificationService.ensureSubscribedForOrderUpdates(id, 'bulk');
+    } catch {
+      /* notification wiring is non-critical for bulk submit */
     }
   }
 

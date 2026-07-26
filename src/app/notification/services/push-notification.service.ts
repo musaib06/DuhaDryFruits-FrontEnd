@@ -13,11 +13,12 @@
 
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, firstValueFrom } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import { AppConstants } from '../../../app-constants';
 import { PushSubscription } from '../models/notification.models';
+import { CommonService } from '../../services/common.service';
 
 const FIREBASE_VERSION = '10.7.0';
 const FCM_TOKEN_STORAGE_KEY = 'duha_fcm_token';
@@ -31,6 +32,7 @@ export class PushNotificationService {
   private messaging: any = null;
   private firebaseApp: any = null;
   private initialized = false;
+  private ensurePromptInFlight = false;
 
   /** Emits the payload of foreground (app-open) push messages. */
   private foregroundMessageSubject = new Subject<any>();
@@ -38,6 +40,7 @@ export class PushNotificationService {
 
   constructor(
     private http: HttpClient,
+    private commonService: CommonService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -118,17 +121,21 @@ export class PushNotificationService {
       if (!token) return null;
 
       const previousToken = this.getStoredToken();
-      if (token !== previousToken) {
-        await this.registerToken(
-          {
-            token,
-            deviceType: 'web',
-            browser: this.getBrowserName(),
-            os: this.getOSName()
-          },
-          previousToken,
-          customerId
-        ).toPromise();
+      // Always re-register when a customerId is provided so checkout/bulk can
+      // attach an already-granted anonymous token to that customer.
+      if (token !== previousToken || customerId != null) {
+        await firstValueFrom(
+          this.registerToken(
+            {
+              token,
+              deviceType: 'web',
+              browser: this.getBrowserName(),
+              os: this.getOSName()
+            },
+            previousToken,
+            customerId
+          )
+        );
         this.setStoredToken(token);
       }
 
@@ -136,6 +143,81 @@ export class PushNotificationService {
     } catch (error) {
       console.error('[FCM] requestPermissionAndRegister failed:', error);
       return null;
+    }
+  }
+
+  /**
+   * Ensure this browser is subscribed for order-tracking pushes.
+   * - If already granted: refresh/register token (and link customerId when given).
+   * - If permission is default: show a confirmation, then request browser permission.
+   * - If denied: show a short tip (user must enable in browser settings).
+   * Best-effort — never throws.
+   */
+  async ensureSubscribedForOrderUpdates(
+    customerId?: number | null,
+    context: 'checkout' | 'bulk' | 'general' = 'general'
+  ): Promise<boolean> {
+    if (!this.isBrowser || !this.isSupported()) return false;
+
+    try {
+      if (this.isPermissionGranted()) {
+        const token = await this.requestPermissionAndRegister(customerId ?? undefined);
+        return !!token;
+      }
+
+      if (this.isPermissionDenied()) {
+        // User previously blocked the browser permission — cannot re-prompt.
+        return false;
+      }
+
+      if (this.ensurePromptInFlight || !this.needsPermissionPrompt()) {
+        return false;
+      }
+
+      this.ensurePromptInFlight = true;
+      const title =
+        context === 'bulk'
+          ? 'Get bulk order updates?'
+          : context === 'checkout'
+            ? 'Track your order?'
+            : 'Enable notifications?';
+      const html =
+        context === 'bulk'
+          ? 'Allow notifications so we can update you when your <strong>bulk order</strong> is approved, paid, shipped, or delivered.'
+          : context === 'checkout'
+            ? 'Allow notifications so you can <strong>track your order</strong> when status changes (paid, shipped, delivered).'
+            : 'Stay updated on <strong>orders</strong>, offers, and new arrivals.';
+
+      const result = await this.commonService.showSweetAlertConfirmation({
+        title,
+        html,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Allow notifications',
+        cancelButtonText: 'Not now',
+        reverseButtons: true,
+        allowOutsideClick: true,
+      });
+
+      if (!result.isConfirmed) {
+        return false;
+      }
+
+      const token = await this.requestPermissionAndRegister(customerId ?? undefined);
+      if (token) {
+        await this.commonService.showSweetAlertToast({
+          title: 'Notifications enabled',
+          text: "You'll get order status updates on this device.",
+          icon: 'success',
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('[FCM] ensureSubscribedForOrderUpdates failed:', error);
+      return false;
+    } finally {
+      this.ensurePromptInFlight = false;
     }
   }
 
@@ -159,16 +241,18 @@ export class PushNotificationService {
       const token = await this.getToken();
       if (!token) return;
 
-      await this.registerToken(
-        {
-          token,
-          deviceType: 'web',
-          browser: this.getBrowserName(),
-          os: this.getOSName()
-        },
-        null,
-        customerId
-      ).toPromise();
+      await firstValueFrom(
+        this.registerToken(
+          {
+            token,
+            deviceType: 'web',
+            browser: this.getBrowserName(),
+            os: this.getOSName()
+          },
+          null,
+          customerId
+        )
+      );
       this.setStoredToken(token);
     } catch (error) {
       console.error('[FCM] linkTokenToCustomer failed:', error);

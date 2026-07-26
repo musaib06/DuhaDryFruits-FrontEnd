@@ -276,6 +276,11 @@ export class Checkout
   async onSubmit() {
     if (this.selectedCustomerId !== null) {
       this.currentCard = 'order';
+      // Ask again at checkout if this device is not yet subscribed for order tracking.
+      void this.pushNotificationService.ensureSubscribedForOrderUpdates(
+        this.selectedCustomerId,
+        'checkout'
+      );
       return;
     }
     try {
@@ -408,11 +413,6 @@ export class Checkout
    * Saves to IndexedDB and proceeds to order
    */
   private _handleCustomerSuccess(isExisting: boolean = false) {
-    // Link this browser's FCM device token to the identified customer so the
-    // admin can later target "registered / selected customers". Best-effort:
-    // never block checkout on notification wiring.
-    this._linkDeviceToCustomer(this.viewModel.createdCustomer?.id);
-
     // Check if customer already in saved list
     const alreadySaved = this.savedCustomers.some(c => c.id === this.viewModel.createdCustomer.id);
     
@@ -453,19 +453,12 @@ export class Checkout
     // Proceed to order
     this.currentCard = 'order';
     this.selectedCustomerId = this.viewModel.createdCustomer.id;
-  }
 
-  /**
-   * Best-effort: associate this browser's push device token with the customer
-   * so admins can target registered/selected customers. Fire-and-forget.
-   */
-  private _linkDeviceToCustomer(customerId?: number | null): void {
-    if (customerId == null) return;
-    this.pushNotificationService
-      .linkTokenToCustomer(Number(customerId))
-      .catch(() => {
-        /* notification linking is non-critical for checkout */
-      });
+    // Prompt/register FCM so the customer can track status updates. Best-effort.
+    void this.pushNotificationService.ensureSubscribedForOrderUpdates(
+      this.viewModel.createdCustomer?.id,
+      'checkout'
+    );
   }
 
   async loadCart() {
