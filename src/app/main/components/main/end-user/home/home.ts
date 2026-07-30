@@ -163,23 +163,32 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
    * Update meta tags for homepage social sharing
    */
   private updateHomeMetaTags(): void {
-    const title = 'Duha Dryfruits — Premium Dry Fruits & Nuts';
-    const description = 'Hand-picked premium dry fruits, nuts and seeds — sourced with care and delivered fresh to your doorstep.';
+    const title =
+      'Duha Dryfruits | Buy Kashmir Dry Fruits, Saffron & Shilajit Online — Pampore, Srinagar';
+    const description =
+      'Duha Dryfruits — authentic Kashmir dry fruits, Pampore saffron, almonds, walnuts, pistachios, dates, figs, raisins and shilajit from our farms in Gundbal, Pampore near Srinagar & Lethpora. Buy premium farm-fresh dry fruits online across India.';
+    const keywords =
+      'Duha Dryfruits, buy dry fruits online, Kashmir dry fruits, Pampore saffron, Srinagar dry fruits, Lethpora, Gundbal Pampore, almonds, walnuts, pistachios, shilajit, Kashmir shilajit, dates, figs, raisins, wholesale dry fruits';
     const image = 'https://www.duhadryfruits.com/assets/duha-dryfruits-hero.png';
     const url = 'https://www.duhadryfruits.com';
 
     this.title.setTitle(title);
+
+    this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ name: 'keywords', content: keywords });
 
     // Open Graph tags
     this.meta.updateTag({ property: 'og:title', content: title });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:image', content: image });
     this.meta.updateTag({ property: 'og:image:secure_url', content: image });
-    this.meta.updateTag({ property: 'og:image:type', content: 'image/webp' });
+    this.meta.updateTag({ property: 'og:image:type', content: 'image/png' });
     this.meta.updateTag({ property: 'og:image:width', content: '1200' });
     this.meta.updateTag({ property: 'og:image:height', content: '630' });
     this.meta.updateTag({ property: 'og:url', content: url });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
+    this.meta.updateTag({ property: 'og:site_name', content: 'Duha Dryfruits' });
+    this.meta.updateTag({ property: 'og:locale', content: 'en_IN' });
 
     // Twitter Card tags
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });

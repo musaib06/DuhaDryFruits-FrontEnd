@@ -1,8 +1,8 @@
 {
   "name": "Duha Dryfruits",
   "short_name": "Duha Dryfruits",
-  "theme_color": "#f19c11",
-  "background_color": "#ffffff",
+  "theme_color": "#3d4f2f",
+  "background_color": "#f7f4ef",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

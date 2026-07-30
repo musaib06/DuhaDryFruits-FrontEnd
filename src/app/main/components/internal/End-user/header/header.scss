@@ -37,6 +37,13 @@
 .mobile-nav-bar {
   padding: 10px 4px;
   gap: 0.5rem;
+  align-items: center;
+
+  .duha-brand {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: calc(100% - 11.5rem);
+  }
 }
 
 .mobile-nav-icons {
@@ -79,14 +86,24 @@
 @media (min-width: 768px) and (max-width: 991.98px) {
   .mobile-nav-bar {
     padding: 12px 6px;
+
+    .duha-brand {
+      max-width: calc(100% - 13rem);
+    }
   }
 
   .duha-brand__name {
-    font-size: 1.55rem;
+    font-size: 1.45rem;
   }
 
   .duha-brand__tagline {
-    font-size: 0.55rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+  }
+
+  .duha-brand__logo {
+    width: 2.6rem;
+    height: 2.6rem;
   }
 
   .mobile-icon-btn {
@@ -105,7 +122,13 @@
   margin: 0;
 
   &__logo {
-    display: none;
+    display: block;
+    width: 2.35rem;
+    height: 2.35rem;
+    object-fit: contain;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #fff;
   }
 
   &__text {
@@ -113,18 +136,21 @@
     flex-direction: column;
     align-items: stretch;
     min-width: 0;
+    flex: 1 1 auto;
     line-height: 1.02;
   }
 
   &__name {
     display: block;
     font-family: $font-family-heading;
-    font-size: 1.35rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: $color-primary;
     line-height: 1;
     white-space: nowrap;
     letter-spacing: -0.02em;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__accent {
@@ -137,14 +163,24 @@
     display: block;
     width: 100%;
     font-family: $font-family-primary;
-    font-size: 0.5rem;
+    font-size: 0.58rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     color: $color-text-muted;
-    white-space: nowrap;
-    margin-top: 4px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.3;
+    margin-top: 3px;
     text-align: left;
+  }
+
+  &__tagline-full {
+    display: none;
+  }
+
+  &__tagline-short {
+    display: inline;
   }
 
   &:hover .duha-brand__name {
@@ -256,8 +292,20 @@
 
 @media (min-width: 576px) {
   .duha-brand {
-    &__name { font-size: 1.55rem; }
-    &__tagline { font-size: 0.55rem; letter-spacing: 0.14em; }
+    &__name { font-size: 1.45rem; }
+    &__tagline {
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    &__tagline-full { display: inline; }
+    &__tagline-short { display: none; }
+    &__logo {
+      width: 2.6rem;
+      height: 2.6rem;
+    }
   }
 }
 
@@ -265,10 +313,18 @@
   .duha-brand--lg {
     margin-left: 0.5rem;
 
+    .duha-brand__logo {
+      width: 3rem;
+      height: 3rem;
+    }
+
     .duha-brand__name { font-size: 1.85rem; }
     .duha-brand__tagline {
       font-size: 0.62rem;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: clip;
     }
   }
 }
