@@ -44,6 +44,13 @@
     min-width: 0;
     max-width: calc(100% - 11.5rem);
   }
+
+  .duha-brand__name {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 1.28rem;
+  }
 }
 
 .mobile-nav-icons {
@@ -101,11 +108,6 @@
     letter-spacing: 0.06em;
   }
 
-  .duha-brand__logo {
-    width: 2.6rem;
-    height: 2.6rem;
-  }
-
   .mobile-icon-btn {
     padding: 9px 10px;
   }
@@ -122,7 +124,7 @@
   margin: 0;
 
   &__logo {
-    display: block;
+    display: none;
     width: 2.35rem;
     height: 2.35rem;
     object-fit: contain;
@@ -302,10 +304,6 @@
     }
     &__tagline-full { display: inline; }
     &__tagline-short { display: none; }
-    &__logo {
-      width: 2.6rem;
-      height: 2.6rem;
-    }
   }
 }
 
@@ -314,6 +312,7 @@
     margin-left: 0.5rem;
 
     .duha-brand__logo {
+      display: block;
       width: 3rem;
       height: 3rem;
     }
@@ -327,6 +326,13 @@
       text-overflow: clip;
     }
   }
+}
+
+/* Offcanvas has room — show logo mark there */
+#offcanvasLeft .duha-brand__logo {
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 .social-icon-inline {
