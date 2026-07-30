@@ -165,8 +165,8 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
   private updateHomeMetaTags(): void {
     const title = 'Duha Dryfruits — Premium Dry Fruits & Nuts';
     const description = 'Hand-picked premium dry fruits, nuts and seeds — sourced with care and delivered fresh to your doorstep.';
-    const image = 'https://duhadryfruits.com/assets/dryfruits.webp';
-    const url = 'https://duhadryfruits.com';
+    const image = 'https://www.duhadryfruits.com/assets/duha-dryfruits-hero.png';
+    const url = 'https://www.duhadryfruits.com';
 
     this.title.setTitle(title);
 
