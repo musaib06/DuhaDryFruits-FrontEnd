@@ -35,7 +35,7 @@ export class WebsiteResourcesComponent extends BaseComponent<BannerViewModel> im
    override async loadPageData(){
      try {
       this._commonService.presentLoading();
-      let resp=await this.bannerService.getAllBanners(this.viewModel);
+      let resp=await this.bannerService.getAdminBanners();
       if(resp.isError){
        await this._logHandler.logObject(resp.errorData);
         this._commonService.showSweetAlertToast({
@@ -50,9 +50,7 @@ export class WebsiteResourcesComponent extends BaseComponent<BannerViewModel> im
           ...banner,
           sequence: this.getBannerSequence(banner),
         }));
-        //     this.categories = data;
         this.viewModel.filteredBanners = [...this.viewModel.bannerSMList];
-        // console.log('Categories loaded:', this.viewModel.filteredBanners);
          this.sortData();
          this.TotalCategoryCount();
       }
@@ -62,7 +60,7 @@ export class WebsiteResourcesComponent extends BaseComponent<BannerViewModel> im
         await this._logHandler.logObject(error);
         this._commonService.showSweetAlertToast({
           title: 'Error',
-          text: 'Failed to load categories.',
+          text: 'Failed to load banners.',
           icon: 'error',
           confirmButtonText: 'OK',
         });

@@ -105,9 +105,26 @@ private async addBanner() {
   try {
     this._commonService.presentLoading();
      const formData = new FormData();
-      formData.append("reqData", JSON.stringify(this.viewModel.bannerFormData));
+     const payload = {
+       title: this.viewModel.bannerFormData.title || null,
+       description: this.viewModel.bannerFormData.description || null,
+       link: this.viewModel.bannerFormData.link || null,
+       ctaText: this.viewModel.bannerFormData.ctaText || null,
+       bannerType: this.viewModel.bannerFormData.bannerType || 'Slider',
+       isVisible: this.viewModel.bannerFormData.isVisible !== false,
+       sequence: Number(this.viewModel.bannerFormData.sequence ?? 0),
+     };
+      formData.append("reqData", JSON.stringify(payload));
     if (this.selectedFile) {
-      formData.append("imagePath", this.selectedFile);  // ✅ send as "image"
+      formData.append("imagePath", this.selectedFile);
+    } else {
+      this._commonService.showSweetAlertToast({
+        title: 'Error',
+        text: 'Please select a banner image to upload.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
     }
 
       const resp = await this.bannerService.addBanner(formData);
@@ -145,7 +162,16 @@ private async addBanner() {
     try {
       this._commonService.presentLoading();
       const formData = new FormData();
-      formData.append("reqData", JSON.stringify(this.viewModel.bannerFormData));
+      const payload = {
+        title: this.viewModel.bannerFormData.title || null,
+        description: this.viewModel.bannerFormData.description || null,
+        link: this.viewModel.bannerFormData.link || null,
+        ctaText: this.viewModel.bannerFormData.ctaText || null,
+        bannerType: this.viewModel.bannerFormData.bannerType || 'Slider',
+        isVisible: this.viewModel.bannerFormData.isVisible !== false,
+        sequence: Number(this.viewModel.bannerFormData.sequence ?? 0),
+      };
+      formData.append("reqData", JSON.stringify(payload));
       if (this.selectedFile) {
         formData.append("imagePath", this.selectedFile);
       }

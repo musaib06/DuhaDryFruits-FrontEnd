@@ -68,6 +68,16 @@ export class BannerService extends BaseService {
     return await this.BannerClient.GetAllBanners(queryFilter);
   }
 
+  /** Admin list — full uncached list so new uploads always appear. */
+  async getAdminBanners(): Promise<ApiResponse<BannerSM[]>> {
+    this.clearBannersCache();
+    return await this.BannerClient.GetAllBannersUnpaginated();
+  }
+
+  clearBannersCache(): void {
+    this.bannersCache = null;
+  }
+
   async getTotalBannersCount(): Promise<ApiResponse<IntResponseRoot>> {
     return await this.BannerClient.GetTotatBannerCount();
   }
@@ -75,6 +85,7 @@ export class BannerService extends BaseService {
     if (id <= 0) {
       throw new Error(AppConstants.ErrorPrompts.Delete_Data_Error);
     }
+    this.clearBannersCache();
     return await this.BannerClient.DeleteBannerById(id);
   }
 
@@ -88,11 +99,12 @@ export class BannerService extends BaseService {
 
 async addBanner(formData: FormData): Promise<ApiResponse<BannerSM>> {
   let apiRequest = formData; // direct pass
-  
+  this.clearBannersCache();
   return await this.BannerClient.AddBanner(apiRequest);
 }
 async updateBanner(formData: FormData, id: number): Promise<ApiResponse<BannerSM>> {
   let apiRequest = formData; // direct pass
+  this.clearBannersCache();
   return await this.BannerClient.UpdateBanner(apiRequest, id);
 }
 }

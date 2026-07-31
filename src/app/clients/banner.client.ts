@@ -39,6 +39,16 @@ export class BannerClient extends BaseApiClient {
     return resp;
   };
 
+  /** Full list for admin (avoids empty pagination/cache edge cases). */
+  GetAllBannersUnpaginated = async (): Promise<ApiResponse<BannerSM[]>> => {
+    return await this.GetResponseAsync<null, BannerSM[]>(
+      `${AppConstants.ApiUrls.Banner}/getall`,
+      'GET',
+      null,
+      new AdditionalRequestDetails<BannerSM[]>(false, Authentication.false)
+    );
+  };
+
   GetTotatBannerCount = async (): Promise<ApiResponse<IntResponseRoot>> => {
     let resp = await this.GetResponseAsync<null, IntResponseRoot>(
       `${AppConstants.ApiUrls.Banner}/count`,
