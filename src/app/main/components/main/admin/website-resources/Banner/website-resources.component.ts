@@ -187,9 +187,43 @@ openFormModal(banner?: BannerSM): void {
   }
 
 confirmDelete(id: number): void {
-    if (confirm('Are you sure you want to delete this category?')) {
-      this.bannerService.deleteBanner(id);
-         this.loadPageData();
+    if (!confirm('Are you sure you want to delete this banner?')) {
+      return;
+    }
+    void this.deleteBannerAndReload(id);
+  }
+
+  private async deleteBannerAndReload(id: number): Promise<void> {
+    try {
+      this._commonService.presentLoading();
+      const resp = await this.bannerService.deleteBanner(id);
+      if (resp.isError) {
+        await this._logHandler.logObject(resp.errorData);
+        this._commonService.showSweetAlertToast({
+          title: 'Error',
+          text: resp.errorData?.displayMessage || 'Failed to delete banner.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        });
+        return;
+      }
+      this._commonService.showSweetAlertToast({
+        title: 'Deleted',
+        text: 'Banner removed successfully.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+      await this.loadPageData();
+    } catch (error) {
+      await this._logHandler.logObject(error);
+      this._commonService.showSweetAlertToast({
+        title: 'Error',
+        text: 'Failed to delete banner.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      this._commonService.dismissLoader();
     }
   }
 

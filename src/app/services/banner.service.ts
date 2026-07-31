@@ -98,13 +98,15 @@ export class BannerService extends BaseService {
 
 
 async addBanner(formData: FormData): Promise<ApiResponse<BannerSM>> {
-  let apiRequest = formData; // direct pass
   this.clearBannersCache();
-  return await this.BannerClient.AddBanner(apiRequest);
+  const resp = await this.BannerClient.AddBanner(formData);
+  this.clearBannersCache();
+  return resp;
 }
 async updateBanner(formData: FormData, id: number): Promise<ApiResponse<BannerSM>> {
-  let apiRequest = formData; // direct pass
   this.clearBannersCache();
-  return await this.BannerClient.UpdateBanner(apiRequest, id);
+  const resp = await this.BannerClient.UpdateBanner(formData, id);
+  this.clearBannersCache();
+  return resp;
 }
 }

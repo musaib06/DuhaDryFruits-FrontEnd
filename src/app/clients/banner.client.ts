@@ -39,10 +39,11 @@ export class BannerClient extends BaseApiClient {
     return resp;
   };
 
-  /** Full list for admin (avoids empty pagination/cache edge cases). */
+  /** Full list for admin (bypasses Redis via nocache + cache-bust). */
   GetAllBannersUnpaginated = async (): Promise<ApiResponse<BannerSM[]>> => {
+    const bust = Date.now();
     return await this.GetResponseAsync<null, BannerSM[]>(
-      `${AppConstants.ApiUrls.Banner}/getall`,
+      `${AppConstants.ApiUrls.Banner}/getall?nocache=1&_t=${bust}`,
       'GET',
       null,
       new AdditionalRequestDetails<BannerSM[]>(false, Authentication.false)
