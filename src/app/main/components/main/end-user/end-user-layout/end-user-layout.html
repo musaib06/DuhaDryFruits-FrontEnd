@@ -24,11 +24,21 @@
   </div>
   <div class="category-sheet__body">
     <button type="button" class="category-sheet__row category-sheet__row--all" (click)="goAllProducts()">
-      <i class="ri ri-grid-fill me-2"></i> Full pantry
+      <span class="category-sheet__thumb category-sheet__thumb--all" aria-hidden="true">
+        <i class="ri ri-grid-fill"></i>
+      </span>
+      <span class="category-sheet__name">Full pantry</span>
     </button>
     @for (cat of categories; track cat.id) {
       <button type="button" class="category-sheet__row" (click)="openCategory(cat)">
-        {{ cat.name }}
+        <img
+          class="category-sheet__thumb duha-protect-asset"
+          [src]="categoryIconSrc(cat)"
+          [alt]="cat.name"
+          loading="lazy"
+          draggable="false"
+          (error)="onCategoryIconError($event)" />
+        <span class="category-sheet__name">{{ cat.name }}</span>
       </button>
     }
     @if (categories.length === 0) {

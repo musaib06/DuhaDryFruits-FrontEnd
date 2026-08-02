@@ -4,9 +4,9 @@
 .mobile-category-fab {
   position: fixed;
   right: calc(#{$spacing-md} + env(safe-area-inset-right, 0px));
-  /* Sit in the lower third — center placement covered mid-page cards */
+  /* Lower third, nudged slightly up from the very bottom edge */
   top: auto;
-  bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  bottom: calc(7.25rem + env(safe-area-inset-bottom, 0px));
   transform: none;
   /* Below sticky header + cart/modals so overlays always cover the FAB */
   z-index: 1010;
@@ -111,10 +111,12 @@ body.offcanvas-open {
   }
 
   &__row {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
     width: 100%;
     text-align: left;
-    padding: $spacing-md $spacing-lg;
+    padding: 0.7rem $spacing-lg;
     border: none;
     background: transparent;
     font-size: 1rem;
@@ -131,6 +133,39 @@ body.offcanvas-open {
       font-weight: $font-weight-semibold;
       color: $color-primary-dark;
     }
+  }
+
+  &__thumb {
+    width: 2.6rem;
+    height: 2.6rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid rgba($color-primary, 0.12);
+    box-shadow: 0 2px 8px rgba($color-primary-dark, 0.08);
+
+    &--all {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, rgba($color-primary, 0.1), rgba($color-gold, 0.16));
+      color: $color-primary-dark;
+
+      i {
+        font-size: 1.15rem;
+      }
+    }
+  }
+
+  &__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-weight: 600;
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

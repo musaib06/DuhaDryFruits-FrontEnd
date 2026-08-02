@@ -5,6 +5,7 @@ import { Header } from '../../../internal/End-user/header/header';
 import { Footer } from '../../../internal/End-user/footer/footer';
 import { CategoryService } from '../../../../../services/category.service';
 import { CategorySM } from '../../../../../models/service-models/app/v1/categories-s-m';
+import { resolveCategoryIcon } from '../../../../../utils/image-url.util';
 import { closestProtectedAssetImage } from './asset-protection';
 
 @Component({
@@ -95,6 +96,17 @@ export class EndUserLayout implements OnInit, OnDestroy {
 
   closeCategorySheet(): void {
     this.categorySheetOpen = false;
+  }
+
+  categoryIconSrc(cat: CategorySM): string {
+    return resolveCategoryIcon(cat);
+  }
+
+  onCategoryIconError(event: Event): void {
+    const img = event.target as HTMLImageElement | null;
+    if (img && !img.src.endsWith('/assets/logo.png')) {
+      img.src = 'assets/logo.png';
+    }
   }
 
   openCategory(cat: CategorySM): void {
