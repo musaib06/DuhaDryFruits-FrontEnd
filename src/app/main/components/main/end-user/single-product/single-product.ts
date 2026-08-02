@@ -26,6 +26,7 @@ import { ReviewService } from '../../../../../services/review.service';
 import { ProductUtils } from '../../../../../utils/product.utils';
 import { extractProductIdFromSlug, generateProductSlug } from '../../../../../utils/slug.utils';
 import { resolveImageUrl, productShareImageUrl, normalizeProductListImageUrl } from '../../../../../utils/image-url.util';
+import { htmlToPlainText, truncatePlainText } from '../../../../../utils/html-to-plain-text.util';
 
 @Component({
   selector: 'app-product-page',
@@ -188,35 +189,34 @@ export class SingleProduct
     const productSlug = generateProductSlug(product.name || '', product.id);
     const productUrl = `https://duhadryfruits.com/dry-fruits/${productSlug}`;
 
-    // Build rich description with all variant rates — strip HTML tags from Quill content
-    const rawDesc = product.subtitle || product.description || 'Premium dry fruits and nuts from Duha Dryfruits';
-    let richDescription = rawDesc.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    // Build OG description from plain text (Quill HTML must never reach social crawlers)
+    const rawDesc =
+      product.subtitle ||
+      product.description ||
+      'Premium dry fruits and nuts from Duha Dryfruits';
+    let richDescription = htmlToPlainText(rawDesc, this.document);
 
-    // Add variant pricing information
     if (product.variants && product.variants.length > 0) {
-      const activeVariants = product.variants.filter(v => v.isActive !== false);
+      const activeVariants = product.variants.filter((v) => v.isActive !== false);
       if (activeVariants.length > 0) {
-        richDescription += '\n\n💰 Prices:\n';
-        activeVariants.forEach(variant => {
+        const priceBits = activeVariants.map((variant) => {
           const sizeText = ProductUtils.getDisplayUnit(variant);
-          const priceText = variant.comparePrice && variant.comparePrice > variant.price
-            ? `₹${variant.price} (was ₹${variant.comparePrice})`
-            : `₹${variant.price}`;
-          richDescription += `• ${sizeText}: ${priceText}\n`;
+          return `${sizeText}: ₹${variant.price}`;
         });
+        richDescription = truncatePlainText(
+          `${richDescription}${richDescription ? ' — ' : ''}${priceBits.join(' · ')}`,
+          300,
+        );
+      } else {
+        richDescription = truncatePlainText(richDescription, 300);
       }
     } else if (product.price) {
-      richDescription += `\n\n💰 Price: ₹${product.price}`;
-    }
-
-    // Add HSN code if available (specification)
-    if (product.hsnCode) {
-      richDescription += `\n📦 HSN: ${product.hsnCode}`;
-    }
-
-    // Truncate if too long (WhatsApp has limits)
-    if (richDescription.length > 300) {
-      richDescription = richDescription.substring(0, 297) + '...';
+      richDescription = truncatePlainText(
+        `${richDescription}${richDescription ? ' — ' : ''}Price: ₹${product.price}`,
+        300,
+      );
+    } else {
+      richDescription = truncatePlainText(richDescription, 300);
     }
 
     // Get selected/default variant price for main price tag
@@ -299,11 +299,7 @@ export class SingleProduct
 
   /** Strip HTML tags so JSON-LD answer text is plain text (schema.org requirement). */
   private toPlainText(html: string): string {
-    return (html || '')
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+    return htmlToPlainText(html, this.document);
   }
 
   /**
@@ -825,43 +821,46 @@ export class SingleProduct
   }
 
   /**
-   * Share product with variant info
+   * Share product with variant info (plain text — never raw Quill HTML).
    */
   shareProduct(): void {
     if (!this.isBrowser || !this.viewModel.product) {
       return;
     }
 
-    const productSlug = generateProductSlug(this.viewModel.product.name, this.viewModel.product.id);
-    let shareUrl =
-      window.location.origin + `/dry-fruits/${productSlug}`;
-    if (this.viewModel.product.selectedVariantId) {
-      shareUrl += `?variant=${this.viewModel.product.selectedVariantId}`;
+    const product = this.viewModel.product;
+    const productSlug = generateProductSlug(product.name, product.id);
+    let shareUrl = `${window.location.origin}/dry-fruits/${productSlug}`;
+    if (product.selectedVariantId) {
+      shareUrl += `?variant=${product.selectedVariantId}`;
     }
 
-    const variant = ProductUtils.getSelectedVariant(this.viewModel.product);
-    const variantInfo = variant
-      ? ` - ${ProductUtils.getVariantPrimarySizeLabel(variant)} - ${this.viewModel.product.currency}${ProductUtils.getPrice(this.viewModel.product)}`
-      : '';
+    const variant = ProductUtils.getSelectedVariant(product);
+    const currency = product.currency || 'INR';
+    const headline = variant
+      ? `${product.name} - ${ProductUtils.getVariantPrimarySizeLabel(variant)} - ${currency}${ProductUtils.getPrice(product)}`
+      : `${product.name}`;
 
+    const plainDesc = truncatePlainText(
+      htmlToPlainText(product.description || product.subtitle || '', this.document),
+      220,
+    );
+
+    const shareText = plainDesc ? `${headline}\n\n${plainDesc}` : headline;
     const shareData = {
-      title: this.viewModel.product.name,
-      text: `${this.viewModel.product.name}${variantInfo} — ${
-        this.viewModel.product.description ?? ''
-      }`,
+      title: product.name || 'Duha Dryfruits',
+      text: shareText,
       url: shareUrl,
     };
 
-    if ((navigator as any).share) {
-      (navigator as any).share(shareData).catch(() => {
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      navigator.share(shareData).catch(() => {
         this._commonService.ShowToastAtTopEnd('Error sharing', 'error');
       });
     } else {
-      navigator.clipboard?.writeText(shareUrl);
-      this._commonService.ShowToastAtTopEnd(
-        'Link copied to clipboard',
-        'success'
-      );
+      const clipboardText = `${shareText}\n${shareUrl}`;
+      navigator.clipboard?.writeText(clipboardText);
+      this._commonService.ShowToastAtTopEnd('Link copied to clipboard', 'success');
     }
   }
 
