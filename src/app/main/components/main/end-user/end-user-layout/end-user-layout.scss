@@ -1,12 +1,15 @@
 @use "../../../../../../variable" as *;
 
-/* Mobile category menu — labelled pill on the right edge (thumb-friendly one-handed) */
+/* Mobile category menu — lower on screen so product cards stay visible */
 .mobile-category-fab {
   position: fixed;
   right: calc(#{$spacing-md} + env(safe-area-inset-right, 0px));
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1040;
+  /* Sit in the lower third — center placement covered mid-page cards */
+  top: auto;
+  bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  transform: none;
+  /* Below sticky header + cart/modals so overlays always cover the FAB */
+  z-index: 1010;
   height: 46px;
   padding: 0 18px;
   border: 1px solid rgba($color-gold, 0.4);
@@ -19,7 +22,7 @@
   box-shadow: 0 8px 24px rgba($color-primary-dark, 0.35);
   font-size: 1.1rem;
   cursor: pointer;
-  transition: transform $transition-base, box-shadow $transition-base;
+  transition: transform $transition-base, box-shadow $transition-base, opacity $transition-fast, visibility $transition-fast;
 
   &__label {
     font-family: $font-family-primary;
@@ -33,19 +36,34 @@
     color: $color-gold-light;
   }
 
-  &--open i {
-    color: $color-cream;
+  &--open {
+    z-index: 1060;
+
+    i {
+      color: $color-cream;
+    }
   }
 
   &:active {
-    transform: translateY(-50%) scale(0.96);
+    transform: scale(0.96);
+  }
+}
+
+/* Hide floating menu whenever cart / Bootstrap modal / offcanvas is open */
+body.duha-overlay-open,
+body.modal-open,
+body.offcanvas-open {
+  .mobile-category-fab:not(.mobile-category-fab--open) {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 }
 
 .category-sheet-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 1030;
+  z-index: 1055;
   background: rgba(0, 0, 0, 0.45);
   border: none;
   padding: 0;
@@ -57,7 +75,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1035;
+  z-index: 1058;
   max-height: 72vh;
   background: $color-bg-primary;
   border-radius: $border-radius-lg $border-radius-lg 0 0;
@@ -122,7 +140,10 @@ app-header {
   z-index: $z-index-fixed;
   background: #fff;
   display: block;
-  /* Keep marquee + navbar as one sticky unit so the menu does not jump down on scroll */
-  isolation: isolate;
   box-shadow: 0 1px 0 $color-border-light;
+
+  /* Cart overlay lives inside header — raise whole header above FAB/page while open */
+  &.header--overlay-open {
+    z-index: 1100;
+  }
 }

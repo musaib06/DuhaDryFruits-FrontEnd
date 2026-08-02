@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostBinding,
   HostListener,
   Inject,
   OnDestroy,
@@ -59,6 +60,12 @@ export class Header
 
   /** Angular-controlled cart bag (avoids Bootstrap modal backdrop lock) */
   isCartOpen = false;
+
+  /** Raise sticky header stacking so cart sits above floating menu / page chrome */
+  @HostBinding('class.header--overlay-open')
+  get headerOverlayOpen(): boolean {
+    return this.isCartOpen;
+  }
 
   /** All products (id + name) for Shop dropdown — from product names API */
   shopDropdownProducts: ProductNameIdSM[] = [];
@@ -297,6 +304,9 @@ onDesktopMenuClick(event: MouseEvent): void {
     this.searchSub?.unsubscribe();
     this.routerSub?.unsubscribe();
     this.closeCartBag();
+    if (this.isBrowser) {
+      document.body.classList.remove('duha-overlay-open');
+    }
   }
 
   openCartBag(event?: Event): void {
@@ -307,6 +317,7 @@ onDesktopMenuClick(event: MouseEvent): void {
     this.isCartOpen = true;
     if (this.isBrowser) {
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('duha-overlay-open');
     }
     this.cdr.detectChanges();
   }
@@ -319,6 +330,7 @@ onDesktopMenuClick(event: MouseEvent): void {
     this.isCartOpen = false;
     if (this.isBrowser) {
       document.body.style.removeProperty('overflow');
+      document.body.classList.remove('duha-overlay-open');
       this._commonService.stripBootstrapModalArtifacts();
     }
     this.cdr.markForCheck();

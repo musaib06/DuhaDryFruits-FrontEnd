@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Private / non-indexable end-user areas
+Disallow: /shopping-cart
+Disallow: /checkout
+Disallow: /saved-items
+Disallow: /order-history
+Disallow: /payment/
+Disallow: /my-wholesale-requests
+Disallow: /auth/
+Disallow: /admin/
+
+Sitemap: https://www.duhadryfruits.com/sitemap.xml
