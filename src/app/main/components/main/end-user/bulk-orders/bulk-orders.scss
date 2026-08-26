@@ -314,7 +314,7 @@
 .cart-panel {
   position: fixed;
   inset: 0;
-  z-index: 1050;
+  z-index: 1200;
   background: rgba(0, 0, 0, 0.45);
   display: flex;
   justify-content: flex-end;
@@ -371,28 +371,40 @@
   }
 }
 
-.modal-backdrop {
+/* Do not use Bootstrap's .modal-backdrop — global z-index 1140 sat on top of inputs. */
+.bulk-modal-overlay {
   position: fixed;
   inset: 0;
+  z-index: 1200;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 1060;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  overscroll-behavior: contain;
+
+  @media (min-width: 768px) {
+    align-items: center;
+    padding: 1rem;
+  }
 }
 
 .custom-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   background: #fff;
   padding: 1.5rem;
-  border-radius: $border-radius-lg;
-  z-index: 1070;
-  width: 90%;
+  border-radius: $border-radius-lg $border-radius-lg 0 0;
+  width: 100%;
   max-width: 520px;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
-  max-height: 90vh;
+  max-height: min(88vh, 100dvh);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
   border: 1px solid $color-border-light;
+
+  @media (min-width: 768px) {
+    border-radius: $border-radius-lg;
+  }
 
   h3 {
     color: $color-primary;

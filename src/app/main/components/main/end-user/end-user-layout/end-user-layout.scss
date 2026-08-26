@@ -49,10 +49,11 @@
   }
 }
 
-/* Hide floating menu whenever cart / Bootstrap modal / offcanvas is open */
+/* Hide floating menu whenever cart / Bootstrap modal / offcanvas / bulk overlay is open */
 body.duha-overlay-open,
 body.modal-open,
-body.offcanvas-open {
+body.offcanvas-open,
+body.bulk-page-active {
   .mobile-category-fab:not(.mobile-category-fab--open) {
     opacity: 0;
     visibility: hidden;

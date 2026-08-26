@@ -130,7 +130,7 @@
 
   <!-- Bulk Cart Panel -->
   @if (viewModel.showCartPanel) {
-    <div class="cart-panel" (click)="viewModel.showCartPanel = false">
+    <div class="cart-panel" (click)="closeCartIfBackdrop($event)">
       <div class="cart-panel-inner" (click)="$event.stopPropagation()">
         <div class="cart-header">
           <h3>Bulk Request List</h3>
@@ -178,11 +178,11 @@
     </div>
   }
 
-  <!-- Custom Product Modal -->
+  <!-- Custom Product Modal (dialog nested in overlay so input taps never close it) -->
   @if (viewModel.showCustomForm) {
-    <div class="modal-backdrop" (click)="viewModel.showCustomForm = false"></div>
-    <div class="custom-modal">
-      <h3>Custom Product Request</h3>
+    <div class="bulk-modal-overlay" (click)="closeCustomIfBackdrop($event)">
+    <div class="custom-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="customProductTitle">
+      <h3 id="customProductTitle">Custom Product Request</h3>
       <div class="mb-2">
         <input class="form-control" placeholder="Product Name *" [(ngModel)]="viewModel.customProduct.productName" />
       </div>
@@ -210,6 +210,7 @@
         <button type="button" class="btn btn-gold" (click)="addCustomProduct()">Add Request</button>
         <button type="button" class="btn btn-outline-secondary" (click)="viewModel.showCustomForm = false">Cancel</button>
       </div>
+    </div>
     </div>
   }
 

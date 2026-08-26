@@ -80,6 +80,9 @@ export class BulkOrders extends BaseComponent<BulkOrdersViewModel> implements On
   }
 
   ngOnInit(): void {
+    if (typeof document !== 'undefined') {
+      document.body.classList.add('bulk-page-active');
+    }
     this.loadCategories();
     this.loadProducts();
     this.subs.add(
@@ -98,6 +101,21 @@ export class BulkOrders extends BaseComponent<BulkOrdersViewModel> implements On
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+    if (typeof document !== 'undefined') {
+      document.body.classList.remove('bulk-page-active');
+    }
+  }
+
+  closeCustomIfBackdrop(event: Event): void {
+    if (event.target === event.currentTarget) {
+      this.viewModel.showCustomForm = false;
+    }
+  }
+
+  closeCartIfBackdrop(event: Event): void {
+    if (event.target === event.currentTarget) {
+      this.viewModel.showCartPanel = false;
+    }
   }
 
   onSearchChange(): void {
