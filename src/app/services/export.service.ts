@@ -248,7 +248,7 @@ export class ExportService {
     doc.setTextColor(80);
     doc.text(`Partner: ${partner.partnerName || '-'}`, 14, 34);
     doc.text(`Email: ${partner.email || '-'}  Phone: ${partner.phone || '-'}`, 14, 40);
-    doc.text(`Current share: ${cards.currentPercent ?? partner.sharePercent || '-'}%`, 14, 46);
+    doc.text(`Current share: ${(cards.currentPercent ?? partner.sharePercent) || '-'}%`, 14, 46);
     doc.text(`Generated: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`, 14, 46 + 6);
     autoTable(doc, {
       startY: 58,
