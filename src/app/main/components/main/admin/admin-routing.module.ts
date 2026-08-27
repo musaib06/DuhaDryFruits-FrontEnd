@@ -53,6 +53,11 @@ const routes: Routes = [
         path: 'bulk-orders',
         loadChildren: () => import('../../../../admin/bulk-orders-dashboard/bulk-orders-dashboard.module')
           .then(m => m.BulkOrdersDashboardModule)
+      },
+      {
+        path: 'partner-revenue',
+        loadChildren: () => import('../../../../admin/partner-revenue-dashboard/partner-revenue-dashboard.module')
+          .then(m => m.PartnerRevenueDashboardModule)
       }
     ]
   }

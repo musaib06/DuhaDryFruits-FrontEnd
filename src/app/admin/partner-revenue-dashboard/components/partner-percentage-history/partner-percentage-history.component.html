@@ -1,0 +1,39 @@
+<div class="pr-page">
+  <div class="page-header">
+    <h2>Percentage History</h2>
+    <div>
+      <button class="btn btn-sm btn-outline-primary me-1" (click)="export('pdf')">PDF</button>
+      <button class="btn btn-sm btn-outline-success" (click)="export('excel')">Excel</button>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <div>
+      <label class="form-label">Partner</label>
+      <select class="form-select form-select-sm" [(ngModel)]="partnerId" (change)="load()">
+        <option [ngValue]="''">All partners</option>
+        @for (p of partners; track p.id) { <option [ngValue]="p.id">{{ p.partnerName }}</option> }
+      </select>
+    </div>
+  </div>
+  @if (error) { <div class="alert alert-danger">{{ error }}</div> }
+  @if (isLoading) { <div class="text-center py-4"><div class="spinner-border"></div></div> }
+  @else {
+    <div class="table-responsive panel">
+      <table class="table mb-0">
+        <thead><tr><th>Partner</th><th>Old %</th><th>New %</th><th>Effective From</th><th>Reason</th><th>Changed At</th></tr></thead>
+        <tbody>
+          @for (r of rows; track r.id) {
+            <tr>
+              <td>{{ r.partner?.partnerName || '—' }}</td>
+              <td>{{ r.oldPercent == null ? '—' : r.oldPercent }}</td>
+              <td>{{ r.newPercent }}%</td>
+              <td>{{ r.effectiveFrom }}</td>
+              <td>{{ r.reason || '—' }}</td>
+              <td>{{ r.changedAt | date:'short' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

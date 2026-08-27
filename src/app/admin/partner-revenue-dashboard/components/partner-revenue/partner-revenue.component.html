@@ -1,0 +1,111 @@
+<div class="pr-page">
+  <div class="page-header">
+    <h2>Revenue</h2>
+    <div class="btn-group btn-group-sm">
+      <button class="btn" [class.btn-primary]="tab === 'daily'" [class.btn-outline-primary]="tab !== 'daily'" (click)="tab = 'daily'; load()">Daily</button>
+      <button class="btn" [class.btn-primary]="tab === 'monthly'" [class.btn-outline-primary]="tab !== 'monthly'" (click)="tab = 'monthly'; load()">Monthly</button>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <div><label class="form-label">Partner</label>
+      <select class="form-select form-select-sm" [(ngModel)]="partnerId" (change)="load()">
+        @for (p of partners; track p.id) { <option [ngValue]="p.id">{{ p.partnerName }}</option> }
+      </select>
+    </div>
+    @if (tab === 'daily') {
+      <div><label class="form-label">Period</label>
+        <select class="form-select form-select-sm" [(ngModel)]="dateFilter" (change)="load()">
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="week">This week</option>
+          <option value="month">This month</option>
+          <option value="previousMonth">Previous month</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      @if (dateFilter === 'custom') {
+        <div><label class="form-label">From</label><input type="date" class="form-control form-control-sm" [(ngModel)]="startDate" (change)="load()"></div>
+        <div><label class="form-label">To</label><input type="date" class="form-control form-control-sm" [(ngModel)]="endDate" (change)="load()"></div>
+      }
+    } @else {
+      <div><label class="form-label">Year</label><input type="number" class="form-control form-control-sm" [(ngModel)]="year" (change)="load()"></div>
+      <div><label class="form-label">Status</label>
+        <select class="form-select form-select-sm" [(ngModel)]="status" (change)="load()">
+          <option value="">All</option>
+          <option>Pending</option>
+          <option>Partially Paid</option>
+          <option>Paid</option>
+        </select>
+      </div>
+    }
+  </div>
+  @if (error) { <div class="alert alert-danger">{{ error }}</div> }
+  @if (isLoading) { <div class="text-center py-4"><div class="spinner-border"></div></div> }
+  @else if (tab === 'daily') {
+    <div class="kpi-grid">
+      <div class="kpi-card"><span class="kpi-val">{{ api.formatInr(totals.revenue) }}</span><span class="kpi-label">Revenue</span></div>
+      <div class="kpi-card"><span class="kpi-val">{{ api.formatInr(totals.partnerShare) }}</span><span class="kpi-label">Partner share</span></div>
+      <div class="kpi-card"><span class="kpi-val">{{ api.formatInr(totals.paid) }}</span><span class="kpi-label">Paid</span></div>
+    </div>
+    <div class="table-responsive panel">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>Date</th><th>Revenue</th><th>Orders</th><th>%</th><th>Partner share</th><th>Paid that day</th><th>Outstanding</th></tr></thead>
+        <tbody>
+          @for (r of daily; track r.date) {
+            <tr class="clickable" (click)="openDay(r.date)">
+              <td>{{ r.date }}</td>
+              <td>{{ api.formatInr(r.revenue) }}</td>
+              <td>{{ r.orderCount }}</td>
+              <td>{{ r.percent }}%</td>
+              <td>{{ api.formatInr(r.partnerShare) }}</td>
+              <td>{{ api.formatInr(r.paymentsMade) }}</td>
+              <td>{{ api.formatInr(r.outstanding) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="table-responsive panel">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>Month</th><th>Revenue</th><th>%</th><th>Partner share</th><th>Paid</th><th>Outstanding</th><th>Status</th></tr></thead>
+        <tbody>
+          @for (m of monthly; track m.month) {
+            <tr class="clickable" (click)="openMonth(m.month)">
+              <td>{{ m.month }}</td>
+              <td>{{ api.formatInr(m.revenue) }}</td>
+              <td>{{ m.percentLabel }}</td>
+              <td>{{ api.formatInr(m.partnerShare) }}</td>
+              <td>{{ api.formatInr(m.paid) }}</td>
+              <td>{{ api.formatInr(m.outstanding) }}</td>
+              <td><span class="badge" [ngClass]="statusClass(m.status)">{{ m.status }}</span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (drilldown) {
+  <div class="pr-modal-backdrop" (click)="drilldown = null">
+    <div class="pr-modal" (click)="$event.stopPropagation()">
+      <h4>How this figure was calculated</h4>
+      <p class="small text-muted mb-2">{{ drilldown.type === 'day' ? drilldown.date : drilldown.month }}</p>
+      <ul class="small">
+        <li>Eligible revenue: {{ api.formatInr(drilldown.eligibleRevenue || drilldown.revenue) }}</li>
+        <li>Orders: {{ drilldown.orderCount }}</li>
+        <li>Applicable %: {{ drilldown.percentLabel || (drilldown.percent + '%') }}</li>
+        <li>Partner share: {{ api.formatInr(drilldown.partnerShare) }}</li>
+        @if (drilldown.paid != null) { <li>Already paid: {{ api.formatInr(drilldown.paid) }}</li> }
+        @if (drilldown.outstanding != null) { <li>Outstanding: {{ api.formatInr(drilldown.outstanding) }}</li> }
+        @if (drilldown.refunds) { <li>Payment refunds recorded: {{ api.formatInr(drilldown.refunds) }} (order paid amount is the source of eligible revenue)</li> }
+      </ul>
+      @if (drilldown.paymentMethods?.length) {
+        <h6>By payment method</h6>
+        <ul class="small">@for (m of drilldown.paymentMethods; track m.method) { <li>{{ m.method }}: {{ api.formatInr(m.amount) }}</li> }</ul>
+      }
+      <button class="btn btn-sm btn-outline-secondary" (click)="drilldown = null">Close</button>
+    </div>
+  </div>
+}

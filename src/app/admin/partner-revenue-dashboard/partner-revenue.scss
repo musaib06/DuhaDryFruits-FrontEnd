@@ -1,0 +1,68 @@
+@use "../../../../variable" as *;
+
+.pr-page {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    h2 { margin: 0; color: $color-primary; font-family: $font-family-heading; font-size: 1.45rem; }
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    align-items: end;
+    .form-label { font-size: 0.75rem; color: $color-text-muted; margin-bottom: 0.2rem; }
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .kpi-card {
+    background: #fff;
+    border: 1px solid $color-border-light;
+    border-radius: $border-radius-lg;
+    padding: 1rem;
+    text-align: center;
+    &.warn { border-left: 3px solid $color-gold; }
+    &.success { border-left: 3px solid $color-success; }
+    .kpi-val { display: block; font-size: 1.25rem; font-weight: 700; color: $color-primary; }
+    .kpi-label { font-size: 0.72rem; color: $color-text-muted; text-transform: uppercase; letter-spacing: 0.05em; }
+  }
+
+  .panel {
+    background: #fff;
+    border: 1px solid $color-border-light;
+    border-radius: $border-radius-lg;
+    padding: 1rem 1.15rem;
+    margin-bottom: 1rem;
+    h5 { color: $color-primary; font-family: $font-family-heading; font-size: 1rem; margin-bottom: 0.75rem; }
+  }
+
+  .chart-wrap { height: 260px; position: relative; }
+
+  .table thead th { white-space: nowrap; font-size: 0.82rem; }
+  .badge-paid { background: $color-success; }
+  .badge-partial { background: $color-gold; color: #1a1a1a; }
+  .badge-pending { background: #6c757d; }
+  .clickable { cursor: pointer; }
+  .clickable:hover { background: #f6f3ea; }
+}
+
+.pr-modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1050;
+  display: flex; align-items: flex-start; justify-content: center; padding: 4vh 1rem; overflow: auto;
+}
+.pr-modal {
+  background: #fff; border-radius: 12px; width: 100%; max-width: 640px; padding: 1.25rem;
+  h4 { color: $color-primary; font-family: $font-family-heading; }
+}

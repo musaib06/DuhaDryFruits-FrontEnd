@@ -236,6 +236,57 @@ export class ExportService {
     XLSX.writeFile(workbook, `${filename}_${new Date().getTime()}.xlsx`);
   }
 
+  exportPartnerStatementPDF(statement: any, filename = 'partner_statement'): void {
+    const doc = new jsPDF();
+    const partner = statement.partner || {};
+    const cards = statement.cards || {};
+    doc.setFontSize(16);
+    doc.text('Duha Dryfruits', 14, 18);
+    doc.setFontSize(12);
+    doc.text('Partner Revenue Statement', 14, 26);
+    doc.setFontSize(10);
+    doc.setTextColor(80);
+    doc.text(`Partner: ${partner.partnerName || '-'}`, 14, 34);
+    doc.text(`Email: ${partner.email || '-'}  Phone: ${partner.phone || '-'}`, 14, 40);
+    doc.text(`Current share: ${cards.currentPercent ?? partner.sharePercent || '-'}%`, 14, 46);
+    doc.text(`Generated: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`, 14, 46 + 6);
+    autoTable(doc, {
+      startY: 58,
+      head: [['Metric', 'Amount']],
+      body: [
+        ["Today's revenue", String(cards.todayRevenue ?? 0)],
+        ["Today's partner share", String(cards.todayShare ?? 0)],
+        ['This month revenue', String(cards.monthRevenue ?? 0)],
+        ['This month share', String(cards.monthShare ?? 0)],
+        ['Total paid', String(cards.totalPaid ?? 0)],
+        ['Outstanding', String(cards.outstanding ?? 0)],
+      ],
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [58, 79, 46] },
+    });
+    const monthly = statement.monthly || [];
+    if (monthly.length) {
+      autoTable(doc, {
+        startY: (doc as any).lastAutoTable.finalY + 10,
+        head: [['Month', 'Revenue', '%', 'Share', 'Paid', 'Outstanding', 'Status']],
+        body: monthly.map((m: any) => [m.month, m.revenue, m.percentLabel || m.percent, m.partnerShare, m.paid, m.outstanding, m.status]),
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [58, 79, 46] },
+      });
+    }
+    const settlements = statement.settlements || [];
+    if (settlements.length) {
+      autoTable(doc, {
+        startY: (doc as any).lastAutoTable.finalY + 10,
+        head: [['Date', 'Period', 'Amount', 'Method', 'Txn ID']],
+        body: settlements.map((s: any) => [s.paymentDate, s.periodMonth, s.amountPaid, s.paymentMethod, s.transactionId || '']),
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [58, 79, 46] },
+      });
+    }
+    doc.save(`${filename}_${Date.now()}.pdf`);
+  }
+
   /**
    * Helper to get nested object values
    */

@@ -24,6 +24,8 @@ import { SSR_TRANSFER_KEYS } from '../../../../../services/ssr-transfer.keys';
 import { Testimonial } from '../../../internal/End-user/testimonial/testimonial';
 import { Videos } from '../videos/videos';
 import { AppConstants } from '../../../../../../app-constants';
+import { StorefrontContentService } from '../../../../../services/storefront-content.service';
+import { HOME_SEO_DESCRIPTION, HOME_SEO_KEYWORDS, HOME_SEO_TITLE } from '../../../../../constants/seo-copy';
 
 interface HomePageTransfer {
   banners: unknown[];
@@ -48,6 +50,10 @@ interface HomePageTransfer {
   styleUrl: './home.scss',
 })
 export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDestroy {
+  showGiftHampers = false;
+  showMediaSection = false;
+  showJournalSection = false;
+
   showReviewModal = false;
   selectedProductForReview: ProductSM | null = null;
   reviewRating = 0;
@@ -78,6 +84,7 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
     private ngZone: NgZone,
     private meta: Meta,
     private title: Title,
+    private storefrontContent: StorefrontContentService,
   ) {
     super(commonService, logHandlerService);
     this.viewModel = new HomeViewModel();
@@ -109,6 +116,15 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
       completePendingTask();
     }
     this.tabResumeTeardown = this.tabResume.subscribe(() => void this.refreshHomeAfterTabVisible());
+    void this.loadStorefrontSections();
+  }
+
+  private async loadStorefrontSections(): Promise<void> {
+    await this.storefrontContent.ensureLoaded();
+    this.showGiftHampers = this.storefrontContent.showGiftHampers;
+    this.showMediaSection = this.storefrontContent.showMedia;
+    this.showJournalSection = this.storefrontContent.showJournal;
+    this.cdr.detectChanges();
   }
 
   /** Stagger browser fetches so banners/images win the network queue first. */
@@ -163,12 +179,9 @@ export class Home extends BaseComponent<HomeViewModel> implements OnInit, OnDest
    * Update meta tags for homepage social sharing
    */
   private updateHomeMetaTags(): void {
-    const title =
-      'Duha Dryfruits | Buy Kashmir Dry Fruits, Saffron & Shilajit Online — Pampore, Srinagar';
-    const description =
-      'Duha Dryfruits — authentic Kashmir dry fruits, Pampore saffron, almonds, walnuts, pistachios, dates, figs, raisins and shilajit from our farms in Gundbal, Pampore near Srinagar & Lethpora. Buy premium farm-fresh dry fruits online across India.';
-    const keywords =
-      'Duha Dryfruits, buy dry fruits online, Kashmir dry fruits, Pampore saffron, Srinagar dry fruits, Lethpora, Gundbal Pampore, almonds, walnuts, pistachios, shilajit, Kashmir shilajit, dates, figs, raisins, wholesale dry fruits';
+    const title = HOME_SEO_TITLE;
+    const description = HOME_SEO_DESCRIPTION;
+    const keywords = HOME_SEO_KEYWORDS;
     const image = 'https://www.duhadryfruits.com/assets/duha-dryfruits-hero.png';
     const url = 'https://www.duhadryfruits.com';
 

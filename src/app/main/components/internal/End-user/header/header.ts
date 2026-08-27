@@ -33,6 +33,7 @@ import { VideoService } from '../../../../../services/video.service';
 import { VideoSM } from '../../../../../models/service-models/app/v1/website-resource/video-s-m';
 import { BlogService } from '../../../../../services/blog.service';
 import { QueryFilter } from '../../../../../models/service-models/foundation/api-contracts/query-filter';
+import { StorefrontContentService, GiftHamperNav } from '../../../../../services/storefront-content.service';
 
 @Component({
   selector: 'app-header',
@@ -74,8 +75,10 @@ export class Header
   healthConcernNavVideos: VideoSM[] = [];
   isOpenOffCanvasHealth = false;
 
-  /** Show Blog link when at least one published post exists */
+  /** Show Blog / Wellness / Gift Hampers only when storefront has content */
   showBlogNav = false;
+  showWellnessNav = false;
+  giftHamperNav: GiftHamperNav | null = null;
 
   // Expose utils to template
   utils = ProductUtils;
@@ -99,6 +102,7 @@ export class Header
     private router: Router,
     private videoService: VideoService,
     private blogService: BlogService,
+    private storefrontContent: StorefrontContentService,
     @Inject(PLATFORM_ID) platformId: object,
   ) {
     super(commonService, logHandlerService);
@@ -157,29 +161,33 @@ export class Header
   }
 
   async loadHealthConcernNavVideos(): Promise<void> {
+    await this.loadStorefrontNavContent();
+  }
+
+  private async loadStorefrontNavContent(): Promise<void> {
     try {
-      const resp = await this.videoService.getStorefrontVideos(1, 100);
-      if (!resp.isError && resp.successData?.length) {
-        this.healthConcernNavVideos = [...resp.successData].sort(
-          (a, b) => (Number(b.id) || 0) - (Number(a.id) || 0)
-        );
-      } else {
-        this.healthConcernNavVideos = [];
-      }
+      await this.storefrontContent.ensureLoaded();
+      this.showBlogNav = this.storefrontContent.showJournal;
+      this.showWellnessNav = this.storefrontContent.showMedia;
+      this.giftHamperNav = this.storefrontContent.giftHamper;
+      this.healthConcernNavVideos = [...this.storefrontContent.videos].sort(
+        (a, b) => (Number(b.id) || 0) - (Number(a.id) || 0),
+      );
     } catch {
+      this.showBlogNav = false;
+      this.showWellnessNav = false;
+      this.giftHamperNav = null;
       this.healthConcernNavVideos = [];
     }
     this.cdr.markForCheck();
   }
 
+  isHiddenGiftHamperCategory(category: { name?: string } | null | undefined): boolean {
+    return StorefrontContentService.isGiftHamperCategory(category) && !this.giftHamperNav;
+  }
+
   private async refreshBlogNavVisibility(): Promise<void> {
-    try {
-      const n = await this.blogService.getPublicBlogCount();
-      this.showBlogNav = n > 0;
-    } catch {
-      this.showBlogNav = false;
-    }
-    this.cdr.markForCheck();
+    await this.loadStorefrontNavContent();
   }
 
   private sortCategoriesBySequence(categories: any[]): any[] {
@@ -273,8 +281,7 @@ onDesktopMenuClick(event: MouseEvent): void {
   private scheduleSecondaryNavLoads(): void {
     const run = () => {
       void this.loadShopDropdownProducts();
-      void this.loadHealthConcernNavVideos();
-      void this.refreshBlogNavVisibility();
+      void this.loadStorefrontNavContent();
     };
     const w = window as Window & {
       requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;

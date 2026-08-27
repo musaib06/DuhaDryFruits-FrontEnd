@@ -35,7 +35,15 @@
           <ul class="list-unstyled footer-links mb-0">
             <li><a routerLink="/" class="footer-link">Home</a></li>
             <li><a routerLink="/buy-dry-fruits" class="footer-link">Shop</a></li>
+            @if (showGiftHampers) {
+            <li><a routerLink="/buy-dry-fruits" class="footer-link">Gift Hampers</a></li>
+            }
+            @if (showWellness) {
             <li><a routerLink="/dry-fruits-for-health" class="footer-link">Health Concerns</a></li>
+            }
+            @if (showJournal) {
+            <li><a routerLink="/journal" class="footer-link">Journal</a></li>
+            }
             <li><a routerLink="/about-duha" class="footer-link">Our Story</a></li>
           </ul>
         </div>

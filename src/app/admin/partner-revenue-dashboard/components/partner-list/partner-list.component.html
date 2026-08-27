@@ -1,0 +1,75 @@
+<div class="pr-page">
+  <div class="page-header">
+    <h2>Partners</h2>
+    <button type="button" class="btn btn-sm btn-primary" (click)="openCreate()">Add Partner</button>
+  </div>
+  @if (error) { <div class="alert alert-danger">{{ error }}</div> }
+  @if (success) { <div class="alert alert-success">{{ success }}</div> }
+  @if (isLoading) { <div class="text-center py-4"><div class="spinner-border"></div></div> }
+  @else {
+    <div class="table-responsive panel">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>%</th><th>Effective From</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          @for (p of partners; track p.id) {
+            <tr>
+              <td>{{ p.partnerName }}</td>
+              <td>{{ p.email || '—' }}</td>
+              <td>{{ p.phone || '—' }}</td>
+              <td>{{ p.sharePercent }}%</td>
+              <td>{{ p.effectiveFrom }}</td>
+              <td><span class="badge" [class.bg-success]="p.status === 'Active'" [class.bg-secondary]="p.status !== 'Active'">{{ p.status }}</span></td>
+              <td class="text-nowrap">
+                <button class="btn btn-sm btn-outline-primary me-1" (click)="openEdit(p)">Edit</button>
+                <button class="btn btn-sm btn-outline-secondary me-1" (click)="openPercent(p)">Change %</button>
+                <button class="btn btn-sm btn-outline-warning" (click)="toggleStatus(p)">{{ p.status === 'Active' ? 'Deactivate' : 'Activate' }}</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (showForm) {
+  <div class="pr-modal-backdrop" (click)="showForm = false">
+    <div class="pr-modal" (click)="$event.stopPropagation()">
+      <h4>{{ editing ? 'Edit Partner' : 'Add Partner' }}</h4>
+      <div class="row g-2">
+        <div class="col-md-6"><label class="form-label">Name</label><input class="form-control" [(ngModel)]="form.partnerName"></div>
+        <div class="col-md-6"><label class="form-label">Email</label><input class="form-control" [(ngModel)]="form.email"></div>
+        <div class="col-md-6"><label class="form-label">Phone</label><input class="form-control" [(ngModel)]="form.phone"></div>
+        <div class="col-md-6"><label class="form-label">Share %</label><input type="number" class="form-control" [(ngModel)]="form.sharePercent"></div>
+        <div class="col-md-6"><label class="form-label">Effective From</label><input type="date" class="form-control" [(ngModel)]="form.effectiveFrom"></div>
+        <div class="col-md-6"><label class="form-label">Status</label>
+          <select class="form-select" [(ngModel)]="form.status"><option>Active</option><option>Inactive</option></select>
+        </div>
+        <div class="col-12"><label class="form-label">Address</label><input class="form-control" [(ngModel)]="form.address"></div>
+        <div class="col-12"><label class="form-label">Notes</label><textarea class="form-control" rows="2" [(ngModel)]="form.notes"></textarea></div>
+      </div>
+      <div class="mt-3 d-flex gap-2 justify-content-end">
+        <button class="btn btn-outline-secondary" (click)="showForm = false">Cancel</button>
+        <button class="btn btn-primary" (click)="save()">Save</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showPercent) {
+  <div class="pr-modal-backdrop" (click)="showPercent = false">
+    <div class="pr-modal" (click)="$event.stopPropagation()">
+      <h4>Change percentage — {{ editing?.partnerName }}</h4>
+      <p class="small text-muted">Past months keep the old percentage. Only revenue from the effective date uses the new rate.</p>
+      <div class="row g-2">
+        <div class="col-md-6"><label class="form-label">New %</label><input type="number" class="form-control" [(ngModel)]="percentForm.sharePercent"></div>
+        <div class="col-md-6"><label class="form-label">Effective From</label><input type="date" class="form-control" [(ngModel)]="percentForm.effectiveFrom"></div>
+        <div class="col-12"><label class="form-label">Reason</label><input class="form-control" [(ngModel)]="percentForm.reason"></div>
+      </div>
+      <div class="mt-3 d-flex gap-2 justify-content-end">
+        <button class="btn btn-outline-secondary" (click)="showPercent = false">Cancel</button>
+        <button class="btn btn-primary" (click)="savePercent()">Save percentage</button>
+      </div>
+    </div>
+  </div>
+}

@@ -23,6 +23,8 @@ import { CategorySM } from '../../../../../models/service-models/app/v1/categori
 import { ProductUtils } from '../../../../../utils/product.utils';
 import { generateProductSlug } from '../../../../../utils/slug.utils';
 import { TabResumeService } from '../../../../../services/tab-resume.service';
+import { Title, Meta } from '@angular/platform-browser';
+import { HOME_SEO_KEYWORDS, SHOP_SEO_DESCRIPTION, SHOP_SEO_TITLE } from '../../../../../constants/seo-copy';
 
 import { Subject, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -80,6 +82,8 @@ export class Shop extends BaseComponent<AdminProductsViewModel> implements OnIni
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private tabResume: TabResumeService,
+    private title: Title,
+    private meta: Meta,
     @Inject(PLATFORM_ID) platformId: object,
   ) {
     super(commonService, logHandler);
@@ -121,6 +125,12 @@ export class Shop extends BaseComponent<AdminProductsViewModel> implements OnIni
   }
 
   ngOnInit(): void {
+    this.title.setTitle(SHOP_SEO_TITLE);
+    this.meta.updateTag({ name: 'description', content: SHOP_SEO_DESCRIPTION });
+    this.meta.updateTag({ name: 'keywords', content: HOME_SEO_KEYWORDS });
+    this.meta.updateTag({ property: 'og:title', content: SHOP_SEO_TITLE });
+    this.meta.updateTag({ property: 'og:description', content: SHOP_SEO_DESCRIPTION });
+
     // ✅ Debounced search
     this.subscriptions.add(
       this.searchSubject.pipe(debounceTime(400)).subscribe(() => {
